@@ -12,14 +12,18 @@
     "test": "jest"
   },
   "dependencies": {
+    "@handsontable/vue": "^9.0.2",
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/pwa": "^3.3.5",
     "core-js": "^3.15.1",
+    "firebase": "^8.8.1",
+    "handsontable": "^9.0.2",
     "nuxt": "^2.15.7",
     "vuetify": "^2.5.5"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.14.7",
+    "@mdi/font": "^5.9.55",
     "@nuxtjs/eslint-config": "^6.0.1",
     "@nuxtjs/eslint-module": "^3.0.2",
     "@nuxtjs/vuetify": "^1.12.1",
