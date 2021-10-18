@@ -1,8 +1,8 @@
 <template>
   <v-container fluid>
     <v-row justify="center">
-      <v-col cols="12" class="pa-0 ma-0" id="soa-table-header"> </v-col>
-      <v-col cols="12" class="pa-0 ma-0" id="soa-table-body"> </v-col>
+      <v-col id="soa-table-header" cols="9" class="pa-0 ma-0"> </v-col>
+      <v-col id="soa-table-body" cols="9" class="pa-0 ma-0"> </v-col>
     </v-row>
   </v-container>
 </template>
@@ -10,7 +10,9 @@
 <script>
 import 'handsontable/dist/handsontable.min.css'
 import Handsontable from 'handsontable'
-import tableHeaders from './TableHeaders'
+import { HyperFormula } from 'hyperformula'
+import { tableHeaders } from './TableHeaders'
+import { tableEquations } from './TableEquations'
 
 export default {
   name: 'SoaTable',
@@ -22,6 +24,7 @@ export default {
         licenseKey: 'non-commercial-and-evaluation',
         height: 'auto',
         width: 'auto',
+        className: 'htMiddle htCenter',
         colWidths: [200, 100, 200, 100, 200, 100, 200, 150], // deafault 50px
         rowHeights: 80,
         mergeCells: [
@@ -30,63 +33,149 @@ export default {
         ],
       },
       soaTableBodySettings: {
-        data: Handsontable.helper.createEmptySpreadsheetData(20, 13),
+        data: Handsontable.helper.createEmptySpreadsheetData(35, 13),
+        className: 'soa-body htLeft',
         licenseKey: 'non-commercial-and-evaluation',
         height: 'auto',
         width: 'auto',
-        colHeaders: [
-          '#yrs',
-          '%',
-          '#ch',
-          '#yrs',
-          'amount',
-          '%',
-          '#ch',
-          '#yrs',
-          'amount',
-          '%',
-          '#ch',
-          'amount',
-          null,
-        ],
-        rowHeaders: [
-          '4-02-01 Permit to Pucrchase',
-          '4-02-01 Filing Fee',
-          '4-02-01 Permit to Pucrchase',
-          '4-02-01 Permit to Possess/Storage',
-        ],
+        colHeaders: tableHeaders.colHeaders,
+        rowHeaders: tableHeaders.rowHeaders,
         rowHeaderWidth: 200,
         colWidths: [50, 50, 50, 150, 50, 50, 50, 150, 50, 50, 50, 150, 150], // deafault 50px
+        afterGetRowHeader: (row, TR) => {
+          TR.className = 'htLeft'
+        },
+        afterGetColHeader: (col, TH) => {
+          TH.className = 'htLeft'
+        },
+        columns: tableHeaders.colTypes,
+        // formulas:{
+        //   engines: HyperFormula
+        // }
       },
     }
   },
+  // created() {
+    // const { hf, sheetId, sheetName } = initializeHF(tableBodyID)
+    // this.hf = hf
+    // this.sheetId = sheetId
+    // this.sheetName = sheetName
+  // },
   mounted() {
-    const hot = new Handsontable(
+    const soaHeader = new Handsontable(
       document.getElementById('soa-table-header'),
       this.soaTableHeaderSettings
     )
-    hot.setDataAtCell(0, 0, 'CODE')
-    hot.setDataAtCell(0, 1, 'Particulant')
-    hot.setDataAtCell(1, 1, 'Date Issued')
-    hot.setDataAtCell(0, 3, 'Particulant')
-    hot.setDataAtCell(1, 3, 'Date Issued')
-    hot.setDataAtCell(0, 5, 'Particulant')
-    hot.setDataAtCell(1, 5, 'Date Issued')
-    hot.setDataAtCell(0, 7, 'Sub-Total')
+    soaHeader.setDataAtCell(0, 0, 'CODE')
+    soaHeader.setDataAtCell(0, 1, 'Particulant')
+    soaHeader.setDataAtCell(1, 1, 'Date Issued')
+    soaHeader.setDataAtCell(0, 3, 'Particulant')
+    soaHeader.setDataAtCell(1, 3, 'Date Issued')
+    soaHeader.setDataAtCell(0, 5, 'Particulant')
+    soaHeader.setDataAtCell(1, 5, 'Date Issued')
+    soaHeader.setDataAtCell(0, 7, 'Sub-Total')
 
-    const soaBody = Handsontable(
+    soaHeader.updateSettings({
+      cells(row, col) {
+        const cellProperties = {}
+
+        if (
+          soaHeader.getData()[row][col] === 'CODE' ||
+          soaHeader.getData()[row][col] === 'Particulant' ||
+          soaHeader.getData()[row][col] === 'Date Issued' ||
+          soaHeader.getData()[row][col] === 'Sub-Total'
+        ) {
+          cellProperties.editor = false
+          cellProperties.className = 'disabled-cell'
+        }
+        return cellProperties
+      },
+    })
+
+    const soaBody = new Handsontable(
       document.getElementById('soa-table-body'),
       this.soaTableBodySettings
     )
 
-    soaBody.setDataAtCell(1, 1, 'test')
-    //  dapat headers ni sila same as code
+    const htBodyData = soaBody.getData()
+    const hfInstance = HyperFormula.buildFromArray(htBodyData, {
+      licenseKey: 'gpl-v3',
+      precisionRounding: 10,
+    })
+
+    tableEquations.forEach((eqn, index) => {
+      hfInstance.setCellContents({ col: 12, row: index, sheet: 0 }, eqn)
+    })
+    soaBody.updateSettings({
+      cells(row, col) {
+        const cellProperties = {}
+        const disabledRows = [0, 8, 11, 16, 21, 24]
+
+        if(col === 12){
+          cellProperties.readOnly = true
+        }
+
+        if (disabledRows.includes(row)) {
+          cellProperties.readOnly = true
+          cellProperties.renderer = disabledRowsRenderer
+        }
+        if (soaBody.getColHeader([col]) === '%') {
+          if (!tableHeaders.perDisable.includes(soaBody.getRowHeader([row]))) {
+            cellProperties.readOnly = true
+            cellProperties.renderer = disabledRowsRenderer
+          }
+        }
+
+        if (soaBody.getColHeader([col]) === '#yrs') {
+          if (!tableHeaders.yrDisable.includes(soaBody.getRowHeader([row]))) {
+            cellProperties.readOnly = true
+            cellProperties.renderer = disabledRowsRenderer
+          }
+        }
+        if (soaBody.getRowHeader([row]) === 'TOTAL') {
+          if (soaBody.getColHeader([col]) !== '') {
+            cellProperties.renderer = disabledRowsRenderer
+          }
+          cellProperties.readOnly = true
+        }
+        return cellProperties
+      },
+      formulas:{
+        engine:hfInstance,
+        sheetName:'Sheet1'
+      }
+    })
   },
+}
+
+function disabledRowsRenderer(
+  instance,
+  td,
+  row,
+  col,
+  prop,
+  value,
+  cellProperties
+) {
+  Handsontable.renderers.TextRenderer.apply(this, arguments)
+  td.style.background = '#E0E0E0'
 }
 </script>
 
 <style>
+
 .wtHider {
-  height: 100px;
+  height: auto !important;
+}
+.rowHeader {
+  font-size: 12px;
+  text-align: left;
+  overflow-wrap: break-word;
+}
+.colHeader {
+  font-size: 12px;
+}
+.soa-body {
+  font-size: 12px;
 }
 </style>

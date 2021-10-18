@@ -1,7 +1,7 @@
 import firebase from 'firebase/app'
-import 'firebase/auth'
+// import 'firebase/auth'
 import 'firebase/database'
-import 'firebase/storage'
+// import 'firebase/storage'
 // import admin from "firebase-admin"
 const config = {
   apiKey: "AIzaSyBh_424FQePP4UDi9LkDjlY8yh-JaUxSPw",
@@ -14,7 +14,7 @@ const config = {
   measurementId: "G-NJF30XXD3R"
 }
 
-!firebase.apps.length ? firebase.initializeApp(config) : ''
+if (!firebase.apps.length) firebase.initializeApp(config);
 
 export const database = firebase.database()
 // export const storage = firebase.storage()
