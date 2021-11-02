@@ -185,3 +185,10 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.floating-btn {
+  position: relative;
+  left: 95%;
+}
+</style>

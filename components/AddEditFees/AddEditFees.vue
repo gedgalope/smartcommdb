@@ -1,6 +1,8 @@
 <template>
   <v-container class="add-edit-fees">
     <v-card>
+      <success-failed-alert :show="alertVisible"></success-failed-alert>
+
       <v-card-title primary-title> Fees Information </v-card-title>
       <v-card-text>
         <v-container>
@@ -116,18 +118,21 @@
             >
           </v-row>
         </v-container>
-        {{ enableFeeTextField }}
       </v-card-actions>
     </v-card>
   </v-container>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import successFailedAlertVue from '../Misc/successFailedAlert.vue'
 export default {
   name: 'AddEditFees',
+  components: {
+    'success-failed-alert': successFailedAlertVue,
+  },
   data() {
     return {
+      alertVisible: null,
       typeLic: null,
       dummyComboboxData: ['FB', 'FX'],
       selection: null,
@@ -141,6 +146,7 @@ export default {
       enableFeeTextField: false,
     }
   },
+
   computed: {
     changeComboxBoxButton() {
       if (this.dummyComboboxData.includes(this.selection)) {
@@ -163,27 +169,27 @@ export default {
     },
   },
   methods: {
-    ...mapActions({
-      submitFees: 'soaStore/postNewFees',
-    }),
     closeFeeDialog() {
       this.$refs.feesForm.reset()
       this.$emit('closeDialog')
     },
     saveFees() {
-      const feeData = {
-        name: this.selection.trim().replace(/ /g, '_'),
-        payload: {
-          licenseFee: this.licenseFee,
-          purchaseFee: this.purchaseFee,
-          possessFee: this.possessFee,
-          inspectionFee: this.inspectionFee,
-          filingFee: this.filingFee,
-          constructionFee: this.constructionFee,
-          arocFee: this.arocFee,
-        },
-      }
-      this.submitFees(feeData)  //  await to open alert something
+      // const feeData = {
+      //   name: this.selection.trim().replace(/ /g, '_'),
+      //   payload: {
+      //     licenseFee: this.licenseFee,
+      //     purchaseFee: this.purchaseFee,
+      //     possessFee: this.possessFee,
+      //     inspectionFee: this.inspectionFee,
+      //     filingFee: this.filingFee,
+      //     constructionFee: this.constructionFee,
+      //     arocFee: this.arocFee,
+      //   },
+      // }
+      this.alertVisible = true
+      setTimeout(() => {
+        this.alertVisible = false
+      }, 1500)
     },
     newEditFeesInfo() {
       const { payload } = this.changeComboxBoxButton

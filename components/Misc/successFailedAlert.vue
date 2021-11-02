@@ -1,5 +1,5 @@
 <template>
-  <v-alert type="primary" :value="true">
+  <v-alert :type="alertType" :value="show" transition="fade-transition">
     {{ text }}
   </v-alert>
 </template>
@@ -8,25 +8,32 @@
 export default {
   name: 'SuccessFailedAlert',
   props: {
+    show: {
+      type: Boolean,
+      default: () => false,
+    },
     text: {
       type: String,
-      default: () => null,
+      default: () => 'success',
     },
   },
   data() {
-    return {}
+    return {
+      visible: false,
+    }
   },
   computed: {
     alertType() {
       const text = this.text
+      if (text === null) return 'success'
       if (text.includes('uccess')) return 'success'
       else return 'error'
     },
   },
   methods: {
-    emitClose(){
+    emitClose() {
       this.$emit('close')
-    }
+    },
   },
 }
 </script>

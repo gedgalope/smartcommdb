@@ -3,12 +3,15 @@
     <v-row justify="center">
       <v-col id="soa-table-header" cols="9" class="pa-0 ma-0"> </v-col>
       <v-col id="soa-table-body" cols="9" class="pa-0 ma-0"> </v-col>
+      <hot-table :settings="soaTableBodySettings"></hot-table>
     </v-row>
+    <v-btn @click="print()"></v-btn>
   </v-container>
 </template>
 
 <script>
 import 'handsontable/dist/handsontable.min.css'
+import { HotTable } from '@handsontable/vue'
 import Handsontable from 'handsontable'
 import { HyperFormula } from 'hyperformula'
 import { tableHeaders } from './TableHeaders'
@@ -16,6 +19,9 @@ import { tableEquations } from './TableEquations'
 
 export default {
   name: 'SoaTable',
+  components: {
+    HotTable,
+  },
 
   data() {
     return {
@@ -56,10 +62,10 @@ export default {
     }
   },
   // created() {
-    // const { hf, sheetId, sheetName } = initializeHF(tableBodyID)
-    // this.hf = hf
-    // this.sheetId = sheetId
-    // this.sheetName = sheetName
+  // const { hf, sheetId, sheetName } = initializeHF(tableBodyID)
+  // this.hf = hf
+  // this.sheetId = sheetId
+  // this.sheetName = sheetName
   // },
   mounted() {
     const soaHeader = new Handsontable(
@@ -111,7 +117,7 @@ export default {
         const cellProperties = {}
         const disabledRows = [0, 8, 11, 16, 21, 24]
 
-        if(col === 12){
+        if (col === 12) {
           cellProperties.readOnly = true
         }
 
@@ -140,11 +146,53 @@ export default {
         }
         return cellProperties
       },
-      formulas:{
-        engine:hfInstance,
-        sheetName:'Sheet1'
-      }
+      formulas: {
+        engine: hfInstance,
+        sheetName: 'Sheet1',
+      },
     })
+  },
+  methods: {
+    print() {
+      const printContainer = window.document.getElementById('soa-table-body')
+      const printView = printContainer.Handsontable('getInstance')
+      const iframe = document.createElement('iframe')
+
+      iframe.style.cssText = 'display: none'
+
+      document.body.appendChild(iframe)
+      const doc = iframe.contentDocument
+
+      doc.open('text/html', 'replace')
+      doc.write(`<!doctype html><html><head>
+  <style>
+    @media print {
+      table {
+        border-collapse: collapse;
+      }
+      th, td {
+        border: 1px solid #ccc;
+        min-width: 50px;
+        padding: 2px 4px;
+      }
+      th {
+        background-color: #f0f0f0;
+        text-align: center;
+        font-weight: 400;
+        white-space: nowrap;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+  </style>
+  </head><body>${printView.toHTML()}</body></html>`)
+      doc.close()
+
+      doc.defaultView.print()
+
+      setTimeout(() => {
+        iframe.parentElement.removeChild(iframe)
+      }, 10)
+    },
   },
 }
 
@@ -163,7 +211,6 @@ function disabledRowsRenderer(
 </script>
 
 <style>
-
 .wtHider {
   height: auto !important;
 }
