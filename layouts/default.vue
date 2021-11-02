@@ -3,7 +3,7 @@
     <v-app-bar :clipped-left="clipped" fixed app>
       <v-container>
         <v-row justify="end">
-          <v-col lg="4" md="6" class="py-0" align-self="center">
+          <v-col lg="6" md="6" class="py-0" align-self="center">
             <v-row justify="end">
               <v-divider vertical></v-divider>
               <v-btn x-large text class="text-capitalize" nuxt to="/">
@@ -14,11 +14,14 @@
                 <v-icon class="pr-2" color="accent">mdi-file-document-edit-outline</v-icon>Create SOA
               </v-btn>
               <v-divider vertical></v-divider>
+              <v-btn x-large text class="text-capitalize" nuxt to="/smartrsl">
+                <v-icon class="pr-2" color="accent">mdi-file-document-edit-outline</v-icon>SmartRSL
+              </v-btn>
             </v-row>
           </v-col>
         </v-row>
-        
-      </v-container>  
+
+      </v-container>
     </v-app-bar>
     <v-main>
       <v-container>

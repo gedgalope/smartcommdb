@@ -10,7 +10,7 @@
 <script>
 import 'handsontable/dist/handsontable.min.css'
 import Handsontable from 'handsontable'
-import tableHeaders from './TableHeaders'
+// import tableHeaders from './TableHeaders'
 
 export default {
   name: 'SoaTable',

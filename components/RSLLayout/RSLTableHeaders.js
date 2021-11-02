@@ -1,0 +1,42 @@
+
+  const colHeaders = [
+    'transactionType',
+    'licenseNumber',
+    'licenseType',
+    'companyName',
+    'location',
+    'longitude',
+    'latitude',
+    'callSign',
+    'operationHours',
+    'serviceArea',
+    'frequencies',
+    'bandwidth',
+    'power',
+    'directivity',
+    'antennaHeight',
+    'gain',
+    'antennaType',
+    'folderNumber',
+    'stationType',
+    'frequencyBand',
+    'configuration',
+    'towerType',
+    'previousFolder',
+    'previousRSLNumber',
+    'antennaModel',
+    'serialNumbers',
+    'frequencyRange',
+    'expiryDate',
+    'effectivityDate',
+    'remarks',
+    'dateProcessed',
+    'orNumber',
+    'amount',
+    'datePaid',
+    'stationClass',
+    'natureOfService'
+  ]
+
+
+export const RSLTableHeaders={colHeaders}
