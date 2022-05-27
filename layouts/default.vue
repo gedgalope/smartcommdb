@@ -14,6 +14,9 @@
                 <v-icon class="pr-2" color="accent">mdi-file-document-edit-outline</v-icon>Create SOA
               </v-btn>
               <v-divider vertical></v-divider>
+              <v-btn x-large text class="text-capitalize" nuxt to="/inspectionForm">
+                <v-icon class="pr-2" color="accent">mdi-file-document</v-icon>Inspection
+              </v-btn>
             </v-row>
           </v-col>
         </v-row>
