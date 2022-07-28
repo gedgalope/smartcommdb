@@ -1,0 +1,4 @@
+export default {
+  cities:["Davao", "Digos", "Malita", "Mati", "Nabunturan", "Tagum", "Asuncion", "Baganga", "Banaybanay", "Bansalan", "Boston", "Braulio E.Dujali", "Caraga", "Carmen", "Cateel", "Compostela", "Don Marcelino", "Governor Generoso", "Hagonoy", "Jose Abad Santos", "Kapalong", "Kiblawan", "Laak", "Lupon", "Mabini", "Maco", "Magsaysay", "Malalag", "Malita", "Manay", "Maragusan", "Matanao", "Mawab", "Monkayo", "Montevista", "Nabunturan", "New Bataan", "New Corella", "Padada", "Pantukan", "San Isidro", "San Isidro", "Santa Cruz", "Santa Maria", "Santo Tomas", "Sarangani", "Sulop", "Talaingod", "Tarragona"],
+  province:["Davao del Sur", "Davao del Norte", "Davao de Oro", "Daveo Oriental"]
+}
