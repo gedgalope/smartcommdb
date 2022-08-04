@@ -1,0 +1,77 @@
+<template>
+  <v-container>
+    <success-failed-alert :show="showAlert" :text="alertText" @snackClosed="showAlert = $event"></success-failed-alert>
+
+    <v-form ref="AmateurPurchase" v-model="amateurPurchase">
+      <v-row dense>
+        <v-row dense>
+          <v-col cols="6">
+            <v-row>
+              <v-radio-group v-model="frequencyRange" multiple :rules="[dataRequired]" dense row>
+                <v-checkbox label="VHF" :value="'vhf'" dense></v-checkbox>
+                <v-checkbox label="HF" :value="'hf'" dense></v-checkbox>
+                <v-checkbox label="UHF" :value="'uhf'" dense></v-checkbox>
+              </v-radio-group>
+            </v-row>
+            <v-row>
+              <v-radio-group v-model="eqptType" multiple :rules="[dataRequired]" dense row>
+                <v-checkbox label="Base" value="base" dense></v-checkbox>
+                <v-checkbox label="Portable" value="portable" dense></v-checkbox>
+              </v-radio-group>
+            </v-row>
+          </v-col>
+          <v-col cols="6">
+            <v-row dense>
+              <v-col cols="12">
+                <v-text-field v-model="units" :rules='[dataRequired]' dense outlined label="No of Units">
+                </v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-combobox v-model="intendedUse" :items="['Additional Unit', 'New Station', 'Replacemnet Unit']" :rules='[dataRequired]' dense outlined label="Intended Use">
+                </v-combobox>
+              </v-col>
+
+            </v-row>
+          </v-col>
+        </v-row>
+        <v-col cols="12">
+          <v-text-field v-model="purchaseNumber" :rules='[dataRequired]' dense outlined label="Purchase Number">
+          </v-text-field>
+        </v-col>
+        <v-col cols="12">
+          <v-text-field v-model="purchaseDateIssued" :rules='[dataRequired, dateRules]' dense outlined
+            label="Date Issued">
+          </v-text-field>
+        </v-col>
+        <v-col cols="6">
+          <v-text-field v-model="ORNumber" :rules='[dataRequired]' dense outlined label="OR Number">
+          </v-text-field>
+        </v-col>
+        <v-col cols="6">
+          <v-text-field v-model="ORDate" :rules='[dataRequired, dateRules]' dense outlined label="OR Date">
+          </v-text-field>
+        </v-col>
+        <v-col cols="12">
+          <v-textarea v-model="purchaseRemarks" no-resize dense outlined label="Remarks">
+          </v-textarea>
+        </v-col>
+      </v-row>
+    </v-form>
+
+    <v-row dense justify="center">
+      <v-col cols="4">
+        <v-btn block rounded @click="savePurchaseData()">Save Permit</v-btn>
+      </v-col>
+      <v-col cols="4">
+      <v-btn block rounded :disabled="!purchaseSave" @click="printData()">Print Permit</v-btn>
+      </v-col>
+    </v-row>
+
+  </v-container>
+
+</template>
+
+<script >
+import amateurPurchase from './amateurPurchase'
+export default amateurPurchase
+</script>

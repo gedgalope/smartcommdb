@@ -1,7 +1,7 @@
 <template>
-  <v-alert :type="alertType" :value="show" transition="fade-transition">
+  <v-snackbar v-model="showSnackBar" :color="alertType" @input="$emit('snackClosed', false)">
     {{ text }}
-  </v-alert>
+  </v-snackbar>
 </template>
 
 <script>
@@ -19,7 +19,7 @@ export default {
   },
   data() {
     return {
-      visible: false,
+      showSnackBar: false
     }
   },
   computed: {
@@ -30,10 +30,10 @@ export default {
       else return 'error'
     },
   },
-  methods: {
-    emitClose() {
-      this.$emit('close')
-    },
+  watch: {
+    show(newValue) {
+      this.showSnackBar = newValue
+    }
   },
 }
 </script>
