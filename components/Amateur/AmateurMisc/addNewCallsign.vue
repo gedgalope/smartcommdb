@@ -17,7 +17,7 @@
       </v-col>
 
       <v-col cols="6">
-        <v-btn block outlined :disabled="!callSeries" @click="saveCallSignSeries()">Save Series</v-btn>
+        <v-btn block outlined :disabled="!callSeries" :loading="savingSeries" @click="saveCallSignSeries()">Save Series</v-btn>
       </v-col>
     </v-row>
   </v-container>

@@ -15,6 +15,7 @@ export default {
 
       showAlert: false,
       alertText: null,
+      savingSeries:false
     }
   },
   components: {
@@ -28,6 +29,7 @@ export default {
       postCallSignSeries: 'amateur/callSign/postCallSignSeries'
     }),
     async saveCallSignSeries() {
+      this.savingSeries = true
       const callSeries = {
         from:this.startSeries,
         to:this.toSeries
@@ -42,7 +44,7 @@ export default {
         this.showAlert = true
         this.alertText = dbResponse
       }
-
+      this.savingSeries =  false
     }
   }
 
