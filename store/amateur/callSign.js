@@ -103,7 +103,7 @@ const actions = {
         })
       if (!callSignData) {
         callSignData = await database
-          .ref(`amateur/callSign/IssuedCallSign/${callsignForQuery.toUpperCase()}`)
+          .ref(`amateur/callSign/issued/${callsignForQuery.toUpperCase()}`)
           .once("value")
           .then(snapshot => {
             return snapshot.val()
@@ -116,6 +116,88 @@ const actions = {
       }
       else commit('POPULATE_CALLSIGN_SEARCH_RESULT', callSignData)
       return true
+    } catch (error) {
+      return error.message
+    }
+  },
+
+  async searchOwner({ commit }, ownerName) {
+    try {
+      if (!ownerName) throw new Error('Please input a name!')
+      console.log(ownerName)
+      //  find name in issued CS
+      const ownerData = await database
+        .ref(`amateur/callSign/issued`)
+        .orderByChild('oldOwner')
+        .once("value")
+        .then(snapshot => {
+          const dataset = snapshot.val()
+          console.log(dataset)
+          const queryResult = dataset.map(elem => {
+            console.log(elem)
+            if (!elem.ownerName) {
+              if (elem.ownerName.includes(ownerName)) return elem
+            }
+            return null
+          })
+          console.log(`result: ${queryResult}`)
+          // return snapshot.val()
+        })
+
+      console.log(ownerData)
+    } catch (error) {
+      return error.message
+    }
+  },
+
+  async saveOrUpdateCallsignInfo({ commit }, callsignInfo) {
+    try {
+      if (!callsignInfo) throw new Error('No blank data!')
+      if (callsignInfo.callsign.length !== 3) throw new Error('Not a callsign series!')
+      const callsignDataForPost = {
+        dateIssued: callsignInfo.dateIssued ? callsignInfo.dateIssued : null,
+        oldOwner: callsignInfo.oldOwner ? callsignInfo.oldOwner : null,
+        newOwner: callsignInfo.newOwner,
+        used: callsignInfo.used,
+      }
+      if (callsignInfo.update) {
+        await database.ref(`amateur/callSign/issued/${callsignInfo.callsign.toUpperCase()}`).set(callsignDataForPost)
+        return true
+      }
+      const checkLicenseeForObject = await database
+        .ref(`amateur/licensee`)
+        .orderByChild('callsign')
+        .equalTo(callsignInfo.callsign.toUpperCase())
+        .once("value")
+        .then(snapshot => {
+          return snapshot.val()
+        })
+      if (checkLicenseeForObject) throw new Error('Callsign has been issued!')
+      const checkIssuedForObject = await database
+        .ref(`amateur/callSign/issued/${callsignInfo.callsign.toUpperCase()}`)
+        .once("value")
+        .then(snapshot => {
+          return snapshot.val()
+        })
+      if (checkIssuedForObject) throw new Error('Callsign hase been issued, please modify and update licensee data first!')
+
+      const checkForIssuanceForObject = await database
+        .ref(`amateur/callSign/forIssuance/${callsignInfo.callsign.toUpperCase()}`)
+        .once('value')
+        .then(snapshot => {
+          return snapshot.val()
+        })
+      if (checkForIssuanceForObject) throw new Error('Double Issuance of Callsign!')
+
+      if (callsignInfo.used) {
+        await database.ref(`amateur/callSign/issued/${callsignInfo.callsign.toUpperCase()}`).set(callsignDataForPost)
+        return true
+      } else {
+        await database.ref(`amateur/callSign/forIssuance/${callsignInfo.callsign.toUpperCase()}`).set(callsignDataForPost)
+        return true
+      }
+
+
     } catch (error) {
       return error.message
     }

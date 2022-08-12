@@ -5,16 +5,12 @@
 
     <v-form ref="licenseeParticulars" v-model="validParticulars">
       <v-row dense>
-        <v-col cols="4">
-          <v-text-field v-model="callSign" :rules='[dataRequired]' dense outlined label="CallSign">
-          </v-text-field>
-        </v-col>
         <v-col cols="3">
           <v-combobox v-model="licenseeClass" :rules="[dataRequired]" :items="['A', 'B', 'C', 'D']" dense outlined
             label="Class">
           </v-combobox>
         </v-col>
-        <v-col cols="5">
+        <v-col cols="9">
           <v-combobox v-model="stationLocation" :rules="[dataRequired]"
             :items="['none', 'portable', 'portable & base', 'above address']" dense outlined label="Station Location">
           </v-combobox>

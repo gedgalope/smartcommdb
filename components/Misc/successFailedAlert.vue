@@ -1,5 +1,5 @@
 <template>
-  <v-snackbar v-model="showSnackBar" :color="alertType" @input="$emit('snackClosed', false)">
+  <v-snackbar v-model="showSnackBar" :timeout="10000" :color="alertType" @input="$emit('snackClosed', false)">
     {{ text }}
   </v-snackbar>
 </template>

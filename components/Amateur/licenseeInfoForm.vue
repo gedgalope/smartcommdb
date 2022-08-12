@@ -16,12 +16,16 @@
           <v-text-field v-model="lastname" :rules='[dataRequired]' dense outlined label="Last Name">
           </v-text-field>
         </v-col>
-        <v-col cols="6">
+        <v-col cols="4">
+          <v-text-field v-model="callsign" :rules='[dataFormat]' dense outlined label="CallSign">
+          </v-text-field>
+        </v-col>
+        <v-col cols="4 ">
           <v-text-field v-model="birthdate" :rules="[dataRequired, birthdateRules]" hint="MM/DD/YY" dense outlined
             label="Birthdate">
           </v-text-field>
         </v-col>
-        <v-col cols="6">
+        <v-col cols="4">
           <v-text-field v-model="contact" dense outlined label="Contact Number">
           </v-text-field>
         </v-col>

@@ -2,7 +2,7 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data() {
     return {
-      callSignHeaders:[
+      callSignHeaders: [
         {
           text: 'CallSign',
           align: 'start',
@@ -14,8 +14,9 @@ export default {
       ],
       searchByCallsign: null,
       searchPreviousOwner: null,
-      loadingResultTable:false,
-      callSignSearchError:null
+      loadingResultTable: false,
+      callSignSearchError: null,
+      ownerSearchError: null,
     }
   },
   computed: {
@@ -25,20 +26,31 @@ export default {
   },
   methods: {
     ...mapActions({
-      searchCallSign:'amateur/callSign/searchCallSign'
+      searchCallSign: 'amateur/callSign/searchCallSign',
+      searchOwner: 'amateur/callSign/searchOwner'
     }),
     async searchCallsign() {
       this.loadingResultTable = true
       const dbResponse = await this.searchCallSign(this.searchByCallsign)
-      if(dbResponse !== true){
+      if (dbResponse !== true) {
         this.callSignSearchError = dbResponse
-      }else{
+      } else {
         this.callSignSearchError = null
       }
       this.loadingResultTable = false
       this.$refs.searchCallsignField.reset()
     },
-    searchOldOwner() { },
+    async searchOldOwner() {
+      this.loadingResultTable = true
+      const dbResponse = await this.searchOwner(this.searchPreviousOwner)
+      if (dbResponse !== true) {
+        this.ownerSearchError = dbResponse
+      } else {
+        this.ownerSearchError = null
+      }
+      this.loadingResultTable = false
+      this.$refs.searchPreviousOwnerField.reset()
+    },
     showCallsignTable() { },
   }
 

@@ -10,7 +10,6 @@ export default {
       dateRules: v => !!(new Date(v)).valueOf() || 'Not a Date!',
       //  licensee particulars  
       validParticulars: null,
-      callSign: null,
       licenseeClass: null,
       stationLocation: null,
       ARLSeries: null,
@@ -43,7 +42,6 @@ export default {
     async saveAmateurRecord() {
       const amateurParticulars = {
         transactionType: this.transactionType,
-        callSign: this.callSign,
         licenseeClass: this.licenseeClass,
         stationLocation: this.stationLocation,
         ARLSeries: this.ARLSeries,
@@ -62,7 +60,6 @@ export default {
       if (dbResponse === true) {
         this.showAlert = true
         this.alertText = "Success"
-        this.possessSaved = true
       } else {
         this.showAlert = true
         this.alertText = dbResponse
