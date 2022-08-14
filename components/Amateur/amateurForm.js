@@ -25,13 +25,32 @@ export default {
   components: {
     'success-failed-alert': successFailedAlertVue
   },
+  props: {
+    searchResult: {
+      type: Object,
+      default: () => null
+    }
+  },
+  watch: {
+    searchResult(val) {
+      if (val) {
+        this.firstname = val.firstname
+        this.middlename = val.middlename
+        this.lastname = val.lastname
+        this.birthdate = val.birthdate
+        this.callsign = val.callsign
+        this.contact = val.contact
+        this.address = val.address
+      }
+    }
+  },
   computed: {
     transactionItems() {
       //  apply this code to transaction items when search bar is added
-      // const newLicensee=['new', 'purchase', 'temporary']
-      // const existingLicensee= ['renewal', 'renmod', 'duplicate', 'modification', 'purchase', 'possess', 'temporary']
-
-
+      const newLicensee=['new', 'purchase', 'temporary']
+      const existingLicensee= ['renewal', 'renmod', 'duplicate', 'modification', 'purchase', 'possess', 'temporary']
+      if(!this.searchResult) return newLicensee
+      else return existingLicensee
     }
   },
   methods: {
@@ -47,7 +66,8 @@ export default {
         callsign: this.callsign ? this.callsign.toUpperCase() : null,
         birthdate: this.birthdate,
         contact: this.contact,
-        address: this.address
+        address: this.address,
+        searchIndex: `${this.lastname}, ${this.firstname} /${this.callsign ? this.callsign.toUpperCase() : 'none'}`
       }
       if (!this.callsign) {
         const dbResponse = await this.postLicenseeInfo(licenseeData)

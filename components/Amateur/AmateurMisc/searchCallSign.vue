@@ -18,9 +18,6 @@
         <v-btn dense outlined block @click="showCallsignTable()">Show Table</v-btn>
       </v-col>
       <v-col cols="12">
-        reset fields after use?? or using other field
-        {{ callSignSearchError }}
-        {{ callsignQueryResult }}
         <v-data-table :headers="callSignHeaders" :items="callsignQueryResult" hide-default-footer :items-per-page="5"
           dense :loading="loadingResultTable"></v-data-table>
       </v-col>

@@ -38,7 +38,7 @@
     <v-row>
       <v-col cols="4">
         <v-combobox v-model="transactionType" :disabled="!licenseeFormComplete"
-          :items="['main','new', 'renewal', 'renmod', 'duplicate', 'modification', 'purchase', 'possess', 'temporary']" dense
+          :items="transactionItems" dense
           outlined label="Transaction type" @change="$emit('transactionType', transactionType)">
         </v-combobox>
       </v-col>

@@ -1,9 +1,12 @@
 <template>
   <v-container>
     <v-row dense>
+      <v-col cols=12>
+        <amateur-search-bar @selectedLicensee="licensee = $event"></amateur-search-bar>
+      </v-col>
       <v-col cols="6">
         <v-row>
-          <licensee-info-form @transactionType="transactionType = $event"></licensee-info-form>
+          <licensee-info-form @transactionType="transactionType = $event" :searchResult="licensee"></licensee-info-form>
         </v-row>
         <v-row>
           <call-sign-table></call-sign-table>
@@ -16,11 +19,9 @@
         <amateur-temporary v-else-if="showForm == 'temporary'" :transactionype="transactionType"></amateur-temporary>
         <add-new-callsign v-else></add-new-callsign>
       </v-col>
-      <v-col cols="12">
-        ACTIONS
-      </v-col>
     </v-row>
     <v-row>
+      hello
     </v-row>
   </v-container>
 </template>
@@ -32,7 +33,8 @@ import AmateurPurchaseVue from '~/components/Amateur/amateurPurchase.vue'
 import amateurPossessVue from '~/components/Amateur/amateurPossess.vue'
 import amateurTemporary from '~/components/Amateur/amateurTemporary.vue'
 import addNewCallsign from '~/components/Amateur/AmateurMisc/addNewCallsign.vue'
-import CallSignTableVue from '~/components/Amateur/AmateurMisc/CallSignTable.vue'
+import CallSignTableVue from '~/components/Amateur/AmateurMisc/callSignTable.vue'
+import AmateurSeachBarVue from '~/components/Amateur/AmateurMisc/amateurSeachBar.vue'
 
 //  data population
 // import preLoadData from '~/components/Amateur/AmateurMisc/preLoadData.js'
@@ -50,11 +52,13 @@ export default {
     'amateur-possess': amateurPossessVue,
     'amateur-temporary': amateurTemporary,
     'add-new-callsign': addNewCallsign,
-    'call-sign-table': CallSignTableVue
+    'call-sign-table': CallSignTableVue,
+    'amateur-search-bar': AmateurSeachBarVue
   },
   data() {
     return {
-      transactionType: null
+      transactionType: null,
+      licensee: null,
     }
   },
   computed: {

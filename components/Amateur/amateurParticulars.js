@@ -1,5 +1,5 @@
 
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 
 import successFailedAlertVue from '@/components/Misc/successFailedAlert'
 
@@ -23,8 +23,8 @@ export default {
       examPlace: null,
       examDate: null,
       rating: null,
-      ORNumber:null,
-      ORDate:null,
+      ORNumber: null,
+      ORDate: null,
       showAlert: false,
       alertText: null,
     }
@@ -33,11 +33,17 @@ export default {
     'success-failed-alert': successFailedAlertVue
   },
   props: {
-    transactionType: null
+    transactionType: {
+      type: String,
+      default: () => "renewal"
+    },
   },
   methods: {
     ...mapActions({
       postLicenseParticulars: 'amateur/licenseeInfo/postLicenseParticulars'
+    }),
+    ...mapMutations({
+      updateLicenseID: 'amateur/licenseeInfo/UPDATE_LICENSEE_ID'
     }),
     async saveAmateurRecord() {
       const amateurParticulars = {

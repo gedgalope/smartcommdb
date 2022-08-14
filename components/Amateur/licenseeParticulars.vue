@@ -1,6 +1,5 @@
 <template>
   <v-container>
-
     <success-failed-alert :show="showAlert" :text="alertText" @snackClosed="showAlert = $event"></success-failed-alert>
 
     <v-form ref="licenseeParticulars" v-model="validParticulars">

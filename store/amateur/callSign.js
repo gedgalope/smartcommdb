@@ -29,7 +29,7 @@ const mutations = {
   POPULATE_CALLSIGN_SEARCH_RESULT(state, searchResult) {
     if (!searchResult) state.callsignSearchResult = []
     else {
-      state.callsignSearchResult = [searchResult]
+      state.callsignSearchResult = searchResult
     }
   }
 
@@ -94,7 +94,7 @@ const actions = {
     try {
 
       if (!callsignForQuery) throw new Error('Please input callsign!')
-      if (callsignForQuery.length !== 3) throw new Error('Not a callsign series!')
+      if (callsignForQuery.length >= 4) throw new Error('Not a callsign series!')
       let callSignData = await database
         .ref(`amateur/callSign/forIssuance/${callsignForQuery.toUpperCase()}`)
         .once("value")
@@ -112,9 +112,9 @@ const actions = {
       console.log(callSignData)
       if (callSignData) {
         const returnData = { callsign: callsignForQuery.toUpperCase() }
-        commit('POPULATE_CALLSIGN_SEARCH_RESULT', Object.assign(returnData, callSignData))
+        commit('POPULATE_CALLSIGN_SEARCH_RESULT', [Object.assign(returnData, callSignData)])
       }
-      else commit('POPULATE_CALLSIGN_SEARCH_RESULT', callSignData)
+      else commit('POPULATE_CALLSIGN_SEARCH_RESULT', [callSignData])
       return true
     } catch (error) {
       return error.message
@@ -124,27 +124,42 @@ const actions = {
   async searchOwner({ commit }, ownerName) {
     try {
       if (!ownerName) throw new Error('Please input a name!')
-      console.log(ownerName)
-      //  find name in issued CS
-      const ownerData = await database
-        .ref(`amateur/callSign/issued`)
+      console.log(`${ownerName}+\uF8FF`)
+      //  find full name in issued CS
+      let ownerDataByName = await database
+        .ref('amateur/callSign/issued')
         .orderByChild('oldOwner')
-        .once("value")
-        .then(snapshot => {
-          const dataset = snapshot.val()
-          console.log(dataset)
-          const queryResult = dataset.map(elem => {
-            console.log(elem)
-            if (!elem.ownerName) {
-              if (elem.ownerName.includes(ownerName)) return elem
-            }
-            return null
-          })
-          console.log(`result: ${queryResult}`)
-          // return snapshot.val()
+        .startAt(ownerName)
+        .endAt(`${ownerName}+uF8FF`)
+        .once("value").
+        then(snapshot => {
+          return snapshot.val()
         })
 
-      console.log(ownerData)
+      if (!ownerDataByName) {
+        ownerDataByName = await database
+          .ref('amateur/callSign/forIssuance')
+          .orderByChild('oldOwner')
+          .startAt(ownerName)
+          .endAt(`${ownerName}+uF8FF`)
+          .once("value").
+          then(snapshot => {
+            return snapshot.val()
+          })
+        if (ownerDataByName) {
+          const formatted = Object.entries(ownerDataByName).map(([key, value]) => {
+            return Object.assign(value, { callsign: key })
+          })
+          commit('POPULATE_CALLSIGN_SEARCH_RESULT', formatted)
+        } else commit('POPULATE_CALLSIGN_SEARCH_RESULT', null)
+      }
+      else {
+        const formatted = Object.entries(ownerDataByName).map(([key, value]) => {
+          return Object.assign(value, { callsign: key })
+        })
+        commit('POPULATE_CALLSIGN_SEARCH_RESULT', formatted)
+      }
+
     } catch (error) {
       return error.message
     }
