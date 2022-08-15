@@ -37,14 +37,15 @@
     </v-form>
     <v-row>
       <v-col cols="4">
-        <v-combobox v-model="transactionType" :disabled="!licenseeFormComplete"
-          :items="transactionItems" dense
-          outlined label="Transaction type" @change="$emit('transactionType', transactionType)">
+        <v-combobox v-model="transactionType" :disabled="!licenseeFormComplete" :items="transactionItems" dense outlined
+          label="Transaction type" @change="populateHistory()">
         </v-combobox>
       </v-col>
       <v-col cols="8">
-        <v-btn v-if="transactionType === 'new'" dense outlined @click="submitLicenseeInfo()" >Create new client</v-btn>
-        <span v-else>Transaction history</span>
+        <v-btn v-if="transactionType === 'new'" dense outlined @click="submitLicenseeInfo()">Create new client</v-btn>
+        <span v-else>
+          <transaction-history :transactionType="transactionType"></transaction-history>
+        </span>
       </v-col>
     </v-row>
   </v-container>

@@ -5,7 +5,9 @@ const state = () => ({
 })
 
 const getters = {
-
+  getLicenseeID(state) {
+    return state.licenseeID
+  }
 }
 
 const mutations = {
@@ -72,7 +74,27 @@ const actions = {
     } catch (error) {
       return error.message
     }
+  },
+  async getTransaction({ commit }, { licenseeID, transactionID, transactionType }) {
+    console.log({ licenseeID, transactionID, transactionType })
+    try {
+      if (!licenseeID || !transactionID || !transactionType) throw new Error('No empty Object!')
+      let type = transactionType
+      const particulars = ['renewal', 'renmod', 'duplicate', 'modification']
+      if (particulars.includes(type)) type = 'particulars'
+      const transaction = await database
+        .ref(`amateur/${type}/${ licenseeID }/${ transactionID }`)
+        .get('value')
+        .then(snapshot => {
+          return snapshot.val()
+        })
 
+        console.log(transaction)
+
+    } catch (error) {
+      console.log(error)
+      return error.message
+    }
   }
 }
 
