@@ -1,5 +1,5 @@
 
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import successFailedAlertVue from '@/components/Misc/successFailedAlert'
 
@@ -28,6 +28,27 @@ export default {
   },
   props: {
     transactionType: null
+  },
+  watch: {
+    getPurchaseDetails(value) {
+      if (value) {
+        console.log(value)
+        this.frequencyRange = value.frequencyRange
+        this.units = value.units
+        this.eqptType = value.eqptType
+        this.intendedUse = value.intendedUse
+        this.purchaseDateIssued = value.purchaseDateIssued
+        this.purchaseNumber = value.purchaseNumber
+        this.ORNumber = value.ORNumber
+        this.ORDate = value.ORDate
+        this.purchaseRemarks = value.purchaseRemarks
+      }
+    }
+  },
+  computed:{
+    ...mapGetters({
+      getPurchaseDetails: 'amateur/licenseeInfo/getTransactionDetails'
+    }),
   },
   methods: {
     ...mapActions({

@@ -67,7 +67,7 @@
               </v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="ORNumber" :rules='[dataRequired]' dense outlined label="OR Numebr">
+              <v-text-field v-model="ORNumber" :rules='[dataRequired]' dense outlined label="OR Number">
               </v-text-field>
             </v-col>
             <v-col cols="12">

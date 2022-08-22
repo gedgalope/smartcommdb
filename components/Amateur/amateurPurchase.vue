@@ -8,15 +8,15 @@
           <v-col cols="6">
             <v-row>
               <v-radio-group v-model="frequencyRange" multiple :rules="[dataRequired]" dense row>
-                <v-checkbox label="VHF" :value="'vhf'" dense></v-checkbox>
-                <v-checkbox label="HF" :value="'hf'" dense></v-checkbox>
-                <v-checkbox label="UHF" :value="'uhf'" dense></v-checkbox>
+                <v-checkbox label="VHF" v-model="frequencyRange" value="vhf" dense></v-checkbox>
+                <v-checkbox label="HF" v-model="frequencyRange" value="hf" dense></v-checkbox>
+                <v-checkbox label="UHF" v-model="frequencyRange" value="uhf" dense></v-checkbox>
               </v-radio-group>
             </v-row>
             <v-row>
               <v-radio-group v-model="eqptType" multiple :rules="[dataRequired]" dense row>
-                <v-checkbox label="Base" value="base" dense></v-checkbox>
-                <v-checkbox label="Portable" value="portable" dense></v-checkbox>
+                <v-checkbox label="Base"  v-model="eqptType" value="base" dense></v-checkbox>
+                <v-checkbox label="Portable" v-model="eqptType"  value="portable" dense></v-checkbox>
               </v-radio-group>
             </v-row>
           </v-col>
@@ -57,6 +57,8 @@
         </v-col>
       </v-row>
     </v-form>
+
+    {{getPurchaseDetails}}
 
     <v-row dense justify="center">
       <v-col cols="4">

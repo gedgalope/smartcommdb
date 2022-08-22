@@ -1,5 +1,5 @@
 
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import successFailedAlertVue from '@/components/Misc/successFailedAlert'
 
@@ -23,7 +23,7 @@ export default {
       ORDate: null,
       showAlert: false,
       alertText: null,
-      temporarySaved:false
+      temporarySaved: false
     }
   },
   components: {
@@ -31,6 +31,27 @@ export default {
   },
   props: {
     transactionType: null
+  },
+  watch: {
+    transactionDetails(value) {
+      if (value) {
+        this.callSign = value.callSign
+        this.licenseeClass = value.licenseeClass
+        this.ARLTPSeries = value.ARLTPSeries
+        this.equipment = value.equipment
+        this.frequencies = value.frequencies
+        this.bandwidth = value.bandwidth
+        this.power = value.power
+        this.dateIssued = value.dateIssued
+        this.dateValid = value.dateValid
+        this.ORAmount = value.ORAmount
+        this.ORNumber = value.ORNumber
+        this.ORDate = value.ORDate
+      }
+    }
+  },
+  computed: {
+    ...mapGetters({ transactionDetails: 'amateur/licenseeInfo/getTransactionDetails' })
   },
   methods: {
     ...mapActions({

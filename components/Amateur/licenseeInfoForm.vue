@@ -44,7 +44,7 @@
       <v-col cols="8">
         <v-btn v-if="transactionType === 'new'" dense outlined @click="submitLicenseeInfo()">Create new client</v-btn>
         <span v-else>
-          <transaction-history :transactionType="transactionType"></transaction-history>
+          <transaction-history :resetCombobox="resetTransactionHistory" @resetDone="resetTransactionHistory=$event" :transactionType="transactionType"></transaction-history>
         </span>
       </v-col>
     </v-row>

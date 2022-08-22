@@ -5,12 +5,33 @@ const state = () => ({
 })
 
 const getters = {
-  getHistoryList(state) {
+  getHistoryList:(state)=>(transaction) =>{
     const transactionHistory = state.transactionHistory
     if (!transactionHistory) return []
-    return transactionHistory.map(historyObject => {
-      return {value:historyObject.transactionID, text:`${historyObject.transactionType} --- ${historyObject.dateIssued}`,disabled:false}
-    })
+    console.log(transaction)
+    const particulars = ['renewal', 'renmod', 'duplicate', 'modification']
+    if(particulars.includes(transaction)){
+      return transactionHistory.map(historyObject => {
+        return {value:historyObject.transactionID, text:`${historyObject.transactionType} --- ${historyObject.dateIssued}`,disabled:false}
+      })
+    }
+    else if(transaction === 'purchase'){
+      return transactionHistory.map(historyObject => {
+        return {value:historyObject.transactionID, text:`${transaction} --- ${historyObject.purchaseDateIssued}`,disabled:false}
+      })
+    }
+    else if(transaction === 'possess'){
+      return transactionHistory.map(historyObject => {
+        return {value:historyObject.transactionID, text:`${transaction} --- ${historyObject.ORDate}`,disabled:false}
+      })
+    }
+    else if(transaction === 'temporary'){
+      return transactionHistory.map(historyObject => {
+        return {value:historyObject.transactionID, text:`${transaction} --- ${historyObject.dateIssued}`,disabled:false}
+      })
+    }
+
+    
   }
 }
 

@@ -1,19 +1,30 @@
 import { database } from "@/services/firebase";
 
 const state = () => ({
-  licenseeID: null
+  licenseeID: null,
+  transactionID:null,
+  transactionDetails:null
 })
 
 const getters = {
   getLicenseeID(state) {
     return state.licenseeID
-  }
+  },
+  getTransactionDetails(state){
+    return state.transactionDetails
+  },
 }
 
 const mutations = {
   UPDATE_LICENSEE_ID(state, licenseeKey) {
     state.licenseeID = licenseeKey
-  }
+  },
+  UPDATE_TRANSACTION_ID(state,transactionID){
+    state.transactionID = transactionID
+  },
+UPDATE_TRANSACTION_DETAILS(state,details){
+  state.transactionDetails = details
+}
 }
 
 const actions = {
@@ -60,6 +71,22 @@ const actions = {
     }
 
   },
+
+  async postLicenseePossess({ commit, state }, possessParticulars) {
+
+    try {
+      if (!possessParticulars) throw new Error('Empty Object')
+
+      const licenseeID = state.licenseeID
+      if (!licenseeID) throw new Error('No Licensee ID')
+      const dbReference = await database.ref(`amateur/possess/${licenseeID}`).push(possessParticulars)
+      console.log(dbReference)
+      return true
+    } catch (error) {
+      return error.message
+    }
+
+  },
   async postLicenseTemporary({ commit, state }, licenseTemporary) {
 
     try {
@@ -88,9 +115,11 @@ const actions = {
         .then(snapshot => {
           return snapshot.val()
         })
-
+        
+        
         console.log(transaction)
-
+        commit('UPDATE_TRANSACTION_ID',transactionID)
+        commit('UPDATE_TRANSACTION_DETAILS',transaction)
     } catch (error) {
       console.log(error)
       return error.message

@@ -10,6 +10,18 @@ export default {
     transactionType: {
       type: String,
       default: () => null
+    },
+    resetCombobox: {
+      type: Boolean,
+      default: () => false
+    }
+  },
+  watch:{
+    resetCombobox(val){
+      if(val){
+        this.$refs.historyCombobox.reset()
+        this.$emit('resetDone',false)
+      }
     }
   },
   computed: {
@@ -25,7 +37,7 @@ export default {
     populateForm() {
       const transactionID = this.transactionDate
       if (transactionID) {
-        this.getTransaction({ licenseeID: this.licenseeId, transactionID: this.transactionDate, transactionType: this.transactionType })
+        this.getTransaction({ licenseeID: this.licenseeId, transactionID: this.transactionDate.value, transactionType: this.transactionType })
       }
     }
   }

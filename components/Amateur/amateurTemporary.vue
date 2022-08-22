@@ -5,20 +5,16 @@
 
     <v-form ref="amateurTemporary" v-model="amateurTemporary">
       <v-row dense>
-        <v-col cols="4">
-          <v-text-field v-model="callSign" :rules='[dataRequired]' dense outlined label="CallSign">
-          </v-text-field>
-        </v-col>
-        <v-col cols="3">
+        <v-col cols="2">
           <v-combobox v-model="licenseeClass" :rules="[dataRequired]" :items="['A', 'B', 'C', 'D']" dense outlined
             label="Class">
           </v-combobox>
         </v-col>
-        <v-col cols="5">
+        <v-col cols="3">
               <v-text-field v-model="power" :rules='[dataRequired]' dense outlined label="Power">
               </v-text-field>
             </v-col>
-        <v-col cols="12">
+        <v-col cols="7">
           <v-text-field v-model="ARLTPSeries" :rules='[dataRequired]' dense outlined label="ARLTP Series">
           </v-text-field>
         </v-col>

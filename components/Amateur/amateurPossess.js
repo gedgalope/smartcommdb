@@ -1,5 +1,5 @@
 
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import successFailedAlertVue from '@/components/Misc/successFailedAlert'
 
@@ -28,6 +28,26 @@ export default {
   },
   props: {
     transactionType: null
+  },
+  watch: {
+    getPossessDetails(val) {
+      if (val) {
+        this.possessForm = val.possessForm
+        this.possessNo = val.possessNo
+        this.equipment = val.equipment
+        this.units = val.units
+        this.frequencyRange = val.frequencyRange
+        this.ORNumber = val.ORNumber
+        this.ORDate = val.ORDate
+        this.Amount = val.Amount
+        this.remarks = val.remarks
+      }
+    }
+  },
+  computed: {
+    ...mapGetters({
+      getPossessDetails: 'amateur/licenseeInfo/getTransactionDetails'
+    })
   },
   methods: {
     ...mapActions({

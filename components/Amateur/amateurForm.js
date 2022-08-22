@@ -20,7 +20,8 @@ export default {
       birthdateRules: v => !!(new Date(v)).valueOf() || 'Not a Date!',
       dataFormat: v => (v || '').length <= 3 || 'not a callsign',
       showAlert: false,
-      alertText: null
+      alertText: null,
+      resetTransactionHistory:false
     }
   },
   components: {
@@ -123,6 +124,7 @@ export default {
 
     },
     populateHistory(){
+      this.resetTransactionHistory = true
       this.$emit('transactionType', this.transactionType)
       this.getTransactionHistory({licenseeID:this.licenseeID,transactionType:this.historyByTransactionType})
     }

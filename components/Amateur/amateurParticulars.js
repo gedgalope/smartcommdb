@@ -1,5 +1,5 @@
 
-import { mapActions, mapMutations } from 'vuex'
+import { mapActions, mapMutations, mapGetters } from 'vuex'
 
 import successFailedAlertVue from '@/components/Misc/successFailedAlert'
 
@@ -37,6 +37,32 @@ export default {
       type: String,
       default: () => "renewal"
     },
+  },
+  watch: {
+    getTransactionDetails(val) {
+      if (val) {
+        this.licenseeClass = val.licenseeClass
+        this.stationLocation = val.stationLocation
+        this.ARLSeries = val.ARLSeries
+        this.AROCSeries = val.AROCSeries
+        this.equipment = val.equipment
+        this.dateIssued = val.dateIssued
+        this.dateValid = val.dateValid
+        this.remarks = val.remarks
+        this.formNumber = val.formNumber
+        this.club = val.club
+        this.examPlace = val.examPlace
+        this.examDate = val.examDate
+        this.rating = val.rating
+        this.ORNumber = val.ORNumber
+        this.ORDate = val.ORDate
+      }
+    }
+  },
+  computed: {
+    ...mapGetters({
+      getTransactionDetails: 'amateur/licenseeInfo/getTransactionDetails'
+    })
   },
   methods: {
     ...mapActions({
