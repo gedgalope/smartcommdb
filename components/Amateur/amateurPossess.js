@@ -1,7 +1,8 @@
 
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 import successFailedAlertVue from '@/components/Misc/successFailedAlert'
+import formActionsVue from './AmateurMisc/formActions.vue'
 
 export default {
   data() {
@@ -24,7 +25,8 @@ export default {
     }
   },
   components: {
-    'success-failed-alert': successFailedAlertVue
+    'success-failed-alert': successFailedAlertVue,
+    'form-actions': formActionsVue
   },
   props: {
     transactionType: null
@@ -47,13 +49,8 @@ export default {
   computed: {
     ...mapGetters({
       getPossessDetails: 'amateur/licenseeInfo/getTransactionDetails'
-    })
-  },
-  methods: {
-    ...mapActions({
-      postLicenseePossess: 'amateur/licenseeInfo/postLicenseePossess'
     }),
-    async savePossessData() {
+    getPossess() {
       const amateurPossess = {
         possessForm: this.possessForm,
         possessNo: this.possessNo,
@@ -63,22 +60,15 @@ export default {
         ORNumber: this.ORNumber,
         ORDate: this.ORDate,
         Amount: this.Amount,
-        remarks: this.remarks,
+        remarks: !this.remarks ? null:this.remarks,
       }
-
-      const dbResponse = await this.postLicenseePossess(amateurPossess)
-      if (dbResponse === true) {
-        this.showAlert = true
-        this.alertText = "Success"
-        this.possessSaved = true
-      } else {
-        this.showAlert = true
-        this.alertText = dbResponse
-      }
-
-    },
-    printData() {
-      console.log('tbc')
+      return amateurPossess
+    }
+  },
+  methods: {
+    showAlertResponse(message){
+      this.showAlert = true
+      this.alertText = message
     }
   }
 

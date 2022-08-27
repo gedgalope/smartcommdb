@@ -79,7 +79,7 @@
       </v-row>
     </v-form>
     <v-row dense justify="center">
-      <v-btn class="submit" rounded block @click="saveAmateurRecord()">Save Record</v-btn>
+      <form-actions transactionType="particulars" :data="getParticulars" :formValid="validParticulars" @showAlert="showAlertResponse($event)"></form-actions>
     </v-row>
 
   </v-container>

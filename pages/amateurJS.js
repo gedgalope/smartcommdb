@@ -6,7 +6,7 @@ import AmateurPurchaseVue from '~/components/Amateur/amateurPurchase.vue'
 import amateurPossessVue from '~/components/Amateur/amateurPossess.vue'
 import amateurTemporary from '~/components/Amateur/amateurTemporary.vue'
 import addNewCallsign from '~/components/Amateur/AmateurMisc/addNewCallsign.vue'
-import CallSignTableVue from '~/components/Amateur/AmateurMisc/callSignTable.vue'
+import callSignTableVue from '~/components/Amateur/AmateurMisc/callSignTable.vue'
 import AmateurSeachBarVue from '~/components/Amateur/AmateurMisc/amateurSeachBar.vue'
 
 export default {
@@ -21,7 +21,7 @@ export default {
     'amateur-possess': amateurPossessVue,
     'amateur-temporary': amateurTemporary,
     'add-new-callsign': addNewCallsign,
-    'call-sign-table': CallSignTableVue,
+    'call-sign-table': callSignTableVue,
     'amateur-search-bar': AmateurSeachBarVue
   },
   data() {

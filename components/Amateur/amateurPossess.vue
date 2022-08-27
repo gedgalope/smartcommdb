@@ -49,12 +49,7 @@
       </v-row>
     </v-form>
     <v-row dense justify="center">
-      <v-col cols="3">
-        <v-btn class="submit" dense rounded block :disabled="!possessForm" @click="savePossessData()">Save</v-btn>
-      </v-col>
-      <v-col cols="3">
-        <v-btn class="primary-1" dense rounded block :disabled="!possessSaved" @click="printData()">Print</v-btn>
-      </v-col>
+      <form-actions transactionType="possess" :data="getPossess" :formValid="possessForm" @showAlert="showAlertResponse($event)"></form-actions>
     </v-row>
   </v-container>
 </template>

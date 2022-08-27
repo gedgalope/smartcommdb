@@ -3,7 +3,6 @@
     <v-app-bar :clipped-left="clipped" fixed app>
       <v-container>
         <v-row justify="end">
-          <v-col lg="4" md="6" class="py-0" align-self="center">
             <v-row justify="end">
               <v-divider vertical></v-divider>
               <v-btn x-large text class="text-capitalize" nuxt to="/">
@@ -14,14 +13,29 @@
                 <v-icon class="pr-2" color="accent">mdi-file-document-edit-outline</v-icon>Create SOA
               </v-btn>
               <v-divider vertical></v-divider>
-              <v-btn x-large text class="text-capitalize" nuxt to="/inspectionForm">
-                <v-icon class="pr-2" color="accent">mdi-file-document</v-icon>Inspection
-              </v-btn>
+              <v-menu offset-y open-on-hover>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn v-on="on" v-bind="attrs" x-large text class="text-capitalize">
+                    <v-icon class="pr-2" color="accent">mdi-file-document</v-icon>Forms
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item>
+                    <v-list-item-title>
+                      <v-btn block text nuxt to="/inspectionFotm">Inspection Form</v-btn>
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-title>
+                      <v-btn block text nuxt to="/amateur">Amateur Form</v-btn>
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </v-row>
-          </v-col>
         </v-row>
-        
-      </v-container>  
+
+      </v-container>
     </v-app-bar>
     <v-main>
       <v-container>

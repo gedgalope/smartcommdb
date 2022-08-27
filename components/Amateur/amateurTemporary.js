@@ -1,7 +1,8 @@
 
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 import successFailedAlertVue from '@/components/Misc/successFailedAlert'
+import formActionsVue from './AmateurMisc/formActions.vue'
 
 export default {
   data() {
@@ -27,7 +28,8 @@ export default {
     }
   },
   components: {
-    'success-failed-alert': successFailedAlertVue
+    'success-failed-alert': successFailedAlertVue,
+    'form-actions': formActionsVue
   },
   props: {
     transactionType: null
@@ -51,15 +53,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({ transactionDetails: 'amateur/licenseeInfo/getTransactionDetails' })
-  },
-  methods: {
-    ...mapActions({
-      postLicenseTemporary: 'amateur/licenseeInfo/postLicenseTemporary'
-    }),
-    async saveAmateurRecord() {
+    ...mapGetters({ transactionDetails: 'amateur/licenseeInfo/getTransactionDetails' }),
+    getTemporary(){
       const amateurTemporary = {
-        callSign: this.callSign,
         licenseeClass: this.licenseeClass,
         ARLTPSeries: this.ARLTPSeries,
         equipment: this.equipment,
@@ -72,16 +68,13 @@ export default {
         ORNumber: this.ORNumber,
         ORDate: this.ORDate,
       }
-      const dbResponse = await this.postLicenseTemporary(amateurTemporary)
-      if (dbResponse === true) {
-        this.showAlert = true
-        this.alertText = "Success"
-        this.temporarySaved = true
-      } else {
-        this.showAlert = true
-        this.alertText = dbResponse
-      }
-
+      return amateurTemporary
+    }
+  },
+  methods: {
+    showAlertResponse(message){
+      this.showAlert = true
+      this.alertText = message
     }
   }
 

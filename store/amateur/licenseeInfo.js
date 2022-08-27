@@ -2,29 +2,32 @@ import { database } from "@/services/firebase";
 
 const state = () => ({
   licenseeID: null,
-  transactionID:null,
-  transactionDetails:null
+  transactionID: null,
+  transactionDetails: null
 })
 
 const getters = {
   getLicenseeID(state) {
     return state.licenseeID
   },
-  getTransactionDetails(state){
+  getTransactionDetails(state) {
     return state.transactionDetails
   },
+  getTransactionID(state) {
+    return state.getTransactionID
+  }
 }
 
 const mutations = {
   UPDATE_LICENSEE_ID(state, licenseeKey) {
     state.licenseeID = licenseeKey
   },
-  UPDATE_TRANSACTION_ID(state,transactionID){
+  UPDATE_TRANSACTION_ID(state, transactionID) {
     state.transactionID = transactionID
   },
-UPDATE_TRANSACTION_DETAILS(state,details){
-  state.transactionDetails = details
-}
+  UPDATE_TRANSACTION_DETAILS(state, details) {
+    state.transactionDetails = details
+  }
 }
 
 const actions = {
@@ -110,18 +113,52 @@ const actions = {
       const particulars = ['renewal', 'renmod', 'duplicate', 'modification']
       if (particulars.includes(type)) type = 'particulars'
       const transaction = await database
-        .ref(`amateur/${type}/${ licenseeID }/${ transactionID }`)
+        .ref(`amateur/${type}/${licenseeID}/${transactionID}`)
         .get('value')
         .then(snapshot => {
           return snapshot.val()
         })
-        
-        
-        console.log(transaction)
-        commit('UPDATE_TRANSACTION_ID',transactionID)
-        commit('UPDATE_TRANSACTION_DETAILS',transaction)
+
+
+      console.log(transaction)
+      commit('UPDATE_TRANSACTION_ID', transactionID)
+      commit('UPDATE_TRANSACTION_DETAILS', transaction)
     } catch (error) {
       console.log(error)
+      return error.message
+    }
+  },
+
+  async updateData({ commit, state }, { transaction, particulars }) {
+    try {
+      const licenseeID = state.licenseeID
+      const transactionID = state.transactionID
+      if (!licenseeID) throw new Error('No licensee ID!')
+      if (!transactionID) throw new Error('No transaction ID!')
+      if (!transaction) throw new Error('No licensee transaction!')
+      if (!particulars) throw new Error('No licensee particulars!')
+
+      await database.ref(`amateur/${transaction}/${licenseeID}/${transactionID}`)
+        .update(particulars)
+
+      return true
+    } catch (error) {
+      return error.message
+    }
+  },
+  async removeData({ commit, state }, transaction) {
+    try {
+      const licenseeID = state.licenseeID
+      const transactionID = state.transactionID
+      if (!licenseeID) throw new Error('No licensee ID!')
+      if (!transactionID) throw new Error('No transaction ID!')
+      if (!transaction) throw new Error('No licensee transaction!')
+
+      await database.ref(`amateur/${transaction}/${licenseeID}/${transactionID}`)
+        .remove()
+
+      return true
+    } catch (error) {
       return error.message
     }
   }

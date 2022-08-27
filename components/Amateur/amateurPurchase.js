@@ -1,7 +1,8 @@
 
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 import successFailedAlertVue from '@/components/Misc/successFailedAlert'
+import formActionsVue from './AmateurMisc/formActions.vue'
 
 export default {
   data() {
@@ -24,7 +25,8 @@ export default {
     }
   },
   components: {
-    'success-failed-alert': successFailedAlertVue
+    'success-failed-alert': successFailedAlertVue,
+    'form-actions':formActionsVue
   },
   props: {
     transactionType: null
@@ -49,12 +51,7 @@ export default {
     ...mapGetters({
       getPurchaseDetails: 'amateur/licenseeInfo/getTransactionDetails'
     }),
-  },
-  methods: {
-    ...mapActions({
-      postLicenseePurchase: 'amateur/licenseeInfo/postLicenseePurchase'
-    }),
-    async savePurchaseData() {
+    getPurchase(){
       const amateurPurchase = {
         frequencyRange: this.frequencyRange,
         units: this.units,
@@ -64,22 +61,15 @@ export default {
         purchaseNumber: this.purchaseNumber,
         ORNumber: this.ORNumber,
         ORDate: this.ORDate,
-        purchaseRemarks: this.purchaseRemarks,
+        purchaseRemarks: !this.purchaseRemarks ? null : this.amateurPurchase,
       }
-
-      const dbResponse = await this.postLicenseePurchase(amateurPurchase)
-      if (dbResponse === true) {
-        this.showAlert = true
-        this.alertText = "Success"
-        this.possessSaved = true
-      } else {
-        this.showAlert = true
-        this.alertText = dbResponse
-      }
-
-    },
-    printData() {
-      console.log('tbc')
+      return amateurPurchase
+    }
+  },
+  methods: {
+    showAlertResponse(message){
+      this.showAlert = true
+      this.alertText = message
     }
   }
 

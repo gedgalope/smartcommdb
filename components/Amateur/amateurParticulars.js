@@ -1,7 +1,8 @@
 
-import { mapActions, mapMutations, mapGetters } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 
 import successFailedAlertVue from '@/components/Misc/successFailedAlert'
+import formActionsVue from './AmateurMisc/formActions.vue'
 
 export default {
   data() {
@@ -30,7 +31,8 @@ export default {
     }
   },
   components: {
-    'success-failed-alert': successFailedAlertVue
+    'success-failed-alert': successFailedAlertVue,
+    'form-actions':formActionsVue
   },
   props: {
     transactionType: {
@@ -62,16 +64,8 @@ export default {
   computed: {
     ...mapGetters({
       getTransactionDetails: 'amateur/licenseeInfo/getTransactionDetails'
-    })
-  },
-  methods: {
-    ...mapActions({
-      postLicenseParticulars: 'amateur/licenseeInfo/postLicenseParticulars'
     }),
-    ...mapMutations({
-      updateLicenseID: 'amateur/licenseeInfo/UPDATE_LICENSEE_ID'
-    }),
-    async saveAmateurRecord() {
+    getParticulars(){
       const amateurParticulars = {
         transactionType: this.transactionType,
         licenseeClass: this.licenseeClass,
@@ -81,23 +75,26 @@ export default {
         equipment: this.equipment,
         dateIssued: this.dateIssued,
         dateValid: this.dateValid,
-        remarks: this.remarks,
+        remarks: !this.remarks ? null : this.remarks,
         formNumber: this.formNumber,
         club: this.club,
         examPlace: this.examPlace,
         examDate: this.examDate,
         rating: this.rating,
+        ORNumber: this.ORNumber,
+        ORDate: this.ORDate
       }
-      const dbResponse = await this.postLicenseParticulars(amateurParticulars)
-      if (dbResponse === true) {
-        this.showAlert = true
-        this.alertText = "Success"
-      } else {
-        this.showAlert = true
-        this.alertText = dbResponse
-      }
-
+      return amateurParticulars
     }
+  },
+  methods: {
+    showAlertResponse(message){
+      this.showAlert=true
+      this.alertText = message
+    },
+    ...mapMutations({
+      updateLicenseID: 'amateur/licenseeInfo/UPDATE_LICENSEE_ID'
+    }),
   }
 
 }

@@ -7,11 +7,11 @@
         <v-row dense>
           <v-col cols="6">
             <v-row>
-              <v-radio-group v-model="frequencyRange" multiple :rules="[dataRequired]" dense row>
+              <!-- <v-radio-group v-model="frequencyRange" multiple :rules="[dataRequired]" dense row> -->
                 <v-checkbox label="VHF" v-model="frequencyRange" value="vhf" dense></v-checkbox>
                 <v-checkbox label="HF" v-model="frequencyRange" value="hf" dense></v-checkbox>
                 <v-checkbox label="UHF" v-model="frequencyRange" value="uhf" dense></v-checkbox>
-              </v-radio-group>
+              <!-- </v-radio-group> -->
             </v-row>
             <v-row>
               <v-radio-group v-model="eqptType" multiple :rules="[dataRequired]" dense row>
@@ -58,15 +58,9 @@
       </v-row>
     </v-form>
 
-    {{getPurchaseDetails}}
 
     <v-row dense justify="center">
-      <v-col cols="4">
-        <v-btn block rounded @click="savePurchaseData()">Save Permit</v-btn>
-      </v-col>
-      <v-col cols="4">
-      <v-btn block rounded :disabled="!purchaseSave" @click="printData()">Print Permit</v-btn>
-      </v-col>
+      <form-actions transactionType="purchase" :data="getPurchase" :formValid="amateurPurchase" @showAlert="showAlertResponse($event)"></form-actions>
     </v-row>
 
   </v-container>

@@ -63,12 +63,7 @@
       </v-row>
     </v-form>
     <v-row justify="center">
-      <v-col cols="4">
-        <v-btn class="submit" rounded block :disabled="!amateurTemporary" @click="saveAmateurRecord()">Save Record</v-btn>
-      </v-col>
-      <v-col cols="4">
-        <v-btn class="submit" rounded block :disabled="!temporarySaved" @click="printTemporaryPermit()">Print Permit</v-btn>
-      </v-col>
+      <form-actions transactionType="temporary" :data="getTemporary" :formValid="amateurTemporary" @showAlert="showAlertResponse($event)"></form-actions>
     </v-row>
 
   </v-container>
