@@ -26,6 +26,7 @@ export default {
       rating: null,
       ORNumber: null,
       ORDate: null,
+      ORAmount:null,
       showAlert: false,
       alertText: null,
     }
@@ -58,6 +59,8 @@ export default {
         this.rating = val.rating
         this.ORNumber = val.ORNumber
         this.ORDate = val.ORDate
+        this.ORAmount=val.ORAmount
+
       }
     }
   },
@@ -82,7 +85,8 @@ export default {
         examDate: this.examDate,
         rating: this.rating,
         ORNumber: this.ORNumber,
-        ORDate: this.ORDate
+        ORDate: this.ORDate,
+        ORAmount:this.ORAmount
       }
       return amateurParticulars
     }

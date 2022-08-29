@@ -25,13 +25,15 @@ export default {
   },
   methods: {
     ...mapMutations({
-      updateLicenseeID:'amateur/licenseeInfo/UPDATE_LICENSEE_ID'
+      updateLicenseeID:'amateur/licenseeInfo/UPDATE_LICENSEE_ID',
+      updateLicenseeInfo: 'amateur/licenseeInfo/UPDATE_LICENSEE_INFO'
     }),
     ...mapActions({
       searchLicensee: 'amateur/searchLicensee/searchLicensee'
     }),
     emitSelected() {
       this.updateLicenseeID(this.searchName.licenseeID)
+      this.updateLicenseeInfo(this.searchName)
       this.$emit('selectedLicensee', this.searchName)
     }
   }

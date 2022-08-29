@@ -67,11 +67,15 @@
               </v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="ORNumber" :rules='[dataRequired]' dense outlined label="OR Number">
+              <v-text-field v-model="ORNumber" :rules='[dataRequired]' dense outlined label="Reciept Number">
               </v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="ORDate" :rules='[dataRequired, dateRules]' dense outlined label="ORDate">
+              <v-text-field v-model="ORDate" :rules='[dataRequired, dateRules]' dense outlined label="Reciept Date">
+              </v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field v-model="ORAmount" :rules='[dataRequired]' dense outlined label="Reciept Amount">
               </v-text-field>
             </v-col>
           </v-row>

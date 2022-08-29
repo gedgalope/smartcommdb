@@ -3,7 +3,8 @@ import { database } from "@/services/firebase";
 const state = () => ({
   licenseeID: null,
   transactionID: null,
-  transactionDetails: null
+  transactionDetails: null,
+  licenseeInfo:null,
 })
 
 const getters = {
@@ -15,6 +16,9 @@ const getters = {
   },
   getTransactionID(state) {
     return state.getTransactionID
+  },
+  getLicenseeInfo(state){
+    return state.licenseeInfo
   }
 }
 
@@ -27,6 +31,9 @@ const mutations = {
   },
   UPDATE_TRANSACTION_DETAILS(state, details) {
     state.transactionDetails = details
+  },
+  UPDATE_LICENSEE_INFO(state,info){
+    state.licenseeInfo = info
   }
 }
 
