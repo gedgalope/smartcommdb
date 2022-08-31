@@ -26,12 +26,12 @@
         <v-col cols="6">
           <v-row dense>
             <v-col cols="12">
-              <v-textarea v-model="equipment" :rules='[dataRequired]' rows="8" no-resize dense outlined
+              <v-textarea v-model="equipment" :rules='[dataRequired]' rows="12" no-resize dense outlined
                 label="Equipments">
               </v-textarea>
             </v-col>
             <v-col cols="12">
-              <v-textarea v-model="remarks" rows="8" no-resize dense outlined label="Remarks">
+              <v-textarea v-model="remarks" rows="11" no-resize dense outlined label="Remarks">
               </v-textarea>
             </v-col>
           </v-row>

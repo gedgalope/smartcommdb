@@ -1,5 +1,5 @@
 import { mapGetters,mapActions } from 'vuex'
-import { printParticulars,printPurchase,printPossess } from '../AmateurPrint/amateurPrint'
+import { printParticulars,printPurchase,printPossess, printTemporary } from '../AmateurPrint/amateurPrint'
 
 export default {
   data() {
@@ -66,7 +66,7 @@ export default {
       if (this.transactionType === 'particulars') printParticulars({licenseeInfo:this.licenseeInfo,particulars:this.data});
       else if (this.transactionType === 'possess') printPossess({licenseeInfo:this.licenseeInfo,particulars:this.data});
       else if (this.transactionType === 'purchase') printPurchase({licenseeInfo:this.licenseeInfo,particulars:this.data});
-      // else if (this.transactionType === 'temporary') printTemporary({licenseeInfo:this.licenseeInfo,particulars:this.data});
+      else if (this.transactionType === 'temporary') printTemporary({licenseeInfo:this.licenseeInfo,particulars:this.data});
       
     }
 

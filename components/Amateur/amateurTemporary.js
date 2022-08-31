@@ -14,6 +14,7 @@ export default {
       licenseeClass: null,
       ARLTPSeries: null,
       equipment: null,
+      citizenship: 'AMERICAN',
       frequencies: null,
       bandwidth: null,
       power: null,
@@ -41,6 +42,7 @@ export default {
         this.licenseeClass = value.licenseeClass
         this.ARLTPSeries = value.ARLTPSeries
         this.equipment = value.equipment
+        this.citizenship = value.citizenship
         this.frequencies = value.frequencies
         this.bandwidth = value.bandwidth
         this.power = value.power
@@ -54,11 +56,12 @@ export default {
   },
   computed: {
     ...mapGetters({ transactionDetails: 'amateur/licenseeInfo/getTransactionDetails' }),
-    getTemporary(){
+    getTemporary() {
       const amateurTemporary = {
         licenseeClass: this.licenseeClass,
         ARLTPSeries: this.ARLTPSeries,
         equipment: this.equipment,
+        citizenship:this.citizenship,
         frequencies: this.frequencies,
         bandwidth: this.bandwidth,
         power: this.power,
@@ -72,7 +75,7 @@ export default {
     }
   },
   methods: {
-    showAlertResponse(message){
+    showAlertResponse(message) {
       this.showAlert = true
       this.alertText = message
     }

@@ -20,6 +20,7 @@ export default {
       purchaseNumber: null,
       ORNumber: null,
       ORDate: null,
+      amount:null,
       purchaseRemarks: null,
       purchaseSave: false,
     }
@@ -43,6 +44,7 @@ export default {
         this.purchaseNumber = value.purchaseNumber
         this.ORNumber = value.ORNumber
         this.ORDate = value.ORDate
+        this.amount = value.amount
         this.purchaseRemarks = value.purchaseRemarks
       }
     }
@@ -61,6 +63,7 @@ export default {
         purchaseNumber: this.purchaseNumber,
         ORNumber: this.ORNumber,
         ORDate: this.ORDate,
+        amount:this.amount,
         purchaseRemarks: !this.purchaseRemarks ? null : this.amateurPurchase,
       }
       return amateurPurchase

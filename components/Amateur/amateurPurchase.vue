@@ -34,21 +34,25 @@
             </v-row>
           </v-col>
         </v-row>
-        <v-col cols="12">
+        <v-col cols="6">
           <v-text-field v-model="purchaseNumber" :rules='[dataRequired]' dense outlined label="Purchase Number">
           </v-text-field>
         </v-col>
-        <v-col cols="12">
+        <v-col cols="6">
           <v-text-field v-model="purchaseDateIssued" :rules='[dataRequired, dateRules]' dense outlined
             label="Date Issued">
           </v-text-field>
         </v-col>
-        <v-col cols="6">
-          <v-text-field v-model="ORNumber" :rules='[dataRequired]' dense outlined label="OR Number">
+        <v-col cols="4">
+          <v-text-field v-model="ORNumber" :rules='[dataRequired]' dense outlined label="Reciept Number">
           </v-text-field>
         </v-col>
-        <v-col cols="6">
-          <v-text-field v-model="ORDate" :rules='[dataRequired, dateRules]' dense outlined label="OR Date">
+        <v-col cols="4">
+          <v-text-field v-model="ORDate" :rules='[dataRequired, dateRules]' dense outlined label="Receipt Date">
+          </v-text-field>
+        </v-col>
+        <v-col cols="4">
+          <v-text-field v-model="amount" :rules='[dataRequired]' dense outlined label="Amount">
           </v-text-field>
         </v-col>
         <v-col cols="12">

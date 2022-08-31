@@ -18,6 +18,10 @@
           <v-text-field v-model="ARLTPSeries" :rules='[dataRequired]' dense outlined label="ARLTP Series">
           </v-text-field>
         </v-col>
+        <v-col cols="12">
+          <v-text-field v-model="citizenship" :rules='[dataRequired]' dense outlined label="Citizenship">
+          </v-text-field>
+        </v-col>
         <v-col cols="6">
               <v-textarea v-model="equipment" :rules='[dataRequired]' rows="10" no-resize dense outlined
                 label="Equipments">

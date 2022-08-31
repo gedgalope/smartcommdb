@@ -20,6 +20,7 @@
     "handsontable": "^9.0.2",
     "hyperformula": "^1.1.0",
     "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.25",
     "lodash": "^4.17.21",
     "number-to-words": "^1.2.4",
     "nuxt": "^2.15.7",
