@@ -11,9 +11,12 @@ export default {
   },
   watch: {
     searchInput: _.debounce(function (val) {
-      this.fetchingQuery = true;
-      this.searchLicensee(val)
-      this.fetchingQuery = false
+      if (val) {
+        this.fetchingQuery = true;
+        this.searchLicensee(val)
+        this.fetchingQuery = false
+
+      }
       //  insert actions for fetching licensees`
     }, 1000),
 
@@ -25,16 +28,23 @@ export default {
   },
   methods: {
     ...mapMutations({
-      updateLicenseeID:'amateur/licenseeInfo/UPDATE_LICENSEE_ID',
-      updateLicenseeInfo: 'amateur/licenseeInfo/UPDATE_LICENSEE_INFO'
+      updateLicenseeID: 'amateur/licenseeInfo/UPDATE_LICENSEE_ID',
+      updateLicenseeInfo: 'amateur/licenseeInfo/UPDATE_LICENSEE_INFO',
+      updateSearchResults:'amateur/searchLicensee/POPULATE_SEARCH_RESULTS'
     }),
     ...mapActions({
       searchLicensee: 'amateur/searchLicensee/searchLicensee'
     }),
+    emitClear(){
+      this.$emit("cleared",true)
+      this.updateSearchResults(null)
+    },
     emitSelected() {
-      this.updateLicenseeID(this.searchName.licenseeID)
-      this.updateLicenseeInfo(this.searchName)
-      this.$emit('selectedLicensee', this.searchName)
+      if (this.searchName) {
+        this.updateLicenseeID(this.searchName.licenseeID)
+        this.updateLicenseeInfo(this.searchName)
+        this.$emit('selectedLicensee', this.searchName)
+      }
     }
   }
 }

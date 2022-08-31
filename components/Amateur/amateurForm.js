@@ -1,5 +1,5 @@
 
-import { mapActions ,mapGetters} from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import successFailedAlertVue from '@/components/Misc/successFailedAlert'
 import amateurHistory from './AmateurMisc/amateurHistory.vue'
 
@@ -21,7 +21,8 @@ export default {
       dataFormat: v => (v || '').length <= 3 || 'not a callsign',
       showAlert: false,
       alertText: null,
-      resetTransactionHistory:false
+      resetTransactionHistory: false,
+      deleteClientDialog: false
     }
   },
   components: {
@@ -32,6 +33,10 @@ export default {
     searchResult: {
       type: Object,
       default: () => null
+    },
+    resetForm:{
+      type:Boolean,
+      default: () => false
     }
   },
   watch: {
@@ -45,32 +50,44 @@ export default {
         this.contact = val.contact
         this.address = val.address
       }
+    },
+    resetForm(val){
+      if(val === true){
+        this.$refs.licenseeInfoForm.reset()
+        this.$emit("reset",false)
+      }
     }
   },
   computed: {
     ...mapGetters({
-      licenseeID:'amateur/licenseeInfo/getLicenseeID'
+      licenseeID: 'amateur/licenseeInfo/getLicenseeID'
     }),
     transactionItems() {
       //  apply this code to transaction items when search bar is added
-      const newLicensee=['new', 'purchase', 'temporary']
-      const existingLicensee= ['renewal', 'renmod', 'duplicate', 'modification', 'purchase', 'possess', 'temporary']
-      if(!this.searchResult) return newLicensee
+      const newLicensee = ['new', 'purchase', 'temporary']
+      const existingLicensee = ['renewal', 'renmod', 'duplicate', 'modification', 'purchase', 'possess', 'temporary']
+      if (!this.searchResult) return newLicensee
       else return existingLicensee
     },
-    historyByTransactionType(){
+    historyByTransactionType() {
       const type = this.transactionType
-      if(type === 'purchase') return type
-      if(type === 'possess') return type
-      if(type === 'temporary') return type
+      if (type === 'purchase') return type
+      if (type === 'possess') return type
+      if (type === 'temporary') return type
       else return 'particulars'
+    },
+    disableUpdateDelete() {
+      if (this.licenseeFormComplete && this.licenseeID) return false
+      else return true
     }
   },
   methods: {
     ...mapActions({
       postLicenseeInfo: 'amateur/licenseeInfo/postLicenseeInfo',
       saveOrUpdateCallsignInfo: 'amateur/callSign/saveOrUpdateCallsignInfo',
-      getTransactionHistory:'amateur/transactionHistory/getTransactionHistory'
+      getTransactionHistory: 'amateur/transactionHistory/getTransactionHistory',
+      updateLicenseeInfo: 'amateur/licenseeInfo/updateLicenseeInfo',
+      removeLicenseeInfo: 'amateur/licenseeInfo/removeLicenseeInfo'
     }),
     async submitLicenseeInfo() {
       const licenseeData = {
@@ -123,10 +140,55 @@ export default {
       }
 
     },
-    populateHistory(){
+    populateHistory() {
       this.resetTransactionHistory = true
       this.$emit('transactionType', this.transactionType)
-      this.getTransactionHistory({licenseeID:this.licenseeID,transactionType:this.historyByTransactionType})
+      this.getTransactionHistory({ licenseeID: this.licenseeID, transactionType: this.historyByTransactionType })
+    },
+    async updateRecord() {
+      const licenseeData = {
+        firstname: this.firstname,
+        middlename: this.middlename,
+        lastname: this.lastname,
+        callsign: this.callsign ? this.callsign.toUpperCase() : null,
+        birthdate: this.birthdate,
+        contact: !this.contact ? null:this.contact,
+        address: this.address,
+        searchIndex: `${this.lastname}, ${this.firstname} /${this.callsign ? this.callsign.toUpperCase() : 'none'}`
+      }
+      const newCallsign = this.searchResult.callsign === this.callsign
+      const dbResponse = await this.updateLicenseeInfo({ licenseeInfo: licenseeData, callsignNew: !newCallsign, oldCallSign:this.searchResult.callsign })
+
+      if (dbResponse === true) {
+        this.showAlert = true
+        this.alertText = "Success, updated licensee Information"
+      } else {
+        this.showAlert = true
+        this.alertText = dbResponse
+      }
+    },
+    async removeRecord() {
+      const licenseeData = {
+        firstname: this.firstname,
+        middlename: this.middlename,
+        lastname: this.lastname,
+        callsign: this.callsign ? this.callsign.toUpperCase() : null,
+        birthdate: this.birthdate,
+        contact: this.contact,
+        address: this.address,
+        searchIndex: `${this.lastname}, ${this.firstname} /${this.callsign ? this.callsign.toUpperCase() : 'none'}`
+      }
+      const dbResponse = await this.removeLicenseeInfo(licenseeData)
+
+      if (dbResponse) {
+        this.showAlert = true
+        this.alertText = "Success, removed licensee from database"
+        this.$refs.licenseeInfoForm.reset()
+      } else {
+        this.showAlert = true
+        this.alertText = dbResponse
+      }
+
     }
   }
 

@@ -4,7 +4,7 @@ const state = () => ({
   licenseeID: null,
   transactionID: null,
   transactionDetails: null,
-  licenseeInfo:null,
+  licenseeInfo: null,
 })
 
 const getters = {
@@ -17,7 +17,7 @@ const getters = {
   getTransactionID(state) {
     return state.getTransactionID
   },
-  getLicenseeInfo(state){
+  getLicenseeInfo(state) {
     return state.licenseeInfo
   }
 }
@@ -32,7 +32,7 @@ const mutations = {
   UPDATE_TRANSACTION_DETAILS(state, details) {
     state.transactionDetails = details
   },
-  UPDATE_LICENSEE_INFO(state,info){
+  UPDATE_LICENSEE_INFO(state, info) {
     state.licenseeInfo = info
   }
 }
@@ -50,6 +50,66 @@ const actions = {
       return error
     }
 
+  },
+
+  async updateLicenseeInfo({ commit, state }, { licenseeInfo, callsignNew, oldCallSign }) {
+    try {
+      const today = new Date(Date.now());
+      const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+
+      if (!licenseeInfo) throw new Error('No licensee Info Data')
+      const licenseeID = state.licenseeID
+      if (!licenseeID) throw new Error('No licensee ID')
+      if (callsignNew) {
+        const callsign = licenseeInfo.callsign.toUpperCase()
+        const callsignInfo = await database.ref(`amateur/callSign/forIssuance/${callsign}`)
+          .get("value")
+          .then((snapshot) => snapshot.val())
+
+        if (callsignInfo) throw new Error('New Callsign is already in use')
+        else {
+          // update new callsign status
+          await database.ref(`amateur/callSign/forIssuance/${callsign}`).remove()
+          await database.ref(`amateur/callSign/issued/${callsign}`)
+            .set({ newOwner: `${licenseeInfo.firstname} ${licenseeInfo.lastname}`, used: true, dateIssued: today.toLocaleDateString(undefined, options) })
+          // update old callsign status
+          await database.ref(`amateur/callSign/issued/${oldCallSign}`).remove()
+          await database.ref(`amateur/callSign/forIssuance/${oldCallSign}`)
+            .set({ oldOwner: `${licenseeInfo.firstname} ${licenseeInfo.lastname}`})
+
+        }
+
+      }
+      await database.ref(`amateur/licensee/${licenseeID}`)
+        .update(licenseeInfo)
+      return true
+    } catch (error) {
+      return error.message
+    }
+  },
+
+  async removeLicenseeInfo({ commit, state }, licenseeInfo) {
+    try {
+      const licenseeID = state.licenseeID
+      if(!licenseeInfo) throw new Error('No licensee Information')
+      if (!licenseeID) throw new Error('No licensee ID')
+
+      await database.ref(`amateur/licensee/${licenseeID}`).remove()
+      await database.ref(`amateur/particulars/${licenseeID}`).remove()
+      await database.ref(`amateur/possess/${licenseeID}`).remove()
+      await database.ref(`amateur/temporary/${licenseeID}`).remove()
+      await database.ref(`amateur/purchase/${licenseeID}`).remove()
+
+      if (licenseeInfo.callsign) {
+        await database.ref(`amateur/callSign/issued/${licenseeInfo.callsign}`).remove()
+        await database.ref(`amateur/callSign/forIssuance/${licenseeInfo.callsign}`)
+        .set({oldOwner:`${licenseeInfo.firstname} ${licenseeInfo.lastname}`})
+      }
+
+      return true
+    } catch (error) {
+      return error.message
+    }
   },
 
   async postLicenseParticulars({ commit, state }, licenseParticulars) {

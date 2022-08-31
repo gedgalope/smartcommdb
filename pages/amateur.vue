@@ -2,11 +2,11 @@
   <v-container>
     <v-row dense>
       <v-col cols=12>
-        <amateur-search-bar @selectedLicensee="licensee = $event"></amateur-search-bar>
+        <amateur-search-bar @selectedLicensee="licensee = $event" @cleared="clearSearch = $event"></amateur-search-bar>
       </v-col>
       <v-col cols="6">
         <v-row>
-          <licensee-info-form @transactionType="transactionType = $event" :searchResult="licensee"></licensee-info-form>
+          <licensee-info-form @transactionType="transactionType = $event" :searchResult="licensee" :resetForm="clearSearch" @reset="clearSearch=$event"></licensee-info-form>
         </v-row>
         <v-row>
           <call-sign-table></call-sign-table>

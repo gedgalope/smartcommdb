@@ -28,6 +28,7 @@ export default {
     return {
       transactionType: null,
       licensee: null,
+      clearSearch:false
     }
   },
   computed: {

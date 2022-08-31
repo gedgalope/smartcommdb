@@ -38,13 +38,57 @@
     <v-row>
       <v-col cols="4">
         <v-combobox v-model="transactionType" :disabled="!licenseeFormComplete" :items="transactionItems" dense outlined
-          label="Transaction type" @change="populateHistory()">
+          label="Transaction type" @change="populateHistory()" hide-details>
         </v-combobox>
       </v-col>
       <v-col cols="8">
-        <v-btn v-if="transactionType === 'new'" dense outlined @click="submitLicenseeInfo()">Create new client</v-btn>
+        <v-container class="pa-1" v-if="transactionType === null" grid-list-xs>
+          <v-row dense>
+            <v-col class="pt-0" cols="6">
+              <v-btn class="primary" block dense rounded :disabled="disableUpdateDelete" @click="updateRecord()">
+                Update</v-btn>
+            </v-col>
+            <v-dialog v-model="deleteClientDialog" persistent :overlay="false" max-width="40%"
+              transition="dialog-transition">
+              <template v-slot:activator="{ on, attrs }">
+                <v-col class="pt-0" cols="6">
+                  <v-btn v-on="on" v-bind="attrs" block class="error" dense rounded
+                    :disabled="disableUpdateDelete">Remove
+                  </v-btn>
+                </v-col>
+              </template>
+              <v-card>
+                <v-card-title primary-title>
+                  <v-row justify="center">
+                    Are you Sure?
+                  </v-row>
+                </v-card-title>
+                <v-card-text class="pt-2">
+                  <v-row justify="center">
+                    The data selected cannot be retrieved
+                  </v-row>
+                </v-card-text>
+                <v-card-actions>
+                  <v-row justify="center">
+                    <v-col cols="4">
+                      <v-btn dense rounded block class="error" @click="removeRecord()">remove</v-btn>
+                    </v-col>
+                    <v-col cols="4">
+                      <v-btn dense rounded block @click="deleteClientDialog = false">cancel</v-btn>
+                    </v-col>
+                  </v-row>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-row>
+
+        </v-container>
+
+        <v-btn v-else-if="transactionType === 'new'" dense outlined @click="submitLicenseeInfo()">Create new client
+        </v-btn>
         <span v-else>
-          <transaction-history :resetCombobox="resetTransactionHistory" @resetDone="resetTransactionHistory=$event" :transactionType="transactionType"></transaction-history>
+          <transaction-history :resetCombobox="resetTransactionHistory" @resetDone="resetTransactionHistory = $event"
+            :transactionType="transactionType"></transaction-history>
         </span>
       </v-col>
     </v-row>
