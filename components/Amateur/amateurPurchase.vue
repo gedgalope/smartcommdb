@@ -39,7 +39,7 @@
           </v-text-field>
         </v-col>
         <v-col cols="6">
-          <v-text-field v-model="purchaseDateIssued" :rules='[dataRequired, dateRules]' dense outlined
+          <v-text-field v-model="purchaseDateIssued" :rules='[dataRequired, dateRules]' dense outlined append-icon="mdi-update" @click:append="updateDateIssued()"
             label="Date Issued">
           </v-text-field>
         </v-col>
@@ -48,7 +48,7 @@
           </v-text-field>
         </v-col>
         <v-col cols="4">
-          <v-text-field v-model="ORDate" :rules='[dataRequired, dateRules]' dense outlined label="Receipt Date">
+          <v-text-field v-model="ORDate" :rules='[dataRequired, dateRules]' dense outlined append-icon="mdi-update" @click:append="updateORDate()" label="Receipt Date">
           </v-text-field>
         </v-col>
         <v-col cols="4">

@@ -22,7 +22,7 @@
                 <v-list>
                   <v-list-item>
                     <v-list-item-title>
-                      <v-btn block text nuxt to="/inspectionFotm">Inspection Form</v-btn>
+                      <v-btn block text nuxt to="/inspectionForm">Inspection Form</v-btn>
                     </v-list-item-title>
                   </v-list-item>
                   <v-list-item>

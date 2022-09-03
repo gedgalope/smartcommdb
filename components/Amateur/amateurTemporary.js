@@ -4,6 +4,9 @@ import { mapGetters } from 'vuex'
 import successFailedAlertVue from '@/components/Misc/successFailedAlert'
 import formActionsVue from './AmateurMisc/formActions.vue'
 
+let today = new Date(Date.now())
+const dateOptions = { year: 'numeric', month: 'numeric', day: 'numeric' };
+
 export default {
   data() {
     return {
@@ -61,7 +64,7 @@ export default {
         licenseeClass: this.licenseeClass,
         ARLTPSeries: this.ARLTPSeries,
         equipment: this.equipment,
-        citizenship:this.citizenship,
+        citizenship: this.citizenship,
         frequencies: this.frequencies,
         bandwidth: this.bandwidth,
         power: this.power,
@@ -78,6 +81,23 @@ export default {
     showAlertResponse(message) {
       this.showAlert = true
       this.alertText = message
+    },
+    updateDateIssued() {
+      this.dateIssued = today.toLocaleDateString(undefined, dateOptions)
+    },
+    updateDateValid() {
+      const years = today.getFullYear() + 1
+      const day = today.getUTCDate() - 1
+      let expiry = new Date(today.setFullYear(years))
+      expiry = new Date(expiry.setUTCDate(day))
+      this.dateValid = expiry.toLocaleString(undefined, dateOptions)
+      today = new Date(Date.now())
+    },
+    updateORDate() {
+      this.ORDate = today.toLocaleDateString(undefined, dateOptions)
+    },
+    nothingFollows(){
+      this.equipment = `${!this.equipment ? "" :this.equipment }${this.equipment ? '\n' : ""} - NOTHING FOLLOWS -`
     }
   }
 

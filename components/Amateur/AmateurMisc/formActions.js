@@ -1,5 +1,5 @@
-import { mapGetters,mapActions } from 'vuex'
-import { printParticulars,printPurchase,printPossess, printTemporary } from '../AmateurPrint/amateurPrint'
+import { mapGetters, mapActions } from 'vuex'
+import { printParticulars, printPurchase, printPossess, printTemporary } from '../AmateurPrint/amateurPrint'
 
 export default {
   data() {
@@ -23,7 +23,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      licenseeInfo:'amateur/licenseeInfo/getLicenseeInfo'
+      licenseeInfo: 'amateur/licenseeInfo/getLicenseeInfo',
+      ATSeries: 'amateur/licenseeInfo/getSeries'
     })
   },
   methods: {
@@ -34,9 +35,12 @@ export default {
       postTemporary: 'amateur/licenseeInfo/postLicenseTemporary',
       updateData: 'amateur/licenseeInfo/updateData',
       removeData: 'amateur/licenseeInfo/removeData',
+      updateATSeries: 'amateur/licenseeInfo/updateSeries'
     }),
     async updateRecord() {
       const dbResponse = await this.updateData({ transaction: this.transactionType, particulars: this.data })
+
+      if (this.data.ARLSeries === this.ATSeries.ARSL) await this.updateATSeries({ aroc: this.ATSeries.AROC, arsl: this.data.ARLSeries })
 
       if (dbResponse === true) this.$emit('showAlert', 'Success')
       else this.$emit('showAlert', dbResponse)
@@ -44,7 +48,13 @@ export default {
 
     async saveRecord() {
       let dbResponse
-      if (this.transactionType === 'particulars') dbResponse = await this.postParticulars(this.data)
+      const particulars = ['renewal', 'renmod', 'duplicate', 'modification', 'new']
+      if (particulars.includes(this.transactionType)) {
+        if (this.transactionType === 'new') {
+          await this.updateATSeries({ aroc: this.data.AROCSeries, arsl: this.data.ARLSeries})
+        }
+        dbResponse = await this.postParticulars(this.data)
+      }
       else if (this.transactionType === 'possess') dbResponse = await this.postPossess(this.data)
       else if (this.transactionType === 'purchase') dbResponse = await this.postPurchase(this.data)
       else if (this.transactionType === 'temporary') dbResponse = await this.postTemporary(this.data)
@@ -61,13 +71,13 @@ export default {
       this.showWarning = false
     },
 
-    printRecord(){
-      console.log({licenseeInfo:this.licenseeInfo,particulars:this.data})
-      if (this.transactionType === 'particulars') printParticulars({licenseeInfo:this.licenseeInfo,particulars:this.data});
-      else if (this.transactionType === 'possess') printPossess({licenseeInfo:this.licenseeInfo,particulars:this.data});
-      else if (this.transactionType === 'purchase') printPurchase({licenseeInfo:this.licenseeInfo,particulars:this.data});
-      else if (this.transactionType === 'temporary') printTemporary({licenseeInfo:this.licenseeInfo,particulars:this.data});
-      
+    printRecord() {
+      const particulars = ['renewal', 'renmod', 'duplicate', 'modification', 'new']
+      if (particulars.includes(this.transactionType)) printParticulars({ licenseeInfo: this.licenseeInfo, particulars: this.data });
+      else if (this.transactionType === 'possess') printPossess({ licenseeInfo: this.licenseeInfo, particulars: this.data });
+      else if (this.transactionType === 'purchase') printPurchase({ licenseeInfo: this.licenseeInfo, particulars: this.data });
+      else if (this.transactionType === 'temporary') printTemporary({ licenseeInfo: this.licenseeInfo, particulars: this.data });
+
     }
 
   }

@@ -11,9 +11,9 @@
           </v-combobox>
         </v-col>
         <v-col cols="3">
-              <v-text-field v-model="power" :rules='[dataRequired]' dense outlined label="Power">
-              </v-text-field>
-            </v-col>
+          <v-text-field v-model="power" :rules='[dataRequired]' dense outlined label="Power">
+          </v-text-field>
+        </v-col>
         <v-col cols="7">
           <v-text-field v-model="ARLTPSeries" :rules='[dataRequired]' dense outlined label="ARLTP Series">
           </v-text-field>
@@ -23,14 +23,14 @@
           </v-text-field>
         </v-col>
         <v-col cols="6">
-              <v-textarea v-model="equipment" :rules='[dataRequired]' rows="10" no-resize dense outlined
-                label="Equipments">
-              </v-textarea>
-            </v-col>
-            <v-col cols="6">
-              <v-textarea v-model="frequencies" rows="10" no-resize dense outlined label="Frequencies">
-              </v-textarea>
-            </v-col>
+          <v-textarea v-model="equipment" :rules='[dataRequired]' rows="10" no-resize dense outlined
+            append-icon="mdi-check-outline" @click:append="nothingFollows()" label="Equipments">
+          </v-textarea>
+        </v-col>
+        <v-col cols="6">
+          <v-textarea v-model="frequencies" rows="10" no-resize dense outlined label="Frequencies">
+          </v-textarea>
+        </v-col>
 
         <v-col cols="6">
           <v-row dense>
@@ -43,11 +43,13 @@
         <v-col cols="6">
           <v-row dense>
             <v-col cols="12">
-              <v-text-field v-model="dateIssued" :rules='[dataRequired, dateRules]' dense outlined label="Date Issued">
+              <v-text-field v-model="dateIssued" :rules='[dataRequired, dateRules]' dense outlined
+                append-icon="mdi-update" @click:append="updateDateIssued()" label="Date Issued">
               </v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="dateValid" :rules='[dataRequired, dateRules]' dense outlined label="Expiry Date">
+              <v-text-field v-model="dateValid" :rules='[dataRequired, dateRules]' dense append-icon="mdi-update"
+                @click:append="updateDateValid()" outlined label="Expiry Date">
               </v-text-field>
             </v-col>
             <v-col cols="12">
@@ -59,7 +61,8 @@
               </v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="ORDate" :rules='[dataRequired, dateRules]' dense outlined label="ORDate">
+              <v-text-field v-model="ORDate" :rules='[dataRequired, dateRules]' dense outlined append-icon="mdi-update"
+                @click:append="updateORDate()" label="ORDate">
               </v-text-field>
             </v-col>
           </v-row>
@@ -67,7 +70,8 @@
       </v-row>
     </v-form>
     <v-row justify="center">
-      <form-actions transactionType="temporary" :data="getTemporary" :formValid="amateurTemporary" @showAlert="showAlertResponse($event)"></form-actions>
+      <form-actions transactionType="temporary" :data="getTemporary" :formValid="amateurTemporary"
+        @showAlert="showAlertResponse($event)"></form-actions>
     </v-row>
 
   </v-container>

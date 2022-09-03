@@ -4,6 +4,9 @@ import { mapMutations, mapGetters } from 'vuex'
 import successFailedAlertVue from '@/components/Misc/successFailedAlert'
 import formActionsVue from './AmateurMisc/formActions.vue'
 
+let today = new Date(Date.now())
+const dateOptions = { year: 'numeric', month: 'numeric', day: 'numeric' };
+
 export default {
   data() {
     return {
@@ -26,20 +29,30 @@ export default {
       rating: null,
       ORNumber: null,
       ORDate: null,
-      ORAmount:null,
+      ORAmount: null,
       showAlert: false,
       alertText: null,
     }
   },
   components: {
     'success-failed-alert': successFailedAlertVue,
-    'form-actions':formActionsVue
+    'form-actions': formActionsVue
   },
   props: {
     transactionType: {
       type: String,
       default: () => "renewal"
     },
+    ATSeries: {
+      type: Object,
+      default: () => null
+    }
+  },
+  mounted() {
+    if (this.transactionType === 'new') {
+      this.ARLSeries = this.ATSeries.ARSL
+      this.AROCSeries = this.ATSeries.AROC
+    }
   },
   watch: {
     getTransactionDetails(val) {
@@ -59,16 +72,19 @@ export default {
         this.rating = val.rating
         this.ORNumber = val.ORNumber
         this.ORDate = val.ORDate
-        this.ORAmount=val.ORAmount
+        this.ORAmount = val.ORAmount
 
       }
-    }
+    },
   },
   computed: {
     ...mapGetters({
-      getTransactionDetails: 'amateur/licenseeInfo/getTransactionDetails'
+      getTransactionDetails: 'amateur/licenseeInfo/getTransactionDetails',
+      series: 'amateur/licenseeInfo/getSeries',
+      licenseeInfo: 'amateur/licenseeInfo/getLicenseeInfo',
+      formNumberSeries:'amateur/callSign/getFormNumber'
     }),
-    getParticulars(){
+    getParticulars() {
       const amateurParticulars = {
         transactionType: this.transactionType,
         licenseeClass: this.licenseeClass,
@@ -86,19 +102,45 @@ export default {
         rating: this.rating,
         ORNumber: this.ORNumber,
         ORDate: this.ORDate,
-        ORAmount:this.ORAmount
+        ORAmount: this.ORAmount
       }
       return amateurParticulars
     }
   },
   methods: {
-    showAlertResponse(message){
-      this.showAlert=true
+    showAlertResponse(message) {
+      this.showAlert = true
       this.alertText = message
     },
     ...mapMutations({
       updateLicenseID: 'amateur/licenseeInfo/UPDATE_LICENSEE_ID'
     }),
+    updateDateIssued() {
+      this.dateIssued = today.toLocaleDateString(undefined, dateOptions)
+    },
+    updateRecieptDate() {
+      this.ORDate = today.toLocaleDateString(undefined, dateOptions)
+    },
+    updateDateValid() {
+      const birthdate = new Date(this.licenseeInfo.birthdate)
+      const threeYears = today.getFullYear() + 3
+      const expiry = new Date(birthdate.setFullYear(threeYears))
+      this.dateValid = expiry.toLocaleString(undefined, dateOptions)
+      today = new Date(Date.now())
+    },
+    updateARSLNumber() { 
+      this.ARLSeries = this.series.ARSL
+    },
+    updateAROCNumber() {
+      this.AROCSeries = this.series.AROC
+     },
+    updateFormNumber() { 
+      this.formNumber = parseInt(this.formNumberSeries) + 1
+
+    },
+    nothingFollows(){
+      this.equipment = `${!this.equipment ? "" :this.equipment }${this.equipment ? '\n' : ""} - NOTHING FOLLOWS -`
+    }
   }
 
 }

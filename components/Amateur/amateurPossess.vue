@@ -30,7 +30,7 @@
                   </v-text-field>
                 </v-col>
                 <v-col cols="12">
-                  <v-text-field v-model="ORDate" :rules='[dataRequired, dateRules]' dense outlined label="OR Date">
+                  <v-text-field v-model="ORDate" :rules='[dataRequired, dateRules]' dense outlined append-icon="mdi-update" @click:append="updateORDate()" label="OR Date">
                   </v-text-field>
                 </v-col>
                 <v-col cols="12">

@@ -5,6 +5,7 @@ const state = () => ({
   transactionID: null,
   transactionDetails: null,
   licenseeInfo: null,
+  ATSeries: null
 })
 
 const getters = {
@@ -19,6 +20,25 @@ const getters = {
   },
   getLicenseeInfo(state) {
     return state.licenseeInfo
+  },
+  getPrevSeries(state) {
+    if (!state.ATSeries) return {}
+    return state.ATSeries
+  },
+  getSeries(state) {
+    if (!state.ATSeries) return {}
+    const roc = state.ATSeries.AROC
+    const rsl = state.ATSeries.ARSL
+
+    const suffix = roc.substring(roc.indexOf('-') + 1, roc.length)
+
+    const rocInt = parseInt(roc.substring(0, roc.indexOf('-'))) + 1
+    const rslInt = parseInt(rsl.substring(0, rsl.indexOf('-'))) + 1
+
+    const rocString = `${addLeadingZeros(rocInt, 4)}-${suffix}`
+    const rslString = `${addLeadingZeros(rslInt, 4)}-${suffix}`
+
+    return { AROC: rocString, ARSL: rslString }
   }
 }
 
@@ -34,6 +54,9 @@ const mutations = {
   },
   UPDATE_LICENSEE_INFO(state, info) {
     state.licenseeInfo = info
+  },
+  UPDATE_AT_SERIES(state, series) {
+    state.ATSeries = series
   }
 }
 
@@ -62,7 +85,7 @@ const actions = {
       if (!licenseeID) throw new Error('No licensee ID')
       if (callsignNew) {
         const callsign = licenseeInfo.callsign.toUpperCase()
-        const callsignInfo = await database.ref(`amateur/callSign/forIssuance/${callsign}`)
+        const callsignInfo = await database.ref(`amateur/callSign/issued/${callsign}`)
           .get("value")
           .then((snapshot) => snapshot.val())
 
@@ -75,7 +98,7 @@ const actions = {
           // update old callsign status
           await database.ref(`amateur/callSign/issued/${oldCallSign}`).remove()
           await database.ref(`amateur/callSign/forIssuance/${oldCallSign}`)
-            .set({ oldOwner: `${licenseeInfo.firstname} ${licenseeInfo.lastname}`})
+            .set({ oldOwner: `${licenseeInfo.firstname} ${licenseeInfo.lastname}` })
 
         }
 
@@ -91,7 +114,7 @@ const actions = {
   async removeLicenseeInfo({ commit, state }, licenseeInfo) {
     try {
       const licenseeID = state.licenseeID
-      if(!licenseeInfo) throw new Error('No licensee Information')
+      if (!licenseeInfo) throw new Error('No licensee Information')
       if (!licenseeID) throw new Error('No licensee ID')
 
       await database.ref(`amateur/licensee/${licenseeID}`).remove()
@@ -103,7 +126,7 @@ const actions = {
       if (licenseeInfo.callsign) {
         await database.ref(`amateur/callSign/issued/${licenseeInfo.callsign}`).remove()
         await database.ref(`amateur/callSign/forIssuance/${licenseeInfo.callsign}`)
-        .set({oldOwner:`${licenseeInfo.firstname} ${licenseeInfo.lastname}`})
+          .set({ oldOwner: `${licenseeInfo.firstname} ${licenseeInfo.lastname}` })
       }
 
       return true
@@ -228,7 +251,42 @@ const actions = {
     } catch (error) {
       return error.message
     }
+  },
+
+  async updateSeries({ dispatch }, { arsl, aroc }) {
+    try {
+      if (!aroc) throw new Error('No ROC input!')
+
+
+      if (!arsl || arsl === 'none') {
+        await database.ref(`amateur/ATSeries/AROC`)
+          .set(aroc)
+      } else {
+        await database.ref(`amateur/ATSeries`)
+          .set({ AROC: aroc, ARSL: arsl })
+      }
+      dispatch('getSeries')
+      return true
+    } catch (error) {
+      console.log(error)
+      return error.message
+    }
+  },
+
+  async getSeries({ commit }) {
+    try {
+      const series = await database.ref(`amateur/ATSeries`)
+        .get("value")
+        .then(snapshot => snapshot.val())
+
+      commit('UPDATE_AT_SERIES', !series ? null : series)
+    } catch (error) {
+      return error.message
+    }
   }
+}
+function addLeadingZeros(num, totalLength) {
+  return String(num).padStart(totalLength, '0');
 }
 
 export default {

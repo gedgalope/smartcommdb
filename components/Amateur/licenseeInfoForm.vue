@@ -52,8 +52,8 @@
               transition="dialog-transition">
               <template v-slot:activator="{ on, attrs }">
                 <v-col class="pt-0" cols="6">
-                  <v-btn v-on="on" v-bind="attrs" block class="error" dense rounded
-                    :disabled="disableUpdateDelete">Remove
+                  <v-btn v-on="on" v-bind="attrs" block class="error" dense rounded :disabled="disableUpdateDelete">
+                    Remove
                   </v-btn>
                 </v-col>
               </template>
@@ -84,7 +84,8 @@
 
         </v-container>
 
-        <v-btn v-else-if="transactionType === 'new'" dense outlined @click="submitLicenseeInfo()">Create new client
+        <v-btn v-else-if="transactionType === 'new'" :disabled="licenseeID ? true : false" dense outlined
+          @click="submitLicenseeInfo()">Create new client
         </v-btn>
         <span v-else>
           <transaction-history :resetCombobox="resetTransactionHistory" @resetDone="resetTransactionHistory = $event"
@@ -99,3 +100,4 @@
 import amateurForm from './amateurForm'
 export default amateurForm
 </script>
+

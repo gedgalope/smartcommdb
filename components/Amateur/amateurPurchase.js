@@ -4,6 +4,9 @@ import { mapGetters } from 'vuex'
 import successFailedAlertVue from '@/components/Misc/successFailedAlert'
 import formActionsVue from './AmateurMisc/formActions.vue'
 
+const today = new Date(Date.now())
+const dateOptions = { year: 'numeric', month: 'numeric', day: 'numeric' };
+
 export default {
   data() {
     return {
@@ -73,6 +76,12 @@ export default {
     showAlertResponse(message){
       this.showAlert = true
       this.alertText = message
+    },
+    updateDateIssued() {
+      this.purchaseDateIssued = today.toLocaleDateString(undefined, dateOptions)
+    },
+    updateORDate(){
+      this.ORDate = today.toLocaleDateString(undefined, dateOptions)
     }
   }
 

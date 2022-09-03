@@ -60,15 +60,21 @@ export default {
         ORNumber: this.ORNumber,
         ORDate: this.ORDate,
         Amount: this.Amount,
-        remarks: !this.remarks ? null:this.remarks,
+        remarks: !this.remarks ? null : this.remarks,
       }
       return amateurPossess
     }
   },
   methods: {
-    showAlertResponse(message){
+    showAlertResponse(message) {
       this.showAlert = true
       this.alertText = message
+    },
+    updateORDate() {
+      const today = new Date(Date.now())
+      const dateOptions = { year: 'numeric', month: 'numeric', day: 'numeric' };
+      this.ORDate = today.toLocaleDateString(undefined, dateOptions)
+
     }
   }
 

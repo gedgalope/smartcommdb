@@ -34,8 +34,8 @@ export default {
       type: Object,
       default: () => null
     },
-    resetForm:{
-      type:Boolean,
+    resetForm: {
+      type: Boolean,
       default: () => false
     }
   },
@@ -51,10 +51,10 @@ export default {
         this.address = val.address
       }
     },
-    resetForm(val){
-      if(val === true){
+    resetForm(val) {
+      if (val === true) {
         this.$refs.licenseeInfoForm.reset()
-        this.$emit("reset",false)
+        this.$emit("reset", false)
       }
     }
   },
@@ -65,7 +65,7 @@ export default {
     transactionItems() {
       //  apply this code to transaction items when search bar is added
       const newLicensee = ['new', 'purchase', 'temporary']
-      const existingLicensee = ['renewal', 'renmod', 'duplicate', 'modification', 'purchase', 'possess', 'temporary']
+      const existingLicensee = ['renewal', 'renmod', 'duplicate', 'modification', 'purchase', 'possess', 'temporary', 'new']
       if (!this.searchResult) return newLicensee
       else return existingLicensee
     },
@@ -84,7 +84,7 @@ export default {
   methods: {
     ...mapActions({
       postLicenseeInfo: 'amateur/licenseeInfo/postLicenseeInfo',
-      saveOrUpdateCallsignInfo: 'amateur/callSign/saveOrUpdateCallsignInfo',
+      updateCallsignInfo: 'amateur/callSign/updateCallsignInfo',
       getTransactionHistory: 'amateur/transactionHistory/getTransactionHistory',
       updateLicenseeInfo: 'amateur/licenseeInfo/updateLicenseeInfo',
       removeLicenseeInfo: 'amateur/licenseeInfo/removeLicenseeInfo'
@@ -121,7 +121,7 @@ export default {
           update: this.transactionType.includes('mod')
         }
 
-        const callsignResponse = await this.saveOrUpdateCallsignInfo(callsignInfo)
+        const callsignResponse = await this.updateCallsignInfo(callsignInfo)
         if (callsignResponse === true) {
           this.showAlert = true
           this.alertText = "Success, posted callsign"
@@ -152,12 +152,12 @@ export default {
         lastname: this.lastname,
         callsign: this.callsign ? this.callsign.toUpperCase() : null,
         birthdate: this.birthdate,
-        contact: !this.contact ? null:this.contact,
+        contact: !this.contact ? null : this.contact,
         address: this.address,
         searchIndex: `${this.lastname}, ${this.firstname} /${this.callsign ? this.callsign.toUpperCase() : 'none'}`
       }
       const newCallsign = this.searchResult.callsign === this.callsign
-      const dbResponse = await this.updateLicenseeInfo({ licenseeInfo: licenseeData, callsignNew: !newCallsign, oldCallSign:this.searchResult.callsign })
+      const dbResponse = await this.updateLicenseeInfo({ licenseeInfo: licenseeData, callsignNew: !newCallsign, oldCallSign: this.searchResult.callsign })
 
       if (dbResponse === true) {
         this.showAlert = true

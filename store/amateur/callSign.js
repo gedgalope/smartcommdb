@@ -3,6 +3,7 @@ import { database } from "@/services/firebase";
 const state = () => ({
   unusedCallsign: null,
   callsignSearchResult: [],
+  formSeries: null
 })
 
 const getters = {
@@ -19,6 +20,10 @@ const getters = {
   },
   callsignQueryResult: (state) => {
     return state.callsignSearchResult
+  },
+  getFormNumber: (state) =>{
+    if(!state.formSeries) return 0
+    return state.formSeries
   }
 }
 
@@ -31,6 +36,9 @@ const mutations = {
     else {
       state.callsignSearchResult = searchResult
     }
+  },
+  UPDATE_FORM_SERIES(state, formNumber){
+    state.formSeries = formNumber
   }
 
 }
@@ -213,6 +221,67 @@ const actions = {
       }
 
 
+    } catch (error) {
+      return error.message
+    }
+  },
+
+  async updateCallsignInfo({ commit }, callsignInfo) { // this if for saving new client with callsign
+    try {
+      if (!callsignInfo) throw new Error('No blank data!')
+      if (callsignInfo.callsign.length !== 3) throw new Error('Not a callsign series!')
+      const callsignDataForPost = {
+        dateIssued: callsignInfo.dateIssued ? callsignInfo.dateIssued : null,
+        oldOwner: callsignInfo.oldOwner ? callsignInfo.oldOwner : null,
+        newOwner: callsignInfo.newOwner,
+        used: callsignInfo.used,
+      }
+      if (callsignInfo.update) {
+        await database.ref(`amateur/callSign/issued/${callsignInfo.callsign.toUpperCase()}`).set(callsignDataForPost)
+        return true
+      }
+
+      const checkIssuedForObject = await database
+        .ref(`amateur/callSign/issued/${callsignInfo.callsign.toUpperCase()}`)
+        .once("value")
+        .then(snapshot => {
+          return snapshot.val()
+        })
+      console.log(checkIssuedForObject)
+      if (checkIssuedForObject) throw new Error('Callsign hase been issued, please modify and update licensee data first!')
+
+      if (callsignInfo.used) {
+        await database.ref(`amateur/callSign/issued/${callsignInfo.callsign.toUpperCase()}`).set(callsignDataForPost)
+        return true
+      } else {
+        await database.ref(`amateur/callSign/forIssuance/${callsignInfo.callsign.toUpperCase()}`).set(callsignDataForPost)
+        return true
+      }
+
+
+    } catch (error) {
+      return error.message
+    }
+  },
+  async postFormSeries({ commit }, seriesNumber) {
+    try {
+      if (!seriesNumber) throw new Error('No series number!')
+
+      const dbReference = await database.ref(`amateur/formNumber`)
+        .set(seriesNumber)
+      commit('UPDATE_FORM_SERIES', dbReference)
+      return true
+    } catch (error) {
+      return error.message
+    }
+  },
+  async getFormSeries({ commit }) {
+    try {
+      const dbReference = await database.ref('amateur/formNumber')
+        .get("value")
+        .then(snapshot => snapshot.val())
+        commit('UPDATE_FORM_SERIES', dbReference)
+        return true
     } catch (error) {
       return error.message
     }
