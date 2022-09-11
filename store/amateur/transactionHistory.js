@@ -5,41 +5,45 @@ const state = () => ({
 })
 
 const getters = {
-  getHistoryList:(state)=>(transaction) =>{
+  getHistoryList: (state) => (transaction) => {
     const transactionHistory = state.transactionHistory
+    console.log(transactionHistory)
     if (!transactionHistory) return []
     console.log(transaction)
     const particulars = ['renewal', 'renmod', 'duplicate', 'modification']
-    if(particulars.includes(transaction)){
+    if (particulars.includes(transaction)) {
       return transactionHistory.map(historyObject => {
-        return {value:historyObject.transactionID, text:`${historyObject.transactionType} --- ${historyObject.dateIssued}`,disabled:false}
+        return { value: historyObject.transactionID, text: `${historyObject.transactionType} --- ${historyObject.dateIssued}`, disabled: false }
       })
     }
-    else if(transaction === 'purchase'){
+    else if (transaction === 'purchase') {
       return transactionHistory.map(historyObject => {
-        return {value:historyObject.transactionID, text:`${transaction} --- ${historyObject.purchaseDateIssued}`,disabled:false}
+        return { value: historyObject.transactionID, text: `${transaction} --- ${historyObject.purchaseDateIssued}`, disabled: false }
       })
     }
-    else if(transaction === 'possess'){
+    else if (transaction === 'possess') {
       return transactionHistory.map(historyObject => {
-        return {value:historyObject.transactionID, text:`${transaction} --- ${historyObject.ORDate}`,disabled:false}
+        return { value: historyObject.transactionID, text: `${transaction} --- ${historyObject.ORDate}`, disabled: false }
       })
     }
-    else if(transaction === 'temporary'){
+    else if (transaction === 'temporary') {
       return transactionHistory.map(historyObject => {
-        return {value:historyObject.transactionID, text:`${transaction} --- ${historyObject.dateIssued}`,disabled:false}
+        return { value: historyObject.transactionID, text: `${transaction} --- ${historyObject.dateIssued}`, disabled: false }
       })
     }
 
-    
+
   }
 }
 
 const mutations = {
   POPOULATE_TRANSACTION_HISTORY(state, historylist) {
-    if (!historylist) return []
+    if (!historylist) {
+      state.transactionHistory = []
+      return
+    }
     const list = Object.entries(historylist).map(([key, history]) => {
-      return Object.assign({ transactionID: key}, history)
+      return Object.assign({ transactionID: key }, history)
     })
     state.transactionHistory = list
   }
@@ -49,14 +53,14 @@ const actions = {
   async getTransactionHistory({ commit }, { licenseeID, transactionType }) {
     try {
       if (!licenseeID) throw new Error('No licensee ID!')
-
+      console.log(`Id:${licenseeID},type:${transactionType}`)
       const transactionHistory = await database.ref(`amateur/${transactionType}/${licenseeID}`)
         .orderByChild('dateIssued')
-        .limitToFirst(10)
         .once('value')
         .then(snapshot => {
           return snapshot.val()
         })
+      console.log(transactionHistory)
       commit('POPOULATE_TRANSACTION_HISTORY', transactionHistory)
     } catch (error) {
       console.log(error)

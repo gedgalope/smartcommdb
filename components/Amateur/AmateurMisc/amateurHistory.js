@@ -18,9 +18,14 @@ export default {
   },
   watch:{
     resetCombobox(val){
-      if(val){
+      if(val === true){
         this.$refs.historyCombobox.reset()
         this.$emit('resetDone',false)
+      }
+    },
+    transactionType(newValue,oldValue){
+      if(newValue !== oldValue){
+        this.$refs.historyCombobox.reset()
       }
     }
   },

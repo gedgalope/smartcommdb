@@ -13,6 +13,7 @@ const getters = {
     return state.licenseeID
   },
   getTransactionDetails(state) {
+    if (!state.transactionDetails) return []
     return state.transactionDetails
   },
   getTransactionID(state) {
@@ -62,12 +63,12 @@ const mutations = {
 
 const actions = {
   async postLicenseeInfo({ commit }, licenseeInfo) {
-
-
+    // Update licensee ID!
     try {
       if (!licenseeInfo) throw new Error('Empty Object')
       const dbReference = await database.ref('amateur/licensee/').push(licenseeInfo)
       commit('UPDATE_LICENSEE_ID', dbReference.key)
+      commit('UPDATE_LICENSEE_INFO', licenseeInfo)
       return true
     } catch (error) {
       return error
@@ -135,13 +136,14 @@ const actions = {
     }
   },
 
-  async postLicenseParticulars({ commit, state }, licenseParticulars) {
+  async postLicenseParticulars({ dispatch, state }, licenseParticulars) {
     try {
       if (!licenseParticulars) throw new Error('No License Information')
       const licenseeID = state.licenseeID
       if (!licenseeID) throw new Error('No Licensee ID')
       const dbReference = await database.ref(`amateur/particulars/${licenseeID}`).push(licenseParticulars)
       console.log(dbReference)
+      dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: licenseParticulars.transactionType }, { root: true })
       return true
     } catch (error) {
       return error.message
@@ -149,7 +151,7 @@ const actions = {
 
   },
 
-  async postLicenseePurchase({ commit, state }, purchaseParticulars) {
+  async postLicenseePurchase({ dispatch, state }, purchaseParticulars) {
 
     try {
       if (!purchaseParticulars) throw new Error('Empty Object')
@@ -158,6 +160,7 @@ const actions = {
       if (!licenseeID) throw new Error('No Licensee ID')
       const dbReference = await database.ref(`amateur/purchase/${licenseeID}`).push(purchaseParticulars)
       console.log(dbReference)
+      dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'purchase' }, { root: true })
       return true
     } catch (error) {
       return error.message
@@ -165,7 +168,7 @@ const actions = {
 
   },
 
-  async postLicenseePossess({ commit, state }, possessParticulars) {
+  async postLicenseePossess({ dispatch, state }, possessParticulars) {
 
     try {
       if (!possessParticulars) throw new Error('Empty Object')
@@ -174,13 +177,14 @@ const actions = {
       if (!licenseeID) throw new Error('No Licensee ID')
       const dbReference = await database.ref(`amateur/possess/${licenseeID}`).push(possessParticulars)
       console.log(dbReference)
+      dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'possess' }, { root: true })
       return true
     } catch (error) {
       return error.message
     }
 
   },
-  async postLicenseTemporary({ commit, state }, licenseTemporary) {
+  async postLicenseTemporary({ dispatch, state }, licenseTemporary) {
 
     try {
       if (!licenseTemporary) throw new Error('Empty Object')
@@ -190,6 +194,7 @@ const actions = {
 
       const dbReference = await database.ref(`amateur/temporary/${licenseeID}`).push(licenseTemporary)
       console.log(dbReference)
+      dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'temporary' }, { root: true })
       return true
     } catch (error) {
       return error.message
@@ -219,7 +224,7 @@ const actions = {
     }
   },
 
-  async updateData({ commit, state }, { transaction, particulars }) {
+  async updateData({ dispatch, state }, { transaction, particulars }) {
     try {
       const licenseeID = state.licenseeID
       const transactionID = state.transactionID
@@ -230,23 +235,26 @@ const actions = {
 
       await database.ref(`amateur/${transaction}/${licenseeID}/${transactionID}`)
         .update(particulars)
-
+      dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: transaction }, { root: true })
       return true
     } catch (error) {
       return error.message
     }
   },
-  async removeData({ commit, state }, transaction) {
+  async removeData({ dispatch, state }, transaction) {
     try {
       const licenseeID = state.licenseeID
       const transactionID = state.transactionID
       if (!licenseeID) throw new Error('No licensee ID!')
       if (!transactionID) throw new Error('No transaction ID!')
       if (!transaction) throw new Error('No licensee transaction!')
+      const particulars = ['renewal', 'renmod', 'duplicate', 'modification']
+      if (particulars.includes(transaction)) transaction = 'particulars'
+
 
       await database.ref(`amateur/${transaction}/${licenseeID}/${transactionID}`)
         .remove()
-
+      dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: transaction }, { root: true })
       return true
     } catch (error) {
       return error.message

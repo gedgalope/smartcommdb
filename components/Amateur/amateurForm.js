@@ -37,10 +37,19 @@ export default {
     resetForm: {
       type: Boolean,
       default: () => false
+    },
+    resetHistory: {
+      type: Boolean,
+      default: () => false
     }
   },
   watch: {
-    searchResult(val) {
+    searchResult(val, oldVal) {
+      if (val && oldVal) {
+        if (val !== oldVal) {
+          this.$refs.transactionHistory.reset()
+        }
+      }
       if (val) {
         this.firstname = val.firstname
         this.middlename = val.middlename
@@ -54,9 +63,17 @@ export default {
     resetForm(val) {
       if (val === true) {
         this.$refs.licenseeInfoForm.reset()
+        this.$refs.transactionHistory.reset()
+        this.resetTransactionHistory = false
         this.$emit("reset", false)
       }
-    }
+    },
+    resetHistory(val) {
+      if (val === true) {
+        this.$refs.transactionHistory.reset()
+        this.$emit('resetDone', false)
+      }
+    },
   },
   computed: {
     ...mapGetters({
@@ -91,13 +108,13 @@ export default {
     }),
     async submitLicenseeInfo() {
       const licenseeData = {
-        firstname: this.firstname,
-        middlename: this.middlename,
-        lastname: this.lastname,
+        firstname: this.firstname.toUpperCase(),
+        middlename: this.middlename.toUpperCase(),
+        lastname: this.lastname.toUpperCase(),
         callsign: this.callsign ? this.callsign.toUpperCase() : null,
         birthdate: this.birthdate,
-        contact: this.contact,
-        address: this.address,
+        contact: !this.contact ? null : this.contact.toUpperCase(),
+        address: this.address.toUpperCase(),
         searchIndex: `${this.lastname}, ${this.firstname} /${this.callsign ? this.callsign.toUpperCase() : 'none'}`
       }
       if (!this.callsign) {
@@ -141,19 +158,18 @@ export default {
 
     },
     populateHistory() {
-      this.resetTransactionHistory = true
       this.$emit('transactionType', this.transactionType)
       this.getTransactionHistory({ licenseeID: this.licenseeID, transactionType: this.historyByTransactionType })
     },
     async updateRecord() {
       const licenseeData = {
-        firstname: this.firstname,
-        middlename: this.middlename,
-        lastname: this.lastname,
+        firstname: this.firstname.toUpperCase(),
+        middlename: this.middlename.toUpperCase(),
+        lastname: this.lastname.toUpperCase(),
         callsign: this.callsign ? this.callsign.toUpperCase() : null,
         birthdate: this.birthdate,
-        contact: !this.contact ? null : this.contact,
-        address: this.address,
+        contact: !this.contact ? null : this.contact.toUpperCase(),
+        address: this.address.toUpperCase(),
         searchIndex: `${this.lastname}, ${this.firstname} /${this.callsign ? this.callsign.toUpperCase() : 'none'}`
       }
       const newCallsign = this.searchResult.callsign === this.callsign
@@ -169,13 +185,13 @@ export default {
     },
     async removeRecord() {
       const licenseeData = {
-        firstname: this.firstname,
-        middlename: this.middlename,
-        lastname: this.lastname,
+        firstname: this.firstname.toUpperCase(),
+        middlename: this.middlename.toUpperCase(),
+        lastname: this.lastname.toUpperCase(),
         callsign: this.callsign ? this.callsign.toUpperCase() : null,
         birthdate: this.birthdate,
-        contact: this.contact,
-        address: this.address,
+        contact: !this.contact ? null : this.contact.toUpperCase(),
+        address: this.address.toUpperCase(),
         searchIndex: `${this.lastname}, ${this.firstname} /${this.callsign ? this.callsign.toUpperCase() : 'none'}`
       }
       const dbResponse = await this.removeLicenseeInfo(licenseeData)

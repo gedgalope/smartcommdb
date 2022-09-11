@@ -46,6 +46,10 @@ export default {
     ATSeries: {
       type: Object,
       default: () => null
+    },
+    resetForm: {
+      type: Boolean,
+      default: () => false
     }
   },
   mounted() {
@@ -76,28 +80,34 @@ export default {
 
       }
     },
+    resetForm(val) {
+      if (val) {
+        this.resetParticularsForm()
+        this.$emit('cleared', false)
+      }
+    }
   },
   computed: {
     ...mapGetters({
       getTransactionDetails: 'amateur/licenseeInfo/getTransactionDetails',
       series: 'amateur/licenseeInfo/getSeries',
       licenseeInfo: 'amateur/licenseeInfo/getLicenseeInfo',
-      formNumberSeries:'amateur/callSign/getFormNumber'
+      formNumberSeries: 'amateur/callSign/getFormNumber'
     }),
     getParticulars() {
       const amateurParticulars = {
         transactionType: this.transactionType,
-        licenseeClass: this.licenseeClass,
-        stationLocation: this.stationLocation,
+        licenseeClass: !this.licenseeClass ? null : this.licenseeClass.toUpperCase(),
+        stationLocation: !this.stationLocation ? null : this.stationLocation.toUpperCase(),
         ARLSeries: this.ARLSeries,
         AROCSeries: this.AROCSeries,
-        equipment: this.equipment,
+        equipment: !this.equipment ? null : this.equipment.toUpperCase(),
         dateIssued: this.dateIssued,
         dateValid: this.dateValid,
         remarks: !this.remarks ? null : this.remarks,
         formNumber: this.formNumber,
-        club: this.club,
-        examPlace: this.examPlace,
+        club: !this.club ? null : this.club.toUpperCase(),
+        examPlace: !this.examPlace ? null : this.examPlace.toUpperCase(),
         examDate: this.examDate,
         rating: this.rating,
         ORNumber: this.ORNumber,
@@ -128,18 +138,24 @@ export default {
       this.dateValid = expiry.toLocaleString(undefined, dateOptions)
       today = new Date(Date.now())
     },
-    updateARSLNumber() { 
+    updateARSLNumber() {
       this.ARLSeries = this.series.ARSL
     },
     updateAROCNumber() {
       this.AROCSeries = this.series.AROC
-     },
-    updateFormNumber() { 
+    },
+    updateFormNumber() {
       this.formNumber = parseInt(this.formNumberSeries) + 1
 
     },
-    nothingFollows(){
-      this.equipment = `${!this.equipment ? "" :this.equipment }${this.equipment ? '\n' : ""} - NOTHING FOLLOWS -`
+    nothingFollows() {
+      this.equipment = `${!this.equipment ? "" : this.equipment}${this.equipment ? '\n' : ""} - NOTHING FOLLOWS -`
+    },
+    resetParticularsForm(fromDatabase = false) {
+      this.$refs.licenseeParticulars.reset()
+      if (fromDatabase) {
+        this.$emit('resetHistory', true)
+      }
     }
   }
 

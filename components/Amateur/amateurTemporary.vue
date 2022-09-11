@@ -71,7 +71,7 @@
     </v-form>
     <v-row justify="center">
       <form-actions transactionType="temporary" :data="getTemporary" :formValid="amateurTemporary"
-        @showAlert="showAlertResponse($event)"></form-actions>
+        @showAlert="showAlertResponse($event)" @resetForm="resetTemporaryForm(true)"></form-actions>
     </v-row>
 
   </v-container>

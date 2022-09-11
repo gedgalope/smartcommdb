@@ -13,7 +13,7 @@ export default {
     searchInput: _.debounce(function (val) {
       if (val) {
         this.fetchingQuery = true;
-        this.searchLicensee(val)
+        this.searchLicensee(val.toUpperCase())
         this.fetchingQuery = false
 
       }

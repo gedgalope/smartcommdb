@@ -33,9 +33,18 @@ export default {
     return {
       transactionType: null,
       licensee: null,
-      clearSearch:false
+      clearSearch:false,
+      resetHistory: false
     }
   },
+  // watch:{
+  //   licensee(newLic,oldLic){
+  //     if(!oldLic) return  
+  //     if(newLic !== oldLic){
+  //       this.clearSearch = true
+  //     }
+  //   }
+  // },
   computed: {
     ...mapGetters({
       ATSeries:'amateur/licenseeInfo/getSeries',

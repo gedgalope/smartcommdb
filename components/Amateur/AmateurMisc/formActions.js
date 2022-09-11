@@ -51,7 +51,7 @@ export default {
       const particulars = ['renewal', 'renmod', 'duplicate', 'modification', 'new']
       if (particulars.includes(this.transactionType)) {
         if (this.transactionType === 'new') {
-          await this.updateATSeries({ aroc: this.data.AROCSeries, arsl: this.data.ARLSeries})
+          await this.updateATSeries({ aroc: this.data.AROCSeries, arsl: this.data.ARLSeries })
         }
         dbResponse = await this.postParticulars(this.data)
       }
@@ -66,7 +66,10 @@ export default {
     async removeRecord() {
       const dbResponse = await this.removeData(this.transactionType)
 
-      if (dbResponse === true) this.$emit('showAlert', 'Success')
+      if (dbResponse === true) {
+        this.$emit('showAlert', 'Success')
+        this.$emit('resetForm',true)
+      }
       else this.$emit('showAlert', dbResponse)
       this.showWarning = false
     },

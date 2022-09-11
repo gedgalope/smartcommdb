@@ -49,7 +49,7 @@
       </v-row>
     </v-form>
     <v-row dense justify="center">
-      <form-actions transactionType="possess" :data="getPossess" :formValid="possessForm" @showAlert="showAlertResponse($event)"></form-actions>
+      <form-actions transactionType="possess" :data="getPossess" :formValid="possessForm" @showAlert="showAlertResponse($event)" @resetForm="resetPossessForm(true)"></form-actions>
     </v-row>
   </v-container>
 </template>

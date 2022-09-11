@@ -36,7 +36,11 @@ export default {
     'form-actions': formActionsVue
   },
   props: {
-    transactionType: null
+    transactionType: null,
+    resetForm: {
+      type: Boolean,
+      default: () => false
+    }
   },
   watch: {
     transactionDetails(value) {
@@ -55,16 +59,22 @@ export default {
         this.ORNumber = value.ORNumber
         this.ORDate = value.ORDate
       }
+    },
+    resetForm(val) {
+      if (val) {
+        this.resetTemporaryForm()
+        this.$emit('cleared')
+      }
     }
   },
   computed: {
     ...mapGetters({ transactionDetails: 'amateur/licenseeInfo/getTransactionDetails' }),
     getTemporary() {
       const amateurTemporary = {
-        licenseeClass: this.licenseeClass,
-        ARLTPSeries: this.ARLTPSeries,
-        equipment: this.equipment,
-        citizenship: this.citizenship,
+        licenseeClass: !this.licenseeClass ? null : this.licenseeClass.toUpperCase(),
+        ARLTPSeries: !this.ARLTPSeries ? null : this.ARLTPSeries.toUpperCase(),
+        equipment: !this.equipment ? null : this.equipment.toUpperCase(),
+        citizenship: !this.citizenship ? null : this.citizenship.toUpperCase(),
         frequencies: this.frequencies,
         bandwidth: this.bandwidth,
         power: this.power,
@@ -96,8 +106,14 @@ export default {
     updateORDate() {
       this.ORDate = today.toLocaleDateString(undefined, dateOptions)
     },
-    nothingFollows(){
-      this.equipment = `${!this.equipment ? "" :this.equipment }${this.equipment ? '\n' : ""} - NOTHING FOLLOWS -`
+    nothingFollows() {
+      this.equipment = `${!this.equipment ? "" : this.equipment}${this.equipment ? '\n' : ""} - NOTHING FOLLOWS -`
+    },
+    resetTemporaryForm(fromDatabase = false) {
+      if (fromDatabase) {
+        this.$emit('resetHistory', true)
+      }
+      this.$refs.amateurTemporary.reset()
     }
   }
 

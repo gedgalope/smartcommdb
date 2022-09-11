@@ -23,22 +23,25 @@ export default {
       purchaseNumber: null,
       ORNumber: null,
       ORDate: null,
-      amount:null,
+      amount: null,
       purchaseRemarks: null,
       purchaseSave: false,
     }
   },
   components: {
     'success-failed-alert': successFailedAlertVue,
-    'form-actions':formActionsVue
+    'form-actions': formActionsVue
   },
   props: {
-    transactionType: null
+    transactionType: null,
+    resetForm: {
+      type: Boolean,
+      default: () => false
+    }
   },
   watch: {
     getPurchaseDetails(value) {
       if (value) {
-        console.log(value)
         this.frequencyRange = value.frequencyRange
         this.units = value.units
         this.eqptType = value.eqptType
@@ -50,13 +53,19 @@ export default {
         this.amount = value.amount
         this.purchaseRemarks = value.purchaseRemarks
       }
+    },
+    resetForm(val) {
+      if (val) {
+        this.resetParticularsForm()
+        this.$emit('cleared')
+      }
     }
   },
-  computed:{
+  computed: {
     ...mapGetters({
       getPurchaseDetails: 'amateur/licenseeInfo/getTransactionDetails'
     }),
-    getPurchase(){
+    getPurchase() {
       const amateurPurchase = {
         frequencyRange: this.frequencyRange,
         units: this.units,
@@ -66,22 +75,29 @@ export default {
         purchaseNumber: this.purchaseNumber,
         ORNumber: this.ORNumber,
         ORDate: this.ORDate,
-        amount:this.amount,
-        purchaseRemarks: !this.purchaseRemarks ? null : this.amateurPurchase,
+        amount: this.amount,
+        purchaseRemarks: !this.purchaseRemarks ? null : this.purchaseRemarks.toUpperCase(),
       }
       return amateurPurchase
     }
   },
   methods: {
-    showAlertResponse(message){
+    showAlertResponse(message) {
       this.showAlert = true
       this.alertText = message
     },
     updateDateIssued() {
       this.purchaseDateIssued = today.toLocaleDateString(undefined, dateOptions)
     },
-    updateORDate(){
+    updateORDate() {
       this.ORDate = today.toLocaleDateString(undefined, dateOptions)
+    },
+    resetParticularsForm(fromDatabase = false) {
+      if (fromDatabase) {
+        this.$emit('resetHistory', true)
+      }
+      this.$refs.AmateurPurchase.reset()
+
     }
   }
 

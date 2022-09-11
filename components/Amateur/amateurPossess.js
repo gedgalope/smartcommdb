@@ -29,7 +29,11 @@ export default {
     'form-actions': formActionsVue
   },
   props: {
-    transactionType: null
+    transactionType: null,
+    resetForm: {
+      type: Boolean,
+      default: () => false
+    }
   },
   watch: {
     getPossessDetails(val) {
@@ -44,6 +48,12 @@ export default {
         this.Amount = val.Amount
         this.remarks = val.remarks
       }
+    },
+    resetForm(val){
+      if(val){
+        this.resetPossessForm()
+        this.$emit('cleared')
+      }
     }
   },
   computed: {
@@ -52,15 +62,15 @@ export default {
     }),
     getPossess() {
       const amateurPossess = {
-        possessForm: this.possessForm,
-        possessNo: this.possessNo,
-        equipment: this.equipment,
-        units: this.units,
-        frequencyRange: this.frequencyRange,
-        ORNumber: this.ORNumber,
-        ORDate: this.ORDate,
-        Amount: this.Amount,
-        remarks: !this.remarks ? null : this.remarks,
+        possessForm:this.possessForm,
+        possessNo:this.possessNo,
+        equipment:!this.equipment? null: this.equipment.toUpperCase(),
+        units:this.units,
+        frequencyRange:this.frequencyRange,
+        ORNumber:this.ORNumber,
+        ORDate:this.ORDate,
+        Amount:this.Amount,
+        remarks: !this.remarks ? null : this.remarks.toUpperCase(),
       }
       return amateurPossess
     }
@@ -75,6 +85,12 @@ export default {
       const dateOptions = { year: 'numeric', month: 'numeric', day: 'numeric' };
       this.ORDate = today.toLocaleDateString(undefined, dateOptions)
 
+    },
+    resetPossessForm(fromDatabase = false){
+      if(fromDatabase){
+        this.$emit('resetHistory', true)
+      }
+      this.$refs.possessForm.reset()  
     }
   }
 

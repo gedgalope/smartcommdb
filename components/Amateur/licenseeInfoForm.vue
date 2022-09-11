@@ -37,9 +37,11 @@
     </v-form>
     <v-row>
       <v-col cols="4">
-        <v-combobox v-model="transactionType" :disabled="!licenseeFormComplete" :items="transactionItems" dense outlined
-          label="Transaction type" @change="populateHistory()" hide-details>
-        </v-combobox>
+        <v-form ref="transactionHistory">
+          <v-combobox v-model="transactionType" :disabled="!licenseeFormComplete" :items="transactionItems" dense
+            outlined label="Transaction type" @change="populateHistory()" hide-details>
+          </v-combobox>
+        </v-form>
       </v-col>
       <v-col cols="8">
         <v-container class="pa-1" v-if="transactionType === null" grid-list-xs>
@@ -88,8 +90,7 @@
           @click="submitLicenseeInfo()">Create new client
         </v-btn>
         <span v-else>
-          <transaction-history :resetCombobox="resetTransactionHistory" @resetDone="resetTransactionHistory = $event"
-            :transactionType="transactionType"></transaction-history>
+          <transaction-history :transactionType="transactionType"></transaction-history>
         </span>
       </v-col>
     </v-row>
