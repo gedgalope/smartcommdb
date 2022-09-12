@@ -51,8 +51,8 @@ function printParticulars({ licenseeInfo, particulars }) {
   // const center = doc.internal.pageSize.getWidth() / 2
   // const right = doc.internal.pageSize.getWidth() - 20
   if (particulars.ARLSeries === 'none' || particulars.ARLSeries === 'NONE') {
-    doc.setLineWidth(8)
-    doc.line(140, 70, 200, 70)
+    doc.setLineWidth(6)
+    doc.line(132, 70, 173, 70)
     doc.setLineWidth(1)
   }
 
@@ -94,8 +94,8 @@ function printParticulars({ licenseeInfo, particulars }) {
     thirdColumn = thirdColumnArray.join('\n')
   }
 
-  doc.text(83, 100, firstColumn);
-  if (secondColumn) doc.text(150, 100, secondColumn);
+  doc.text(78, 100, firstColumn);
+  if (secondColumn) doc.text(140, 100, secondColumn);
   doc.text(doc.splitTextToSize(particulars.stationLocation, 50), 200, 100);
 
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
