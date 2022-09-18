@@ -42,7 +42,7 @@ function printParticulars({ licenseeInfo, particulars }) {
   });
 
   const suffix = licenseeInfo.callsign
-  let prefix
+  let prefix = ''
   if (particulars.licenseeClass === 'A') prefix = 'DU9'
   if (particulars.licenseeClass === 'B') prefix = 'DV9'
   if (particulars.licenseeClass === 'C') prefix = 'DW9'
@@ -59,7 +59,7 @@ function printParticulars({ licenseeInfo, particulars }) {
 
   doc.setFontSize(12)
   doc.setFont('times', 'bold')
-  doc.text(110, 80, `${licenseeInfo.firstname} ${licenseeInfo.middlename}. ${licenseeInfo.lastname}`)
+  doc.text(110, 80, `${licenseeInfo.firstname} ${!licenseeInfo.middlename ? '' : licenseeInfo.middlename} ${licenseeInfo.lastname}`)
   doc.setFontSize(8)
   doc.text(doc.splitTextToSize(licenseeInfo.address, 55), 200, 88);
   doc.setFontSize(10)
@@ -70,11 +70,11 @@ function printParticulars({ licenseeInfo, particulars }) {
   //  ADD SECOND COLUMN AND BACK PORTION
   const eqptBuffer = particulars.equipment
   const eqptArray = eqptBuffer.split("\n")
-  let firstColumn
-  let secondColumn
-  let thirdColumn
+  let firstColumn = []
+  let secondColumn = []
+  let thirdColumn = []
 
-  if(eqptArray.length <= 6) {
+  if (eqptArray.length <= 6) {
     const firstColumnArray = eqptArray.slice(0, 6)
     firstColumn = firstColumnArray.join('\n')
   }
@@ -175,7 +175,7 @@ function printPurchase({ licenseeInfo, particulars }) {
   const today = Date.now()
   const dateProcessed = new Date(today).toDateString().substring(4)
   const seriesEnd = new Date(today).toISOString().substring(2, 4)
-  const purchaseBody = `THIS IS TO CERTIFY THAT ${licenseeInfo.firstname} ${licenseeInfo.middlename}. ${licenseeInfo.lastname} with postal address at ${licenseeInfo.address} is granted this PERMIT TO PURCHASE with the following transmitter/transceiver (s) described as follows:`
+  const purchaseBody = `THIS IS TO CERTIFY THAT ${licenseeInfo.firstname} ${!licenseeInfo.middlename ? '' : licenseeInfo.middlename} ${licenseeInfo.lastname} with postal address at ${licenseeInfo.address} is granted this PERMIT TO PURCHASE with the following transmitter/transceiver (s) described as follows:`
 
   const validity = `This permit shall be valid for a period of ONE HUNDRED  EIGHTY (180) days from the date of payment of the prescribed permit fee to the Commission, unless sooner revoked or cancelled.`
 
@@ -288,7 +288,7 @@ function printPossess({ licenseeInfo, particulars }) {
 
   doc.setFontSize(14)
   doc.setFont('times', 'bold')
-  doc.text(`${licenseeInfo.firstname} ${licenseeInfo.middlename}. ${licenseeInfo.lastname}`, center, 105, 'center')
+  doc.text(`${licenseeInfo.firstname} ${!licenseeInfo.middlename ? '' : licenseeInfo.middlename} ${licenseeInfo.lastname}`, center, 105, 'center')
   doc.line(40, 106, right - 20, 106, 'DF')
   doc.setFont('times', 'normal')
 
@@ -374,9 +374,9 @@ function printTemporary({ licenseeInfo, particulars }) {
   const additionalNote = ` NOTES: 1. Issued under a Reciprocity Licensing Agreement /Memo Order 30-03-2008.
                 2. This license is issued subject to inspection on a later date`
 
-  const TPBody = `This TEMPORARY PERMIT is hereby granted to ${licenseeInfo.firstname} ${licenseeInfo.middlename}. ${licenseeInfo.lastname} an ${particulars.citizenship} citizen with postal address at ${licenseeInfo.address} Amateur "${particulars.licenseeClass}" radio station(s) with the following particulars`
+  const TPBody = `This TEMPORARY PERMIT is hereby granted to ${licenseeInfo.firstname} ${!licenseeInfo.middlename ? '' : licenseeInfo.middlename} ${licenseeInfo.lastname} an ${particulars.citizenship} citizen with postal address at ${licenseeInfo.address} Amateur "${particulars.licenseeClass}" radio station(s) with the following particulars`
 
-  // const nameWidth = doc.getTextWidth(`${licenseeInfo.firstname} ${licenseeInfo.middlename}. ${licenseeInfo.lastname}`)
+  // const nameWidth = doc.getTextWidth(`${licenseeInfo.firstname} ${!licenseeInfo.middlename ? '' : licenseeInfo.middlename}. ${licenseeInfo.lastname}`)
   // const addressWidth = doc.getTextWidth(`${licenseeInfo.address}`)
   const seriesWidth = doc.getTextWidth(`ARLTP-KK-${particulars.ARLTPSeries}`)
 
@@ -464,6 +464,228 @@ function printTemporary({ licenseeInfo, particulars }) {
   doc.output('dataurlnewwindow')
 
 }
+
+
+function printMonthlyPurchase({ purchase, date }) {
+  /*  eslint-disable  */
+  /*
+        licensee: `${licensee.firstname} ${!licensee.middlename ? null : licensee.middlename} ${licensee.lastname}`,
+        callsign: `${prefix}${licensee.callsign}`,
+        units: particulars.units,
+        purchaseNumber: particulars.purchaseNumber,
+        dateIssued: particulars.purchaseDateIssued,
+        remarks: particulars.intendedUse,
+  */
+  const today = new Date(Date.now())
+  const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' }
+  const monthlyDate = new Date(date)
+  const monthlyDateOption = { month: 'long', year: 'numeric' }
+
+  const tableHeaders = [['FULLNAME', 'CALLSIGN', 'UNITS', 'PURCHASE NO', 'DATE ISSUED', 'REMARKS']]
+
+  const doc = new JSPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "legal"
+
+  });
+
+  const center = doc.internal.pageSize.getWidth() / 2
+  const right = doc.internal.pageSize.getWidth() - 20
+  const bottom = doc.internal.pageSize.getHeight() - 20
+
+
+
+  doc.setFontSize(10)
+  doc.setFont('times', 'normal')
+  doc.text(today.toLocaleDateString(undefined, dateOptions), 20, 20)
+  doc.setFontSize(12)
+  doc.setFont('times', 'bold')
+  doc.text('MS. DIVINA N. DAQUIOAG', 20, 40)
+
+  doc.setFontSize(10)
+  doc.setFont('times', 'normal')
+  doc.text(`Chief Records Section.\nNational Telecommunications Commission\nQuezon City`, 20, 50)
+
+  doc.text(doc.splitTextToSize(`Dear Ms. Daquioag;\nForwarding herewith copies of PERMIT TO PURCHASE processed for the month of ${monthlyDate.toLocaleDateString(undefined, monthlyDateOption)} by this Regional Office, to wit :`, right - 20), 20, 70)
+
+  AutoTable(doc, {
+    head: tableHeaders,
+    body: purchase,
+    startY: 90,
+    theme: 'grid',
+    headStyles: { fillColor: [225, 225, 225], textColor: 'black', fontSize: 10 },
+    columnWidth: 10,
+    tableWidth: 190,
+    columnStyles: {
+      0: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 50, fontSize: 10 },
+      1: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 10 },
+      2: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 15, fontSize: 10 },
+      3: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 10 },
+      4: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 10 },
+      5: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 10 },
+    }
+  })
+
+  doc.text('Very truly yours,', 20, bottom - 20)
+  doc.setFontSize(12)
+  doc.setFont('times', 'bold')
+  doc.text('DR. NELSON T. CAÑETE, JD,', 20, bottom - 10)
+  doc.setFontSize(10)
+  doc.setFont('times', 'normal')
+  doc.text('Regional Director', 20, bottom - 5)
+
+
+  doc.autoPrint()
+  doc.output('dataurlnewwindow')
+}
+
+function printMonthlyPossess({ possess, date }) {
+  /*
+        licensee: `${licensee.firstname} ${!licensee.middlename ? null : licensee.middlename} ${licensee.lastname}`,
+        possessNumber: particulars.possessNo,
+        units: particulars.units,
+        dateIssued: particulars.ORDate,
+        remarks: particulars.remarks
+  */
+  const today = new Date(Date.now())
+  const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' }
+  const monthlyDate = new Date(date)
+  const monthlyDateOption = { month: 'long', year: 'numeric' }
+
+  const tableHeaders = [['FULLNAME', 'PURCHASE NO', 'UNITS', 'DATE ISSUED', 'REMARKS']]
+
+  const doc = new JSPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "legal"
+
+  });
+
+  const right = doc.internal.pageSize.getWidth() - 20
+  const bottom = doc.internal.pageSize.getHeight() - 20
+
+
+
+  doc.setFontSize(10)
+  doc.setFont('times', 'normal')
+  doc.text(today.toLocaleDateString(undefined, dateOptions), 20, 20)
+  doc.setFontSize(12)
+  doc.setFont('times', 'bold')
+  doc.text('MS. DIVINA N. DAQUIOAG', 20, 40)
+
+  doc.setFontSize(10)
+  doc.setFont('times', 'normal')
+  doc.text(`Chief Records Section.\nNational Telecommunications Commission\nQuezon City`, 20, 50)
+
+  doc.text(doc.splitTextToSize(`Dear Ms. Daquioag;\nForwarding herewith copies of PERMIT TO POSSESS processed for the month of ${monthlyDate.toLocaleDateString(undefined, monthlyDateOption)} by this Regional Office, to wit :`, right - 20), 20, 70)
+
+  AutoTable(doc, {
+    head: tableHeaders,
+    body: possess,
+    startY: 90,
+    theme: 'grid',
+    headStyles: { fillColor: [225, 225, 225], textColor: 'black', fontSize: 10 },
+    columnWidth: 10,
+    tableWidth: 190,
+    columnStyles: {
+      0: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 50, fontSize: 10 },
+      1: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 10 },
+      2: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 15, fontSize: 10 },
+      3: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 10 },
+      4: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 10 },
+      5: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 10 },
+    }
+  })
+
+  doc.text('Very truly yours,', 20, bottom - 20)
+  doc.setFontSize(12)
+  doc.setFont('times', 'bold')
+  doc.text('DR. NELSON T. CAÑETE, JD,', 20, bottom - 10)
+  doc.setFontSize(10)
+  doc.setFont('times', 'normal')
+  doc.text('Regional Director', 20, bottom - 5)
+
+
+  doc.autoPrint()
+  doc.output('dataurlnewwindow')
+}
+
+function printMonthlyParticulars({ particulars, date, summary }) {
+  /*
+        licensee: `${licensee.firstname} ${!licensee.middlename ? null : licensee.middlename} ${licensee.lastname}`,
+        ARSLNumber: particulars.ARLSeries === 'NONE' ? null : particulars.ARLSeries,
+        AROCNumber: particulars.AROCSeries,
+        formNumber: particulars.formNumber,
+        validity: particulars.dateValid,
+        remarks: particulars.transactionType,
+  */
+  const today = new Date(Date.now())
+  const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' }
+  const monthlyDate = new Date(date)
+  const monthlyDateOption = { month: 'long', year: 'numeric' }
+
+  const tableHeaders = [['LICENSEE', 'RSL NO', 'ROC NO', 'FORM NO', 'VALIDITY', 'REMARKS']]
+
+  const doc = new JSPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "legal"
+
+  });
+
+  const right = doc.internal.pageSize.getWidth() - 20
+  const bottom = doc.internal.pageSize.getHeight() - 20
+
+
+
+  doc.setFontSize(10)
+  doc.setFont('times', 'normal')
+  doc.text(today.toLocaleDateString(undefined, dateOptions), 20, 20)
+  doc.setFontSize(12)
+  doc.setFont('times', 'bold')
+  doc.text('MS. DIVINA N. DAQUIOAG', 20, 40)
+
+  doc.setFontSize(10)
+  doc.setFont('times', 'normal')
+  doc.text(`Chief Records Section.\nNational Telecommunications Commission\nQuezon City`, 20, 50)
+
+  doc.text(doc.splitTextToSize(`Dear Ms. Daquioag;\nForwarding herewith copies of AMATEUR LICENSES/CERTIFICATES processed for the month of ${monthlyDate.toLocaleDateString(undefined, monthlyDateOption)} by this Regional Office, to wit :`, right - 20), 20, 70)
+
+  AutoTable(doc, {
+    head: tableHeaders,
+    body: particulars,
+    startY: 90,
+    theme: 'striped',
+    headStyles: { fillColor: [225, 225, 225], textColor: 'black', fontSize: 8 },
+    columnWidth: 8,
+    tableWidth: 190,
+    columnStyles: {
+      0: { minCellHeight: 8, halign: 'center', overflow: 'linebreak', cellWidth: 50, fontSize: 8 },
+      1: { minCellHeight: 8, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 8 },
+      2: { minCellHeight: 8, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 8 },
+      3: { minCellHeight: 8, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 8 },
+      4: { minCellHeight: 8, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 8 },
+    }
+  })
+
+  //  summary roc, rsl, new, renewal, renmod, mod,
+
+  
+  doc.text('SUMMARY', 20, bottom-40)
+  doc.text(doc.splitTextToSize(`ROC Processed: ${summary.ROCLic}, ARSL Processed: ${summary.ARSLLic}, New Licenses: ${summary.newLic}, Renewal: ${summary.renewal}, RenMod: ${summary.renmod}, Modification: ${summary.mod}` , right-20), 20, bottom-30)
+  doc.text('Very truly yours,', 20, bottom - 20)
+  doc.setFontSize(12)
+  doc.setFont('times', 'bold')
+  doc.text('DR. NELSON T. CAÑETE, JD,', 20, bottom - 10)
+  doc.setFontSize(10)
+  doc.setFont('times', 'normal')
+  doc.text('Regional Director', 20, bottom - 5)
+
+
+  doc.autoPrint()
+  doc.output('dataurlnewwindow')
+}
 export {
-  printParticulars, printPurchase, printPossess, printTemporary
+  printParticulars, printPurchase, printPossess, printTemporary, printMonthlyPurchase, printMonthlyPossess, printMonthlyParticulars
 }

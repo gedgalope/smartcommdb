@@ -38,6 +38,8 @@ export default {
     emitClear(){
       this.$emit("cleared",true)
       this.updateSearchResults(null)
+      this.updateLicenseeID(null)
+      this.updateLicenseeInfo(null)
     },
     emitSelected() {
       if (this.searchName) {

@@ -10,6 +10,7 @@ import addNewCallsign from '~/components/Amateur/AmateurMisc/addNewCallsign.vue'
 import callSignTableVue from '~/components/Amateur/AmateurMisc/callSignTable.vue'
 import AmateurSeachBarVue from '~/components/Amateur/AmateurMisc/amateurSeachBar.vue'
 import amateurAccFormVue from '~/components/Amateur/AmateurMisc/amateurAccForm.vue'
+import monthlyReportVue from '~/components/Amateur/AmateurMisc/monthlyReport.vue' 
 
 export default {
   name: 'Amateur',
@@ -27,7 +28,8 @@ export default {
     'add-new-callsign': addNewCallsign,
     'call-sign-table': callSignTableVue,
     'amateur-search-bar': AmateurSeachBarVue,
-    'amateur-accountable-form':amateurAccFormVue
+    'amateur-accountable-form':amateurAccFormVue,
+    'monthly-report':monthlyReportVue
   },
   data() {
     return {

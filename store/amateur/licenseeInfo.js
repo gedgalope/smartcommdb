@@ -143,7 +143,9 @@ const actions = {
       if (!licenseeID) throw new Error('No Licensee ID')
       const dbReference = await database.ref(`amateur/particulars/${licenseeID}`).push(licenseParticulars)
       console.log(dbReference)
-      dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: licenseParticulars.transactionType }, { root: true })
+      await dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: licenseParticulars.transactionType }, { root: true })
+      await dispatch("amateur/monthlyReport/postParticularsMonthly", {licensee:state.licenseeInfo,particulars:licenseParticulars}, {root:true})
+      await dispatch("amateur/callSign/postFormSeries", licenseParticulars.formNumber, {root:true})
       return true
     } catch (error) {
       return error.message
@@ -160,7 +162,9 @@ const actions = {
       if (!licenseeID) throw new Error('No Licensee ID')
       const dbReference = await database.ref(`amateur/purchase/${licenseeID}`).push(purchaseParticulars)
       console.log(dbReference)
-      dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'purchase' }, { root: true })
+      await dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'purchase' }, { root: true })
+      await dispatch("amateur/monthlyReport/postPurchaseMonthly", {licensee:state.licenseeInfo,particulars:purchaseParticulars}, {root:true})
+
       return true
     } catch (error) {
       return error.message
@@ -178,6 +182,8 @@ const actions = {
       const dbReference = await database.ref(`amateur/possess/${licenseeID}`).push(possessParticulars)
       console.log(dbReference)
       dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'possess' }, { root: true })
+      await dispatch("amateur/monthlyReport/postPossessMonthly", {licensee:state.licenseeInfo,particulars:possessParticulars}, {root:true})
+
       return true
     } catch (error) {
       return error.message

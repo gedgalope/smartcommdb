@@ -17,7 +17,7 @@ export default {
       amateurPurchase: false,
       frequencyRange: [],
       units: null,
-      eqptType: [],
+      eqptType: ['PORTABLE'],
       intendedUse: null,
       purchaseDateIssued: null,
       purchaseNumber: null,

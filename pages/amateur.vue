@@ -39,7 +39,7 @@
                     </v-text-field>
                   </v-col>
                   <v-col cols="6">
-                    <v-text-field disabled outlined label="Previous issued ROC Series" :value="previousATSeries.AROC"
+                    <v-text-field disabled outlined label="Previous issued RSL Series" :value="previousATSeries.ARSL"
                       dense hide-details>
                     </v-text-field>
                   </v-col>
@@ -65,7 +65,10 @@
           @cleared="clearSearch = $event" @resetHistory = "resetHistory = $event"></amateur-possess>
         <amateur-temporary v-else-if="showForm == 'temporary'" :transactionType="transactionType"
           :resetForm="clearSearch" @cleared="clearSearch = $event" @resetHistory = "resetHistory = $event"></amateur-temporary>
-        <add-new-callsign v-else></add-new-callsign>
+        <span v-else>
+          <monthly-report></monthly-report>
+          <add-new-callsign ></add-new-callsign>          
+        </span>
       </v-col>
     </v-row>
     <v-row>

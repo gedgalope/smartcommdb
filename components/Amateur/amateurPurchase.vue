@@ -16,6 +16,7 @@
               <v-radio-group v-model="eqptType" multiple :rules="[dataRequired]" dense row>
                 <v-checkbox label="Base" v-model="eqptType" value="BASE" dense></v-checkbox>
                 <v-checkbox label="Portable" v-model="eqptType" value="PORTABLE" dense></v-checkbox>
+                <v-checkbox label="Land Mobile" v-model="eqptType" value="LAND MOBILE" dense></v-checkbox>
               </v-radio-group>
             </v-row>
           </v-col>
