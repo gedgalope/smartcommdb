@@ -1,5 +1,5 @@
 import { mapGetters, mapActions } from 'vuex'
-import { printParticulars, printPurchase, printPossess, printTemporary } from '../AmateurPrint/amateurPrint'
+import { printParticulars, printPurchase, printPossess, printTemporary, printSellTransfer } from '../AmateurPrint/amateurPrint'
 
 export default {
   data() {
@@ -24,7 +24,8 @@ export default {
   computed: {
     ...mapGetters({
       licenseeInfo: 'amateur/licenseeInfo/getLicenseeInfo',
-      ATSeries: 'amateur/licenseeInfo/getSeries'
+      ATSeries: 'amateur/licenseeInfo/getSeries',
+      transactionDetails: 'amateur/licenseeInfo/getTransactionDetails'
     })
   },
   methods: {
@@ -33,6 +34,7 @@ export default {
       postPurchase: 'amateur/licenseeInfo/postLicenseePurchase',
       postPossess: 'amateur/licenseeInfo/postLicenseePossess',
       postTemporary: 'amateur/licenseeInfo/postLicenseTemporary',
+      postSellTransfer:'amateur/licenseeInfo/postLicenseeSellTransfer',
       updateData: 'amateur/licenseeInfo/updateData',
       removeData: 'amateur/licenseeInfo/removeData',
       updateATSeries: 'amateur/licenseeInfo/updateSeries'
@@ -47,17 +49,21 @@ export default {
     },
 
     async saveRecord() {
-      let dbResponse
+      let dbResponse = null
       const particulars = ['renewal', 'renmod', 'duplicate', 'modification', 'new']
       if (particulars.includes(this.transactionType)) {
         if (this.transactionType === 'new') {
           await this.updateATSeries({ aroc: this.data.AROCSeries, arsl: this.data.ARLSeries })
+        }
+        if ((this.transactionDetails.ARLSeries === 'none' || this.transactionDetails.ARLSeries === 'NONE') && (this.data.ARLSeries !== 'none' || this.data.ARLSeries !== 'NONE')) {
+          await this.updateATSeries({ aroc: this.ATSeries.AROC, arsl: this.data.ARLSeries })
         }
         dbResponse = await this.postParticulars(this.data)
       }
       else if (this.transactionType === 'possess') dbResponse = await this.postPossess(this.data)
       else if (this.transactionType === 'purchase') dbResponse = await this.postPurchase(this.data)
       else if (this.transactionType === 'temporary') dbResponse = await this.postTemporary(this.data)
+      else if(this.transactionType === 'sell-transfer') dbResponse = await this.postSellTransfer(this.data)
 
       if (dbResponse === true) this.$emit('showAlert', 'Success')
       else this.$emit('showAlert', dbResponse)
@@ -68,7 +74,7 @@ export default {
 
       if (dbResponse === true) {
         this.$emit('showAlert', 'Success')
-        this.$emit('resetForm',true)
+        this.$emit('resetForm', true)
       }
       else this.$emit('showAlert', dbResponse)
       this.showWarning = false
@@ -80,6 +86,7 @@ export default {
       else if (this.transactionType === 'possess') printPossess({ licenseeInfo: this.licenseeInfo, particulars: this.data });
       else if (this.transactionType === 'purchase') printPurchase({ licenseeInfo: this.licenseeInfo, particulars: this.data });
       else if (this.transactionType === 'temporary') printTemporary({ licenseeInfo: this.licenseeInfo, particulars: this.data });
+      else if (this.transactionType === 'sell-transfer') printSellTransfer({ licenseeInfo: this.licenseeInfo, particulars: this.data });
 
     }
 

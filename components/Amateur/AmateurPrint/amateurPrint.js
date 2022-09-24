@@ -465,9 +465,111 @@ function printTemporary({ licenseeInfo, particulars }) {
 
 }
 
+function printSellTransfer({ licenseeInfo, particulars }) {
+
+  /*
+        this.buyersName = value.buyersName
+        this.buyersAddress = value.buyersAddress
+        this.equipment = value.equipment
+        this.sellTransferNumber = value.sellTransferNumber
+        this.purchaseNumber = value.purchaseNumber
+        this.units = value.units
+        this.range = value.range
+        this.power = value.power
+        this.ORNumber = value.ORNumber
+        this.ORDate = value.ORDate
+        this.ORAmount = value.ORAmount
+
+  */
+
+  const doc = new JSPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "legal"
+  });
+
+  const center = doc.internal.pageSize.getWidth() / 2
+  const right = doc.internal.pageSize.getWidth() - 20
+
+  const today = Date.now()
+  const dateProcessed = new Date(today).toDateString().substring(4)
+  const seriesEnd = new Date(today).toISOString().substring(2, 4)
+  const sellTransferBody = `THIS IS TO CERTIFY THAT ${licenseeInfo.firstname} ${!licenseeInfo.middlename ? '' : licenseeInfo.middlename} ${licenseeInfo.lastname} with postal address at ${licenseeInfo.address} is granted this PERMIT TO SELL/TRANSFER with the following transmitter/transceiver (s) described below to:`
+
+  const notes = `1. The above described equipment shall not be installed, operated, sold or transferred without prior authority from the\nNATIONAL TELECOMMUNICATIONS COMMISSION.\n2. Any person/corp. who shall installed and/or operated said equipment without prior authorization from the NATIONAL TELECOMMUNICATIONS\n COMMISSION shall subject to the penal provisions Act 3846, as amended, by a fine of not more than PHP 5,000.00\n5. Permit Paid under OR number: ${particulars.ORNumber} dated: ${particulars.ORDate} amounting to: ${particulars.ORAmount}  `
+
+  doc.setFontSize(12)
+  doc.text(`Permit Number : STR-KK-${particulars.purchaseNumber}-${seriesEnd}`, 20, 50,)
+  doc.setFontSize(12)
+  doc.text(`Date: ${dateProcessed}`, right, 50, 'right')
+
+  doc.setFontSize(16)
+  doc.setFont('times', 'bold')
+  doc.text('PERMIT TO SELL/TRANSFER\nRADIO TRANSMITTER/TRANSCEIVER(S)', center, 70, 'center')
+  doc.setFont('times', 'normal')
+  doc.setFontSize(12)
+  doc.text(doc.splitTextToSize(sellTransferBody, 180), 20, 90)
+
+  doc.setFontSize(12)
+  doc.text(20, 110, `BUYER'S NAME`);
+  doc.setFontSize(12)
+  const buyersName = doc.splitTextToSize(`: ${particulars.buyersName}`, 90)
+  doc.text(center, 110, buyersName);
+
+  doc.setFontSize(12)
+  doc.text(20, 120, `BUYER'S ADDRESS`);
+  doc.setFontSize(12)
+  const buyersAddress = doc.splitTextToSize(`: ${particulars.buyersAddress}`, 90)
+  doc.text(center, 120, buyersAddress);
+
+  doc.setFontSize(12)
+  doc.text(20, 135, `PURCHASE NUMBER`);
+  doc.setFontSize(12)
+  doc.text(center, 135, `: PUR-KK-${particulars.purchaseNumber}`);
+
+  doc.setFontSize(12)
+  doc.text(20, 145, `NUMBER OF UNITS`)
+  doc.setFontSize(12)
+  doc.text(center, 145, `: (${converter.toWords(particulars.units)}) ${particulars.units}`)
+
+  doc.setFontSize(12)
+  doc.text(20, 155, `EQUIPMENT`);
+  doc.setFontSize(12)
+  doc.text(center, 155, doc.splitTextToSize(`: ${particulars.equipment}`, 90));
+
+  doc.setFontSize(12)
+  doc.text(20, 190, `FREQUENCY RANGE`)
+  doc.setFontSize(12)
+  doc.text(center, 190, doc.splitTextToSize(`: AMATEUR FREQUENCY BANDS (${particulars.range}MHz)`, 90))
+
+  doc.setFontSize(12)
+  doc.text(20, 195, `POWER`)
+  doc.setFontSize(12)
+  doc.text(center, 195, `: ${particulars.power} watts`)
+
+
+  doc.setFontSize(12)
+  doc.text('FOR THE COMMMISSION:', right, 210, 'right')
+
+  doc.setFontSize(12)
+  doc.setFont('times', 'bold')
+  doc.text('DR. NELSON T CAÑETE, JD', right, 220, 'right');
+  doc.setFont('times', 'normal')
+  doc.setFontSize(12)
+  doc.text('Regional Director', right - 22, 225, 'right');
+
+  doc.setFontSize(12)
+  doc.text(20, 270, 'IMPORTANT NOTES')
+  doc.setFontSize(8)
+  doc.text(notes, 20, 275)
+
+
+  // doc.save(`Permit to Purchase (${licenseeInfo.lastname})`);
+  doc.autoPrint()
+  doc.output('dataurlnewwindow')
+}
 
 function printMonthlyPurchase({ purchase, date }) {
-  /*  eslint-disable  */
   /*
         licensee: `${licensee.firstname} ${!licensee.middlename ? null : licensee.middlename} ${licensee.lastname}`,
         callsign: `${prefix}${licensee.callsign}`,
@@ -490,7 +592,7 @@ function printMonthlyPurchase({ purchase, date }) {
 
   });
 
-  const center = doc.internal.pageSize.getWidth() / 2
+  // const center = doc.internal.pageSize.getWidth() / 2
   const right = doc.internal.pageSize.getWidth() - 20
   const bottom = doc.internal.pageSize.getHeight() - 20
 
@@ -671,9 +773,84 @@ function printMonthlyParticulars({ particulars, date, summary }) {
 
   //  summary roc, rsl, new, renewal, renmod, mod,
 
-  
-  doc.text('SUMMARY', 20, bottom-40)
-  doc.text(doc.splitTextToSize(`ROC Processed: ${summary.ROCLic}, ARSL Processed: ${summary.ARSLLic}, New Licenses: ${summary.newLic}, Renewal: ${summary.renewal}, RenMod: ${summary.renmod}, Modification: ${summary.mod}` , right-20), 20, bottom-30)
+
+  doc.text('SUMMARY', 20, bottom - 40)
+  doc.text(doc.splitTextToSize(`ROC Processed: ${summary.ROCLic}, ARSL Processed: ${summary.ARSLLic}, New Licenses: ${summary.newLic}, Renewal: ${summary.renewal}, RenMod: ${summary.renmod}, Modification: ${summary.mod}`, right - 20), 20, bottom - 30)
+  doc.text('Very truly yours,', 20, bottom - 20)
+  doc.setFontSize(12)
+  doc.setFont('times', 'bold')
+  doc.text('DR. NELSON T. CAÑETE, JD,', 20, bottom - 10)
+  doc.setFontSize(10)
+  doc.setFont('times', 'normal')
+  doc.text('Regional Director', 20, bottom - 5)
+
+
+  doc.autoPrint()
+  doc.output('dataurlnewwindow')
+}
+
+function printMonthlySellTransfer({ sellTransfer, date }) {
+  /*
+        licensee: `${licensee.firstname} ${!licensee.middlename ? '' : licensee.middlename} ${licensee.lastname}`,
+        units: particulars.units,
+        sellTransferNumber: particulars.sellTransferNumber,
+        purchaseNumber: particulars.purchaseNumber,
+        dateIssued: particulars.purchaseDateIssued,
+
+      return [elem.licensee,`STR-KK-${elem.sellTransferNumber}-${permitYear}`, `PUR-KK-${elem.purchaseNumber}`,elem.units,elem.dateIssued]
+
+  */
+  const today = new Date(Date.now())
+  const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' }
+  const monthlyDate = new Date(date)
+  const monthlyDateOption = { month: 'long', year: 'numeric' }
+
+  const tableHeaders = [['FULLNAME', 'SELL TRANSFER NO.', 'PURCHASE NO.', 'UNITS', 'DATE ISSUED']]
+
+  const doc = new JSPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "legal"
+
+  });
+
+  // const center = doc.internal.pageSize.getWidth() / 2
+  const right = doc.internal.pageSize.getWidth() - 20
+  const bottom = doc.internal.pageSize.getHeight() - 20
+
+
+
+  doc.setFontSize(10)
+  doc.setFont('times', 'normal')
+  doc.text(today.toLocaleDateString(undefined, dateOptions), 20, 20)
+  doc.setFontSize(12)
+  doc.setFont('times', 'bold')
+  doc.text('MS. DIVINA N. DAQUIOAG', 20, 40)
+
+  doc.setFontSize(10)
+  doc.setFont('times', 'normal')
+  doc.text(`Chief Records Section.\nNational Telecommunications Commission\nQuezon City`, 20, 50)
+
+  doc.text(doc.splitTextToSize(`Dear Ms. Daquioag;\nForwarding herewith copies of PERMIT TO SELL TRANSFER processed for the month of ${monthlyDate.toLocaleDateString(undefined, monthlyDateOption)} by this Regional Office, to wit :`, right - 20), 20, 70)
+
+  AutoTable(doc, {
+    head: tableHeaders,
+    body: sellTransfer,
+    startY: 90,
+    theme: 'grid',
+    headStyles: { fillColor: [225, 225, 225], textColor: 'black', fontSize: 10 },
+    columnWidth: 10,
+    tableWidth: 190,
+    columnStyles: {
+      0: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 50, fontSize: 10 },
+      1: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 10 },
+      2: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 10 },
+      3: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 15, fontSize: 10 },
+      4: { minCellHeight: 10, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 10 },
+
+    }
+  })
+
   doc.text('Very truly yours,', 20, bottom - 20)
   doc.setFontSize(12)
   doc.setFont('times', 'bold')
@@ -687,5 +864,5 @@ function printMonthlyParticulars({ particulars, date, summary }) {
   doc.output('dataurlnewwindow')
 }
 export {
-  printParticulars, printPurchase, printPossess, printTemporary, printMonthlyPurchase, printMonthlyPossess, printMonthlyParticulars
+  printParticulars, printPurchase, printPossess, printTemporary, printMonthlyPurchase, printMonthlyPossess, printMonthlyParticulars, printSellTransfer, printMonthlySellTransfer
 }

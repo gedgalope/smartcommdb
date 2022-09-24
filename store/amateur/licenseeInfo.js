@@ -171,6 +171,25 @@ const actions = {
     }
 
   },
+  async postLicenseeSellTransfer({ dispatch, state }, particulars) {
+
+    try {
+      if (!particulars) throw new Error('Empty Object')
+
+      const licenseeID = state.licenseeID
+      if (!licenseeID) throw new Error('No Licensee ID')
+      const dbReference = await database.ref(`amateur/sell-transfer/${licenseeID}`).push(particulars)
+      console.log(dbReference)
+      await dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'sell-transfer' }, { root: true })
+      await dispatch("amateur/monthlyReport/postSellTransferMonthly", {licensee:state.licenseeInfo,particulars}, {root:true})
+
+      return true
+    } catch (error) {
+      console.log(error.message)
+      return error.message
+    }
+
+  },
 
   async postLicenseePossess({ dispatch, state }, possessParticulars) {
 

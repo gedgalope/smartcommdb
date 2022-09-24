@@ -82,16 +82,15 @@ export default {
     transactionItems() {
       //  apply this code to transaction items when search bar is added
       const newLicensee = ['new', 'purchase', 'temporary']
-      const existingLicensee = ['renewal', 'renmod', 'duplicate', 'modification', 'purchase', 'possess', 'temporary', 'new']
+      const existingLicensee = ['renewal', 'renmod', 'duplicate', 'modification', 'purchase', 'possess', 'temporary', 'new', 'sell-transfer']
       if (!this.searchResult) return newLicensee
       else return existingLicensee
     },
     historyByTransactionType() {
       const type = this.transactionType
-      if (type === 'purchase') return type
-      if (type === 'possess') return type
-      if (type === 'temporary') return type
-      else return 'particulars'
+      const particulars = ['renewal', 'renmod', 'duplicate', 'modification','new']
+      if(particulars.includes(type)) return 'particulars'
+      else return type
     },
     disableUpdateDelete() {
       if (this.licenseeFormComplete && this.licenseeID) return false

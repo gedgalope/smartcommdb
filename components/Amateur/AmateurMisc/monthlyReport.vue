@@ -1,7 +1,7 @@
 <template>
   <v-container grid-list-xs>
     <v-row justify="center">
-      <v-dialog v-model="monthlyReport" persistent :overlay="false" max-width="50%" transition="dialog-transition">
+      <v-dialog v-model="monthlyReport" persistent :overlay="false" max-width="80%" transition="dialog-transition">
         <template v-slot:activator="{on,attrs}">
           <v-col cols="12">
             <v-btn v-on="on" v-bind="attrs" block dense outlined color="primary">Monthly Report</v-btn>
@@ -17,6 +17,7 @@
                       <v-radio label="Monthly Licenses" value="particulars"></v-radio>
                       <v-radio label="Monthly Purchases" value="purchase"></v-radio>
                       <v-radio label="Monthly Possess" value="possess"></v-radio>
+                      <v-radio label="Monthly Sell Transfer" value="sell-transfer"></v-radio>
                     </v-radio-group>
                   </v-col>
                   {{monthlyType}}

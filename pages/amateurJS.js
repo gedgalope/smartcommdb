@@ -11,6 +11,7 @@ import callSignTableVue from '~/components/Amateur/AmateurMisc/callSignTable.vue
 import AmateurSeachBarVue from '~/components/Amateur/AmateurMisc/amateurSeachBar.vue'
 import amateurAccFormVue from '~/components/Amateur/AmateurMisc/amateurAccForm.vue'
 import monthlyReportVue from '~/components/Amateur/AmateurMisc/monthlyReport.vue' 
+import amateurSellTransfer from '~/components/Amateur/amateurSellTransfer.vue'
 
 export default {
   name: 'Amateur',
@@ -29,7 +30,8 @@ export default {
     'call-sign-table': callSignTableVue,
     'amateur-search-bar': AmateurSeachBarVue,
     'amateur-accountable-form':amateurAccFormVue,
-    'monthly-report':monthlyReportVue
+    'monthly-report':monthlyReportVue,
+    'amateur-sell-transfer':amateurSellTransfer
   },
   data() {
     return {

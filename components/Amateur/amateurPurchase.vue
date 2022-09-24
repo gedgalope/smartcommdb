@@ -6,11 +6,11 @@
         <v-row dense>
           <v-col cols="6">
             <v-row>
-              <!-- <v-radio-group v-model="frequencyRange" multiple :rules="[dataRequired]" dense row> -->
+              <v-radio-group v-model="frequencyRange" multiple :rules="[dataRequired]" dense row>
               <v-checkbox label="VHF" v-model="frequencyRange" value="VHF" dense></v-checkbox>
               <v-checkbox label="HF" v-model="frequencyRange" value="HF" dense></v-checkbox>
               <v-checkbox label="UHF" v-model="frequencyRange" value="UHF" dense></v-checkbox>
-              <!-- </v-radio-group> -->
+              </v-radio-group>
             </v-row>
             <v-row>
               <v-radio-group v-model="eqptType" multiple :rules="[dataRequired]" dense row>

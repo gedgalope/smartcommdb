@@ -1,5 +1,5 @@
 
-import { printMonthlyPurchase, printMonthlyPossess, printMonthlyParticulars } from '@/components/Amateur/AmateurPrint/amateurPrint'
+import { printMonthlyPurchase, printMonthlyPossess, printMonthlyParticulars, printMonthlySellTransfer } from '@/components/Amateur/AmateurPrint/amateurPrint'
 import { mapGetters, mapActions } from 'vuex'
 
 const today = new Date(Date.now())
@@ -21,6 +21,7 @@ export default {
       getPurchaseMonthly: 'amateur/monthlyReport/getPurchaseMonthly',
       getPossessMonthly: 'amateur/monthlyReport/getPossessMonthly',
       getParticularsMonthly: 'amateur/monthlyReport/getParticularsMonthly',
+      getSellTransferMonthly:'amateur/monthlyReport/getSellTransferMonthly',
       particularsProcessed: 'amateur/monthlyReport/countROCProcessed'
 
     })
@@ -36,6 +37,7 @@ export default {
       if (this.monthlyType === 'particulars') printMonthlyParticulars({ particulars: this.getParticularsMonthly, date: dateRequested, summary:this.particularsProcessed })
       else if (this.monthlyType === 'purchase') printMonthlyPurchase({ purchase: this.getPurchaseMonthly, date: dateRequested })
       else if (this.monthlyType === 'possess') printMonthlyPossess({ possess: this.getPossessMonthly, date: dateRequested })
+      else if (this.monthlyType === 'sell-transfer') printMonthlySellTransfer({sellTransfer: this.getSellTransferMonthly, date: dateRequested})
       // get data from database
     },
     closeMonthlyDialog() {

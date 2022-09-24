@@ -31,6 +31,11 @@ const getters = {
         return { value: historyObject.transactionID, text: `${transaction} --- ${historyObject.dateIssued}`, disabled: false }
       })
     }
+    else if(transaction === 'sell-transfer'){
+      return transactionHistory.map(historyObject => {
+        return { value: historyObject.transactionID, text: `${transaction} --- ${historyObject.ORDate}`, disabled: false }
+      })
+    }
 
 
   }
