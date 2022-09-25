@@ -88,8 +88,8 @@ export default {
     },
     historyByTransactionType() {
       const type = this.transactionType
-      const particulars = ['renewal', 'renmod', 'duplicate', 'modification','new']
-      if(particulars.includes(type)) return 'particulars'
+      const particulars = ['renewal', 'renmod', 'duplicate', 'modification', 'new']
+      if (particulars.includes(type)) return 'particulars'
       else return type
     },
     disableUpdateDelete() {
@@ -116,45 +116,15 @@ export default {
         address: this.address.toUpperCase(),
         searchIndex: `${this.lastname}, ${this.firstname} /${this.callsign ? this.callsign.toUpperCase() : 'none'}`
       }
-      if (!this.callsign) {
-        const dbResponse = await this.postLicenseeInfo(licenseeData)
-        if (dbResponse === true) {
-          this.showAlert = true
-          this.alertText = "Success, posted licensee"
-        } else {
-          this.showAlert = true
-          this.alertText = dbResponse
-        }
+
+      const dbResponse = await this.postLicenseeInfo(licenseeData)
+      if (dbResponse === true) {
+        this.showAlert = true
+        this.alertText = "Success, posted licensee"
       } else {
-        const currentDate = new Date(Date.now())
-        const dateNow = currentDate.getMonth() + "/" + currentDate.getDate() + "/" + currentDate.getYear()
-        const callsignInfo = {
-          callsign: this.callsign.toUpperCase(),
-          dateIssued: dateNow,
-          oldOwner: this.oldOwner,
-          newOwner: this.firstname.concat(' ', this.lastname),
-          used: true,
-          update: this.transactionType.includes('mod')
-        }
-
-        const callsignResponse = await this.updateCallsignInfo(callsignInfo)
-        if (callsignResponse === true) {
-          this.showAlert = true
-          this.alertText = "Success, posted callsign"
-          const dbResponse = await this.postLicenseeInfo(licenseeData)
-          if (dbResponse === true) {
-            this.showAlert = true
-            this.alertText = "Success, posted licensee"
-          } else {
-            this.showAlert = true
-            this.alertText = dbResponse
-          }
-        } else {
-          this.showAlert = true
-          this.alertText = callsignResponse
-        }
+        this.showAlert = true
+        this.alertText = dbResponse
       }
-
     },
     populateHistory() {
       this.$emit('transactionType', this.transactionType)

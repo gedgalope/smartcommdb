@@ -50,7 +50,7 @@
               </v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="formNumber" :rules='[dataRequired]' dense outlined append-icon="mdi-update"
+              <v-text-field v-model="formNumber" :rules='[dataRequired]' readonly dense outlined append-icon="mdi-update"
                 @click:append="updateFormNumber()" label="Form No">
               </v-text-field>
             </v-col>

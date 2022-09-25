@@ -27,20 +27,20 @@
               <v-card-text>
                 <v-row>
                   <v-col cols="6">
-                    <v-text-field disabled outlined label="Next ROC Series" :value="ATSeries.AROC" dense hide-details>
+                    <v-text-field readonly outlined label="Next ROC Series" :value="ATSeries.AROC" dense hide-details>
                     </v-text-field>
                   </v-col>
                   <v-col cols="6">
-                    <v-text-field disabled outlined label="Next RSL Series" :value="ATSeries.ARSL" dense hide-details>
+                    <v-text-field readonly outlined label="Issued ROC Series" :value="previousATSeries.AROC" dense hide-details>
                     </v-text-field>
                   </v-col>
                   <v-col cols="6">
-                    <v-text-field disabled outlined label="Previous issued ROC Series" :value="previousATSeries.AROC"
+                    <v-text-field readonly outlined label="Next RSL Series" :value="ATSeries.ARSL"
                       dense hide-details>
                     </v-text-field>
                   </v-col>
                   <v-col cols="6">
-                    <v-text-field disabled outlined label="Previous issued RSL Series" :value="previousATSeries.ARSL"
+                    <v-text-field readonly outlined label="Issued RSL Series" :value="previousATSeries.ARSL"
                       dense hide-details>
                     </v-text-field>
                   </v-col>

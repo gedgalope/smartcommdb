@@ -11,11 +11,11 @@
       <v-card-text>
         <v-row>
           <v-col cols="6">
-            <v-text-field disabled outlined label="For Issuance AT Form" :value="forIssuance" dense hide-details>
+            <v-text-field readonly outlined label="AT Form For Issuance " :value="forIssuance" dense hide-details>
             </v-text-field>
           </v-col>
           <v-col cols="6">
-            <v-text-field disabled outlined label="Issue" :value="issued" dense hide-details>
+            <v-text-field readonly outlined label="AT Form Currently Issued" :value="issued" dense hide-details>
             </v-text-field>
           </v-col>
         </v-row>

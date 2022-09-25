@@ -763,7 +763,7 @@ function printMonthlyParticulars({ particulars, date, summary }) {
     columnWidth: 8,
     tableWidth: 190,
     columnStyles: {
-      0: { minCellHeight: 8, halign: 'center', overflow: 'linebreak', cellWidth: 50, fontSize: 8 },
+      0: { minCellHeight: 8, halign: 'left', overflow: 'linebreak', cellWidth: 50, fontSize: 8 },
       1: { minCellHeight: 8, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 8 },
       2: { minCellHeight: 8, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 8 },
       3: { minCellHeight: 8, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 8 },

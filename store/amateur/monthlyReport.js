@@ -37,7 +37,7 @@ const getters = {
     const possess = state.monthlyReport
     if (!possess) return null
     const formatted = Object.entries(possess).map(([keys, elem]) => {
-      return [elem.licensee, `${formatARSLNumber({ licenseeClass: elem.licenseeClass, ARSL: elem.ARSLNumber })}`, `AROC-AT${elem.licenseeClass}-KK-${elem.AROCNumber}`, elem.formNumber, elem.dateValid, elem.remarks]
+      return [elem.licensee, `${formatARSLNumber({ licenseeClass: elem.licenseeClass, ARSL: elem.ARSLNumber })}`, `AROC-AT${elem.licenseeClass}-KK-${elem.AROCNumber}`, elem.formNumber, elem.validity, elem.remarks]
     })
     console.log(formatted)
     return formatted
@@ -54,14 +54,13 @@ const getters = {
   },
   countROCProcessed(state) {
     const processedLic = state.monthlyReport
-    const transactionType = Object.entries(processedLic).map(([keys, elem]) => elem.transactionType)
+    const transactionType = Object.entries(processedLic).map(([keys, elem]) => elem.remarks)
     const ROC = Object.entries(processedLic).map(([keys, elem]) => elem.AROCNumber)
     const ARSL = Object.entries(processedLic).map(([keys, elem]) => elem.ARSLNumber).filter(elem => elem !== 'none')
     const newLicensee = transactionType.filter(elem => elem === 'new')
     const renewalLic = transactionType.filter(elem => elem === 'renewal')
     const modLic = transactionType.filter(elem => elem === 'modification')
     const renmodLic = transactionType.filter(elem => elem === 'renmod')
-
     return { ROCLic: ROC.length, ARSLLic: !ARSL ? 0 : ARSL.length, newLic: !newLicensee ? 0 : newLicensee.length, renewal: !renewalLic ? 0 : renewalLic.length, mod: !modLic ? 0 : modLic.length, renmod: !renmodLic ? 0 : renmodLic.length }
   }
 

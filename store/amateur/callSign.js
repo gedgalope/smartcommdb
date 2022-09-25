@@ -183,7 +183,8 @@ const actions = {
         newOwner: callsignInfo.newOwner,
         used: callsignInfo.used,
       }
-      if (callsignInfo.update) {
+      if (callsignInfo.update) { 
+        // not in for issuance directly post to issued
         await database.ref(`amateur/callSign/issued/${callsignInfo.callsign.toUpperCase()}`).set(callsignDataForPost)
         return true
       }
@@ -195,14 +196,17 @@ const actions = {
         .then(snapshot => {
           return snapshot.val()
         })
+        //  checks if callsign has been issued by posting directly to particulars
       if (checkLicenseeForObject) throw new Error('Callsign has been issued!')
+
       const checkIssuedForObject = await database
         .ref(`amateur/callSign/issued/${callsignInfo.callsign.toUpperCase()}`)
         .once("value")
         .then(snapshot => {
           return snapshot.val()
         })
-      if (checkIssuedForObject) throw new Error('Callsign hase been issued, please modify and update licensee data first!')
+        // checks if callsign has been issued through the issued callsign data
+      if (checkIssuedForObject) throw new Error('Callsign has been issued, please modify and update licensee data first!')
 
       const checkForIssuanceForObject = await database
         .ref(`amateur/callSign/forIssuance/${callsignInfo.callsign.toUpperCase()}`)
@@ -229,7 +233,7 @@ const actions = {
   async updateCallsignInfo({ commit }, callsignInfo) { // this if for saving new client with callsign
     try {
       if (!callsignInfo) throw new Error('No blank data!')
-      if (callsignInfo.callsign.length !== 3) throw new Error('Not a callsign series!')
+      if (callsignInfo.callsign.length > 3) throw new Error('Not a callsign series!')
       const callsignDataForPost = {
         dateIssued: callsignInfo.dateIssued ? callsignInfo.dateIssued : null,
         oldOwner: callsignInfo.oldOwner ? callsignInfo.oldOwner : null,
@@ -252,6 +256,16 @@ const actions = {
 
       if (callsignInfo.used) {
         await database.ref(`amateur/callSign/issued/${callsignInfo.callsign.toUpperCase()}`).set(callsignDataForPost)
+        const checkCallsignInForIssuance = await database
+        .ref(`amateur/callSign/forIssuance/${callsignInfo.callsign.toUpperCase()}`)
+        .once("value")
+        .then(snapshot => {
+          return snapshot.val()
+        })
+        if(checkCallsignInForIssuance){
+          await database.ref(`amateur/callSign/forIssuance/${callsignInfo.callsign.toUpperCase()}`)
+          .remove()
+        }
         return true
       } else {
         await database.ref(`amateur/callSign/forIssuance/${callsignInfo.callsign.toUpperCase()}`).set(callsignDataForPost)
@@ -263,13 +277,13 @@ const actions = {
       return error.message
     }
   },
-  async postFormSeries({ commit }, seriesNumber) {
+  async postFormSeries({ dispatch }, seriesNumber) {
     try {
       if (!seriesNumber) throw new Error('No series number!')
 
-      const dbReference = await database.ref(`amateur/formNumber`)
+      await database.ref(`amateur/formNumber`)
         .set(seriesNumber)
-      commit('UPDATE_FORM_SERIES', dbReference)
+      await dispatch("getFormSeries")
       return true
     } catch (error) {
       return error.message
