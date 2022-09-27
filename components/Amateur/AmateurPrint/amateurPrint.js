@@ -52,7 +52,7 @@ function printParticulars({ licenseeInfo, particulars }) {
   // const right = doc.internal.pageSize.getWidth() - 20
   if (particulars.ARLSeries === 'none' || particulars.ARLSeries === 'NONE') {
     doc.setLineWidth(8)
-    doc.line(140, 70, 200, 70)
+    doc.line(126, 70, 165, 70)
     doc.setLineWidth(1)
   }
 
