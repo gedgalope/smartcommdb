@@ -78,15 +78,16 @@ const actions = {
           used: true
         }
         await dispatch("amateur/callSign/updateCallsignInfo", callsignData, { root: true })
-        await dispatch("amateur/callSign/getUnusedCallSign", { root: true })
-        return true
+        await dispatch("amateur/callSign/getUnusedCallSign", undefined,{ root: true })
       }
-      const dbReference = await database.ref('amateur/licensee/').push(licenseeInfo)
+      const dbReference = await database.ref('amateur/licensee').push(licenseeInfo)
       commit('UPDATE_LICENSEE_ID', dbReference.key)
       commit('UPDATE_LICENSEE_INFO', licenseeInfo)
+      console.log(dbReference)
       return true
     } catch (error) {
-      return error
+      console.log(error.message)
+      return error.message
     }
 
   },
