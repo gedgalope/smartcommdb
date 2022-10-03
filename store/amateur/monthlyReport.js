@@ -228,6 +228,7 @@ const actions = {
 
 }
 function formatARSLNumber({ licenseeClass, ARSL }) {
+  if(!ARSL) return ''
   if (ARSL.toUpperCase() === 'NONE') return ''
   else return `ARSL-KK-AT${licenseeClass}-${ARSL}`
 }

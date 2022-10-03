@@ -150,16 +150,24 @@ const actions = {
     }
   },
 
-  async postLicenseParticulars({ dispatch, state }, licenseParticulars) {
+  async postLicenseParticulars({ dispatch, state, getters }, licenseParticulars) {
     try {
       if (!licenseParticulars) throw new Error('No License Information')
       const licenseeID = state.licenseeID
       if (!licenseeID) throw new Error('No Licensee ID')
       const dbReference = await database.ref(`amateur/particulars/${licenseeID}`).push(licenseParticulars)
+      const { ARSL } = getters.getSeries
       console.log(dbReference)
       await dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: licenseParticulars.transactionType }, { root: true })
       await dispatch("amateur/monthlyReport/postParticularsMonthly", { ID: licenseeID, licensee: state.licenseeInfo, particulars: licenseParticulars }, { root: true })
       await dispatch("amateur/callSign/postFormSeries", licenseParticulars.formNumber, { root: true })
+      if (licenseParticulars.transactionType === 'new') {
+        await dispatch('updateSeries', { arsl: licenseParticulars.ARLSeries.includes('-') ? licenseParticulars.ARLSeries : ARSL, aroc: licenseParticulars.AROCSeries })
+      } else if (licenseParticulars.transactionType === 'renmod' || licenseParticulars.transactionType === 'modification') {
+        if (licenseParticulars.ARLSeries === ARSL) {
+          await dispatch('updateSeries', { arsl: licenseParticulars.ARLSeries.includes('-') ? licenseParticulars.ARLSeries : ARSL, aroc: licenseParticulars.AROCSeries })
+        }
+      }
       return true
     } catch (error) {
       return error.message
@@ -330,12 +338,12 @@ const actions = {
       if (!aroc) throw new Error('No ROC input!')
 
 
-      if (!arsl || arsl === 'none') {
-        await database.ref(`amateur/ATSeries/AROC`)
-          .set(aroc)
-      } else {
+      if (arsl.includes('-')) {
         await database.ref(`amateur/ATSeries`)
           .set({ AROC: aroc, ARSL: arsl })
+      } else {
+        await database.ref(`amateur/ATSeries/AROC`)
+          .set(aroc)
       }
       dispatch('getSeries')
       return true
