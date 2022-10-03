@@ -18,7 +18,7 @@ export default {
       licenseeFormComplete: false,
       dataRequired: v => !!v || 'Required!',
       birthdateRules: v => !!(new Date(v)).valueOf() || 'Not a Date!',
-      dataFormat: v => (v || '').length <= 3 || 'not a callsign',
+      dataFormat: v => (v || '').length <= 6 || 'not a callsign',
       showAlert: false,
       alertText: null,
       resetTransactionHistory: false,

@@ -196,7 +196,6 @@ const actions = {
       console.log(dbReference)
       await dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'sell-transfer' }, { root: true })
       await dispatch("amateur/monthlyReport/postSellTransferMonthly", { ID: licenseeID, licensee: state.licenseeInfo, particulars }, { root: true })
-
       return true
     } catch (error) {
       console.log(error.message)
@@ -214,7 +213,7 @@ const actions = {
       if (!licenseeID) throw new Error('No Licensee ID')
       const dbReference = await database.ref(`amateur/possess/${licenseeID}`).push(possessParticulars)
       console.log(dbReference)
-      dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'possess' }, { root: true })
+      await dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'possess' }, { root: true })
       await dispatch("amateur/monthlyReport/postPossessMonthly", { ID: licenseeID, licensee: state.licenseeInfo, particulars: possessParticulars }, { root: true })
 
       return true
@@ -233,7 +232,8 @@ const actions = {
 
       const dbReference = await database.ref(`amateur/temporary/${licenseeID}`).push(licenseTemporary)
       console.log(dbReference)
-      dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'temporary' }, { root: true })
+      await dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'temporary' }, { root: true })
+      await dispatch("amateur/monthlyReport/postTemporaryMonthly", { ID: licenseeID, licensee: state.licenseeInfo, particulars: licenseTemporary }, { root: true })
       return true
     } catch (error) {
       return error.message
@@ -318,7 +318,7 @@ const actions = {
       await database.ref(`amateur/${transaction}/${licenseeID}/${transactionID}`)
         .remove()
       dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: transaction }, { root: true })
-      dispatch("amateur/monthlyReport/removeMonthly", { ID: licenseeID, transactionType: transaction,processedDate:dateIssued }, { root: true })
+      dispatch("amateur/monthlyReport/removeMonthly", { ID: licenseeID, transactionType: transaction, processedDate: dateIssued }, { root: true })
       return true
     } catch (error) {
       return error.message

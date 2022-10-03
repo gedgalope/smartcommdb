@@ -2,7 +2,7 @@ import { database } from "@/services/firebase";
 import monthlyReport from "~/components/Amateur/AmateurMisc/monthlyReport";
 const today = new Date(Date.now())
 const dateOptions = { year: 'numeric', month: 'long' };
-const permitDateOptions = {year:'2-digit'}
+const permitDateOptions = { year: '2-digit' }
 
 const state = () => ({
   monthlyReport: null,
@@ -18,7 +18,7 @@ const getters = {
     if (!purchase) return null
     const formatted = Object.entries(purchase).map(([keys, elem]) => {
       const permitYearBuffer = new Date(elem.dateIssued)
-      const permitYear = permitYearBuffer.toLocaleDateString(undefined, permitDateOptions) 
+      const permitYear = permitYearBuffer.toLocaleDateString(undefined, permitDateOptions)
       return [elem.licensee, elem.callsign, elem.units, `PUR-KK-${elem.purchaseNumber}-${permitYear}`, elem.dateIssued, elem.remarks]
     })
     return formatted
@@ -28,7 +28,7 @@ const getters = {
     if (!possess) return null
     const formatted = Object.entries(possess).map(([keys, elem]) => {
       const permitYearBuffer = new Date(elem.dateIssued)
-      const permitYear = permitYearBuffer.toLocaleDateString(undefined, permitDateOptions) 
+      const permitYear = permitYearBuffer.toLocaleDateString(undefined, permitDateOptions)
       return [elem.licensee, `POSS-KK-${elem.possessNumber}-${permitYear}`, elem.units, elem.dateIssued, elem.remarks]
     })
     return formatted
@@ -42,13 +42,13 @@ const getters = {
     console.log(formatted)
     return formatted
   },
-  getSellTransferMonthly(state){
+  getSellTransferMonthly(state) {
     const sellTransfer = state.monthlyReport
-    if(!monthlyReport) return null
-    const formatted = Object.entries(sellTransfer).map(([keys,elem])=>{
+    if (!monthlyReport) return null
+    const formatted = Object.entries(sellTransfer).map(([keys, elem]) => {
       const permitYearBuffer = new Date(elem.dateIssued)
-      const permitYear = permitYearBuffer.toLocaleDateString(undefined, permitDateOptions) 
-      return [elem.licensee,`STR-KK-${elem.sellTransferNumber}-${permitYear}`, `PUR-KK-${elem.purchaseNumber}`,elem.units,elem.dateIssued]
+      const permitYear = permitYearBuffer.toLocaleDateString(undefined, permitDateOptions)
+      return [elem.licensee, `STR-KK-${elem.sellTransferNumber}-${permitYear}`, `PUR-KK-${elem.purchaseNumber}`, elem.units, elem.dateIssued]
     })
     return formatted
   },
@@ -76,7 +76,7 @@ const mutations = {
 }
 
 const actions = {
-  async postParticularsMonthly({ rootState }, { ID,particulars, licensee }) {
+  async postParticularsMonthly({ commit }, { ID, particulars, licensee }) {
     try {
       const reportDate = today.toLocaleDateString(undefined, dateOptions)
       const reportData = {
@@ -99,7 +99,7 @@ const actions = {
     }
 
   },
-  async postPossessMonthly({ rootState }, {ID, particulars, licensee }) {
+  async postPossessMonthly({ commit }, { ID, particulars, licensee }) {
     try {
       const reportDate = today.toLocaleDateString(undefined, dateOptions)
       const reportData = {
@@ -122,7 +122,7 @@ const actions = {
     }
 
   },
-  async postPurchaseMonthly({ rootState }, { ID,particulars, licensee }) {
+  async postPurchaseMonthly({ commit }, { ID, particulars, licensee }) {
     try {
       const reportDate = today.toLocaleDateString(undefined, dateOptions)
       const reportData = {
@@ -146,7 +146,7 @@ const actions = {
 
   },
 
-  async postSellTransferMonthly({ rootState }, {ID, particulars, licensee }) {
+  async postSellTransferMonthly({ commit }, { ID, particulars, licensee }) {
     try {
       const reportDate = today.toLocaleDateString(undefined, dateOptions)
       const reportData = {
@@ -167,15 +167,38 @@ const actions = {
     }
 
   },
-  async removeMonthly ({commit},{ID,processedDate,transactionType}){
+  async postTemporaryMonthly({ commit }, { ID, particulars, licensee }) {
     try {
-      if(!ID) throw new Error('NO LICENSEE ID!')
-      if(!processedDate) throw new Error('NO DATE PROCESSED!')
-      if(!transactionType) throw new Error('NO transactionType!')
+      const reportDate = today.toLocaleDateString(undefined, dateOptions)
+      const reportData = {
+        licensee: `${licensee.firstname} ${!licensee.middlename ? '' : licensee.middlename} ${licensee.lastname}`,
+        ARSLNumber: 'NONE',
+        AROCNumber: 'NONE',
+        formNumber: 'Not Applicable',
+        validity: particulars.dateValid,
+        remarks: 'temporary',
+        licenseeClass: particulars.licenseeClass
+      }
+      if (!particulars) throw new Error('No data in particulars')
+      if (!licensee) throw new Error('No data in licensee')
+
+      await database.ref(`amateur/monthly/particulars/${reportDate.replace(' ', '')}/${ID}`)
+        .set(reportData)
+    } catch (error) {
+      console.log(error.message)
+      return error.message
+    }
+
+  },
+  async removeMonthly({ commit }, { ID, processedDate, transactionType }) {
+    try {
+      if (!ID) throw new Error('NO LICENSEE ID!')
+      if (!processedDate) throw new Error('NO DATE PROCESSED!')
+      if (!transactionType) throw new Error('NO transactionType!')
       const dateIssued = new Date(processedDate)
       const reportDate = dateIssued.toLocaleDateString(undefined, dateOptions)
       await database.ref(`amateur/monthly/${transactionType}/${reportDate.replace(' ', '')}/${ID}`)
-      .remove()
+        .remove()
 
     } catch (error) {
       console.log(error.message)
@@ -205,7 +228,7 @@ const actions = {
 
 }
 function formatARSLNumber({ licenseeClass, ARSL }) {
-  if (ARSL === 'none' || ARSL === 'NONE') return ''
+  if (ARSL.toUpperCase() === 'NONE') return ''
   else return `ARSL-KK-AT${licenseeClass}-${ARSL}`
 }
 
