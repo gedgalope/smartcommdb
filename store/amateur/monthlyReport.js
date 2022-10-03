@@ -76,7 +76,7 @@ const mutations = {
 }
 
 const actions = {
-  async postParticularsMonthly({ commit }, { particulars, licensee }) {
+  async postParticularsMonthly({ rootState }, { ID,particulars, licensee }) {
     try {
       const reportDate = today.toLocaleDateString(undefined, dateOptions)
       const reportData = {
@@ -91,15 +91,15 @@ const actions = {
       if (!particulars) throw new Error('No data in particulars')
       if (!licensee) throw new Error('No data in licensee')
 
-      await database.ref(`amateur/monthly/particulars/${reportDate.replace(' ', '')}`)
-        .push(reportData)
+      await database.ref(`amateur/monthly/particulars/${reportDate.replace(' ', '')}/${ID}`)
+        .set(reportData)
     } catch (error) {
       console.log(error.message)
       return error.message
     }
 
   },
-  async postPossessMonthly({ commit }, { particulars, licensee }) {
+  async postPossessMonthly({ rootState }, {ID, particulars, licensee }) {
     try {
       const reportDate = today.toLocaleDateString(undefined, dateOptions)
       const reportData = {
@@ -110,28 +110,24 @@ const actions = {
         remarks: particulars.remarks
 
       }
+
       if (!particulars) throw new Error('No data in particulars')
       if (!licensee) throw new Error('No data in licensee')
 
-      await database.ref(`amateur/monthly/possess/${reportDate.replace(' ', '')}`)
-        .push(reportData)
+      await database.ref(`amateur/monthly/possess/${reportDate.replace(' ', '')}/${ID}`)
+        .set(reportData)
     } catch (error) {
       console.log(error.message)
       return error.message
     }
 
   },
-  async postPurchaseMonthly({ commit }, { particulars, licensee }) {
+  async postPurchaseMonthly({ rootState }, { ID,particulars, licensee }) {
     try {
-      let prefix = ''
-      if (particulars.licenseeClass === 'A') prefix = 'DU9'
-      else if (particulars.licenseeClass === 'B') prefix = 'DV9'
-      else if (particulars.licenseeClass === 'C') prefix = 'DW9'
-      else if (particulars.licenseeClass === 'D') prefix = 'DY9'
       const reportDate = today.toLocaleDateString(undefined, dateOptions)
       const reportData = {
         licensee: `${licensee.firstname} ${!licensee.middlename ? '' : licensee.middlename} ${licensee.lastname}`,
-        callsign: `${prefix}${licensee.callsign}`,
+        callsign: particulars.licenseeClass,
         units: particulars.units,
         purchaseNumber: particulars.purchaseNumber,
         dateIssued: particulars.purchaseDateIssued,
@@ -141,8 +137,8 @@ const actions = {
       if (!particulars) throw new Error('No data in particulars')
       if (!licensee) throw new Error('No data in licensee')
 
-      await database.ref(`amateur/monthly/purchase/${reportDate.replace(' ', '')}`)
-        .push(reportData)
+      await database.ref(`amateur/monthly/purchase/${reportDate.replace(' ', '')}/${ID}`)
+        .set(reportData)
     } catch (error) {
       console.log(error.message)
       return error.message
@@ -150,7 +146,7 @@ const actions = {
 
   },
 
-  async postSellTransferMonthly({ commit }, { particulars, licensee }) {
+  async postSellTransferMonthly({ rootState }, {ID, particulars, licensee }) {
     try {
       const reportDate = today.toLocaleDateString(undefined, dateOptions)
       const reportData = {
@@ -163,8 +159,24 @@ const actions = {
       if (!particulars) throw new Error('No data in particulars')
       if (!licensee) throw new Error('No data in licensee')
 
-      await database.ref(`amateur/monthly/sell-transfer/${reportDate.replace(' ', '')}`)
-        .push(reportData)
+      await database.ref(`amateur/monthly/sell-transfer/${reportDate.replace(' ', '')}/${ID}`)
+        .set(reportData)
+    } catch (error) {
+      console.log(error.message)
+      return error.message
+    }
+
+  },
+  async removeMonthly ({commit},{ID,processedDate,transactionType}){
+    try {
+      if(!ID) throw new Error('NO LICENSEE ID!')
+      if(!processedDate) throw new Error('NO DATE PROCESSED!')
+      if(!transactionType) throw new Error('NO transactionType!')
+      const dateIssued = new Date(processedDate)
+      const reportDate = dateIssued.toLocaleDateString(undefined, dateOptions)
+      await database.ref(`amateur/monthly/${transactionType}/${reportDate.replace(' ', '')}/${ID}`)
+      .remove()
+
     } catch (error) {
       console.log(error.message)
       return error.message
@@ -189,7 +201,7 @@ const actions = {
       console.log(error)
       return error.message
     }
-  }
+  },
 
 }
 function formatARSLNumber({ licenseeClass, ARSL }) {

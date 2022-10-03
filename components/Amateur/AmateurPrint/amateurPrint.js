@@ -43,10 +43,18 @@ function printParticulars({ licenseeInfo, particulars }) {
 
   const suffix = licenseeInfo.callsign
   let prefix = ''
-  if (particulars.licenseeClass === 'A') prefix = 'DU9'
-  if (particulars.licenseeClass === 'B') prefix = 'DV9'
-  if (particulars.licenseeClass === 'C') prefix = 'DW9'
-  if (particulars.licenseeClass === 'D') prefix = 'DY9'
+  if (!particulars.prefix) {
+    if (particulars.licenseeClass === 'A') prefix = 'DU9'
+    if (particulars.licenseeClass === 'B') prefix = 'DV9'
+    if (particulars.licenseeClass === 'C') prefix = 'DW9'
+    if (particulars.licenseeClass === 'D') prefix = 'DY9'
+  }else{
+    if (particulars.licenseeClass === 'A') prefix = '4F9'
+    if (particulars.licenseeClass === 'B') prefix = '4I9'
+    if (particulars.licenseeClass === 'C') prefix = '4G9'
+    if (particulars.licenseeClass === 'D') prefix = '4H9'
+  
+  }
 
   // const center = doc.internal.pageSize.getWidth() / 2
   // const right = doc.internal.pageSize.getWidth() - 20
@@ -583,7 +591,7 @@ function printMonthlyPurchase({ purchase, date }) {
   const monthlyDate = new Date(date)
   const monthlyDateOption = { month: 'long', year: 'numeric' }
 
-  const tableHeaders = [['FULLNAME', 'CALLSIGN', 'UNITS', 'PURCHASE NO', 'DATE ISSUED', 'REMARKS']]
+  const tableHeaders = [['FULLNAME', 'CLASS', 'UNITS', 'PURCHASE NO', 'DATE ISSUED', 'REMARKS']]
 
   const doc = new JSPDF({
     orientation: "portrait",

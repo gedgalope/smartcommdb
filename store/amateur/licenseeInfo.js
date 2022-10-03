@@ -78,7 +78,7 @@ const actions = {
           used: true
         }
         await dispatch("amateur/callSign/updateCallsignInfo", callsignData, { root: true })
-        await dispatch("amateur/callSign/getUnusedCallSign", undefined,{ root: true })
+        await dispatch("amateur/callSign/getUnusedCallSign", undefined, { root: true })
       }
       const dbReference = await database.ref('amateur/licensee').push(licenseeInfo)
       commit('UPDATE_LICENSEE_ID', dbReference.key)
@@ -158,7 +158,7 @@ const actions = {
       const dbReference = await database.ref(`amateur/particulars/${licenseeID}`).push(licenseParticulars)
       console.log(dbReference)
       await dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: licenseParticulars.transactionType }, { root: true })
-      await dispatch("amateur/monthlyReport/postParticularsMonthly", { licensee: state.licenseeInfo, particulars: licenseParticulars }, { root: true })
+      await dispatch("amateur/monthlyReport/postParticularsMonthly", { ID: licenseeID, licensee: state.licenseeInfo, particulars: licenseParticulars }, { root: true })
       await dispatch("amateur/callSign/postFormSeries", licenseParticulars.formNumber, { root: true })
       return true
     } catch (error) {
@@ -177,7 +177,7 @@ const actions = {
       const dbReference = await database.ref(`amateur/purchase/${licenseeID}`).push(purchaseParticulars)
       console.log(dbReference)
       await dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'purchase' }, { root: true })
-      await dispatch("amateur/monthlyReport/postPurchaseMonthly", { licensee: state.licenseeInfo, particulars: purchaseParticulars }, { root: true })
+      await dispatch("amateur/monthlyReport/postPurchaseMonthly", { ID: licenseeID, licensee: state.licenseeInfo, particulars: purchaseParticulars }, { root: true })
 
       return true
     } catch (error) {
@@ -195,7 +195,7 @@ const actions = {
       const dbReference = await database.ref(`amateur/sell-transfer/${licenseeID}`).push(particulars)
       console.log(dbReference)
       await dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'sell-transfer' }, { root: true })
-      await dispatch("amateur/monthlyReport/postSellTransferMonthly", { licensee: state.licenseeInfo, particulars }, { root: true })
+      await dispatch("amateur/monthlyReport/postSellTransferMonthly", { ID: licenseeID, licensee: state.licenseeInfo, particulars }, { root: true })
 
       return true
     } catch (error) {
@@ -215,7 +215,7 @@ const actions = {
       const dbReference = await database.ref(`amateur/possess/${licenseeID}`).push(possessParticulars)
       console.log(dbReference)
       dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'possess' }, { root: true })
-      await dispatch("amateur/monthlyReport/postPossessMonthly", { licensee: state.licenseeInfo, particulars: possessParticulars }, { root: true })
+      await dispatch("amateur/monthlyReport/postPossessMonthly", { ID: licenseeID, licensee: state.licenseeInfo, particulars: possessParticulars }, { root: true })
 
       return true
     } catch (error) {
@@ -275,7 +275,7 @@ const actions = {
       let transactionType = null
       const transactionArray = ['renewal', 'renmod', 'duplicate', 'modification', 'new']
 
-      if(transactionArray.includes(transaction)) transactionType = 'particulars'
+      if (transactionArray.includes(transaction)) transactionType = 'particulars'
       else transactionType = transaction
 
       console.log(transactionType)
@@ -288,20 +288,37 @@ const actions = {
       return error.message
     }
   },
-  async removeData({ dispatch, state }, transaction) {
+  async removeData({ dispatch, state }, { transaction, particulars }) {
     try {
       const licenseeID = state.licenseeID
       const transactionID = state.transactionID
       if (!licenseeID) throw new Error('No licensee ID!')
       if (!transactionID) throw new Error('No transaction ID!')
       if (!transaction) throw new Error('No licensee transaction!')
-      const particulars = ['renewal', 'renmod', 'duplicate', 'modification']
-      if (particulars.includes(transaction)) transaction = 'particulars'
+      const licenseParticulars = ['renewal', 'renmod', 'duplicate', 'modification']
+      let dateIssued = ''
 
+      if (licenseParticulars.includes(transaction)) {
+        transaction = 'particulars'
+        dateIssued = particulars.dateIssued
+      }
+      else if (transaction === 'purchase') {
+        dateIssued = particulars.purchaseDateIssued
+      }
+      else if (transaction === 'possess') {
+        dateIssued = particulars.ORDate
+      }
+      else if (transaction === 'temporary') {
+        dateIssued = particulars.dateIssued
+      }
+      else if (transaction === 'sell-transfer') {
+        dateIssued = particulars.ORDate
+      }
 
       await database.ref(`amateur/${transaction}/${licenseeID}/${transactionID}`)
         .remove()
       dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: transaction }, { root: true })
+      dispatch("amateur/monthlyReport/removeMonthly", { ID: licenseeID, transactionType: transaction,processedDate:dateIssued }, { root: true })
       return true
     } catch (error) {
       return error.message

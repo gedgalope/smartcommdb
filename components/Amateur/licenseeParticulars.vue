@@ -3,18 +3,21 @@
     <success-failed-alert :show="showAlert" :text="alertText" @snackClosed="showAlert = $event"></success-failed-alert>
     <v-form ref="licenseeParticulars" v-model="validParticulars">
       <v-row dense>
-        <v-col cols="3">
+        <v-col cols="4">
           <v-combobox v-model="licenseeClass" :rules="[dataRequired]" :items="['A', 'B', 'C', 'D']" dense outlined
-            label="Class">
+            label="Class" hint="toggle if prefix is 4D-4I">
+            <template v-slot:prepend-inner>
+              <v-checkbox class="pa-0 ma-0" v-model="prefix" dense hide-details></v-checkbox>
+            </template>
           </v-combobox>
         </v-col>
-        <v-col cols="9">
+        <v-col cols="8">
           <v-combobox v-model="stationLocation" :rules="[dataRequired]"
             :items="['NONE', 'PORTABLE', 'PORTABLE & BASE', 'ABOVE ADDRESS']" dense outlined label="Station Location">
           </v-combobox>
         </v-col>
         <v-col cols="6">
-          <v-text-field v-model="ARLSeries" :rules='[dataRequired]' dense outlined append-icon="mdi-update"
+          <v-text-field v-model="ARLSeries" :rules='[dataRequired]' :readonly="disableARL" dense outlined append-icon="mdi-update"
             @click:append="updateARSLNumber()" label="ARL">
           </v-text-field>
         </v-col>
@@ -50,13 +53,13 @@
               </v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="formNumber" :rules='[dataRequired]' readonly dense outlined append-icon="mdi-update"
-                @click:append="updateFormNumber()" label="Form No">
+              <v-text-field v-model="formNumber" :rules='[dataRequired]' readonly dense outlined
+                append-icon="mdi-update" @click:append="updateFormNumber()" label="Form No">
               </v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="club" dense outlined label="Club">
-              </v-text-field>
+              <v-combobox v-model="club" :items="clubList" dense outlined label="Club">
+              </v-combobox>
             </v-col>
             <v-col cols="12">
               <v-text-field v-model="examPlace" dense outlined label="Place of Exam">

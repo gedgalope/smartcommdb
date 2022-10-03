@@ -13,9 +13,11 @@ export default {
       dataRequired: v => !!v || 'Required!',
       dateRules: v => !!(new Date(v)).valueOf() || 'Not a Date!',
       //  licensee particulars  
+      clubList:['DARC','DVFBRAN','RAGDARI', 'RECON PHILS', 'SCAN INTL', 'UMARC-DEA', 'URGENT'],
       validParticulars: null,
       licenseeClass: null,
       stationLocation: null,
+      prefix:false,
       ARLSeries: null,
       AROCSeries: null,
       equipment: null,
@@ -63,6 +65,7 @@ export default {
       if (val) {
         this.licenseeClass = val.licenseeClass
         this.stationLocation = val.stationLocation
+        this.prefix = !val.prefix ? false : val.prefix
         this.ARLSeries = val.ARLSeries
         this.AROCSeries = val.AROCSeries
         this.equipment = val.equipment
@@ -94,11 +97,27 @@ export default {
       licenseeInfo: 'amateur/licenseeInfo/getLicenseeInfo',
       formNumberSeries: 'amateur/callSign/getFormNumber'
     }),
+    disableARL(){
+      const station = this.stationLocation
+      if(station === 'none' || station === 'NONE'){
+        this.ARLSeries = 'NONE'
+        this.equipment = '- NOTHING FOLLOWS -'
+
+        return true
+      }
+      else{
+        if(this.getTransactionDetails.ARLSeries !== 'NONE') this.ARLSeries = this.getTransactionDetails.ARLSeries
+        else this.updateARSLNumber()
+        this.equipment = this.getTransactionDetails.equipment
+        return false
+      }
+    },
     getParticulars() {
       const amateurParticulars = {
         transactionType: this.transactionType,
         licenseeClass: !this.licenseeClass ? null : this.licenseeClass.toUpperCase(),
         stationLocation: !this.stationLocation ? null : this.stationLocation.toUpperCase(),
+        prefix: this.prefix,
         ARLSeries: this.ARLSeries,
         AROCSeries: this.AROCSeries,
         equipment: !this.equipment ? null : this.equipment.toUpperCase(),

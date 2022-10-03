@@ -25,7 +25,8 @@ export default {
     ...mapGetters({
       licenseeInfo: 'amateur/licenseeInfo/getLicenseeInfo',
       ATSeries: 'amateur/licenseeInfo/getSeries',
-      transactionDetails: 'amateur/licenseeInfo/getTransactionDetails'
+      transactionDetails: 'amateur/licenseeInfo/getTransactionDetails',
+      formNumberSeries: 'amateur/callSign/getFormNumber'
     })
   },
   methods: {
@@ -51,11 +52,14 @@ export default {
     async saveRecord() {
       let dbResponse = null
       const particulars = ['renewal', 'renmod', 'duplicate', 'modification', 'new']
+
+      if(this.formNumberSeries+1 !== this.data.formNumber) this.data.formNumber = this.formNumberSeries
+
       if (particulars.includes(this.transactionType)) {
         if (this.transactionType === 'new') {
           await this.updateATSeries({ aroc: this.data.AROCSeries, arsl: this.data.ARLSeries })
         }
-        if ((this.transactionDetails.ARLSeries === 'none' || this.transactionDetails.ARLSeries === 'NONE') && (this.data.ARLSeries !== 'none' || this.data.ARLSeries !== 'NONE')) {
+        if (this.transactionDetails.ARLSeries.toUpperCase() === 'NONE' &&  this.data.ARLSeries.toUpperCase() !== 'NONE') {
           await this.updateATSeries({ aroc: this.ATSeries.AROC, arsl: this.data.ARLSeries })
         }
         dbResponse = await this.postParticulars(this.data)
@@ -70,7 +74,7 @@ export default {
     },
 
     async removeRecord() {
-      const dbResponse = await this.removeData(this.transactionType)
+      const dbResponse = await this.removeData({transaction:this.transactionType,particulars:this.data})
 
       if (dbResponse === true) {
         this.$emit('showAlert', 'Success')
