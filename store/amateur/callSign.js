@@ -21,8 +21,8 @@ const getters = {
   callsignQueryResult: (state) => {
     return state.callsignSearchResult
   },
-  getFormNumber: (state) =>{
-    if(!state.formSeries) return 0
+  getFormNumber: (state) => {
+    if (!state.formSeries) return 0
     return state.formSeries
   }
 }
@@ -37,7 +37,7 @@ const mutations = {
       state.callsignSearchResult = searchResult
     }
   },
-  UPDATE_FORM_SERIES(state, formNumber){
+  UPDATE_FORM_SERIES(state, formNumber) {
     state.formSeries = formNumber
   }
 
@@ -183,7 +183,7 @@ const actions = {
         newOwner: callsignInfo.newOwner,
         used: callsignInfo.used,
       }
-      if (callsignInfo.update) { 
+      if (callsignInfo.update) {
         // not in for issuance directly post to issued
         await database.ref(`amateur/callSign/issued/${callsignInfo.callsign.toUpperCase()}`).set(callsignDataForPost)
         return true
@@ -196,7 +196,7 @@ const actions = {
         .then(snapshot => {
           return snapshot.val()
         })
-        //  checks if callsign has been issued by posting directly to particulars
+      //  checks if callsign has been issued by posting directly to particulars
       if (checkLicenseeForObject) throw new Error('Callsign has been issued!')
 
       const checkIssuedForObject = await database
@@ -205,7 +205,7 @@ const actions = {
         .then(snapshot => {
           return snapshot.val()
         })
-        // checks if callsign has been issued through the issued callsign data
+      // checks if callsign has been issued through the issued callsign data
       if (checkIssuedForObject) throw new Error('Callsign has been issued, please modify and update licensee data first!')
 
       const checkForIssuanceForObject = await database
@@ -257,14 +257,14 @@ const actions = {
       if (callsignInfo.used) {
         await database.ref(`amateur/callSign/issued/${callsignInfo.callsign.toUpperCase()}`).set(callsignDataForPost)
         const checkCallsignInForIssuance = await database
-        .ref(`amateur/callSign/forIssuance/${callsignInfo.callsign.toUpperCase()}`)
-        .once("value")
-        .then(snapshot => {
-          return snapshot.val()
-        })
-        if(checkCallsignInForIssuance){
+          .ref(`amateur/callSign/forIssuance/${callsignInfo.callsign.toUpperCase()}`)
+          .once("value")
+          .then(snapshot => {
+            return snapshot.val()
+          })
+        if (checkCallsignInForIssuance) {
           await database.ref(`amateur/callSign/forIssuance/${callsignInfo.callsign.toUpperCase()}`)
-          .remove()
+            .remove()
         }
         return true
       } else {
@@ -277,6 +277,38 @@ const actions = {
       return error.message
     }
   },
+  async checkCallsignAvailability({ commit }, callsign) { // this will check if the callsign selected is available
+    if (!callsign) throw new Error('missing callsign!')
+    //  check if callsign is in available callsigns for issuance
+    const callsignForIssuance = await database
+      .ref(`amateur/callSign/forIssuance/${callsign.toUpperCase()}`)
+      .once("value")
+      .then(snapshot => {
+        return snapshot.val()
+      })
+    const issuedCallsign = await database
+      .ref('amateur/licensee')
+      .orderByChild('callsign')
+      .startAt(callsign)
+      .endAt(`${callsign}\uF8FF`)
+      .once('value')
+      .then(snapshot => {
+        return snapshot.val()
+      })
+    console.log(callsignForIssuance)
+    console.log(issuedCallsign)
+    if (!issuedCallsign && !callsignForIssuance) {
+      return true
+    }
+    else if (callsignForIssuance) {
+      return true
+    }
+    else if (issuedCallsign) {
+      throw new Error(`The particular callsign "${callsign}" is already issued}`)
+    }
+
+  },
+
   async postFormSeries({ dispatch }, seriesNumber) {
     try {
       if (!seriesNumber) throw new Error('No series number!')
@@ -294,8 +326,8 @@ const actions = {
       const dbReference = await database.ref('amateur/formNumber')
         .get("value")
         .then(snapshot => snapshot.val())
-        commit('UPDATE_FORM_SERIES', dbReference)
-        return true
+      commit('UPDATE_FORM_SERIES', dbReference)
+      return true
     } catch (error) {
       return error.message
     }

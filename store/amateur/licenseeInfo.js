@@ -1,7 +1,7 @@
 import { database } from "@/services/firebase";
 
-const today = new Date(Date.now())
-const options = { year: 'numeric', month: 'numeric', day: 'numeric' }
+// const today = new Date(Date.now())
+// const options = { year: 'numeric', month: 'numeric', day: 'numeric' }
 
 const state = () => ({
   licenseeID: null,
@@ -69,17 +69,19 @@ const actions = {
     // Update licensee ID!
     try {
       if (!licenseeInfo) throw new Error('Empty Object')
-      if (licenseeInfo.callsign) {
-        const callsignData = {
-          callsign: licenseeInfo.callsign.toUpperCase(),
-          dateIssued: today.toLocaleDateString(undefined, options),
-          oldOwner: null,
-          newOwner: `${licenseeInfo.firstname} ${licenseeInfo.lastname}`,
-          used: true
-        }
-        await dispatch("amateur/callSign/updateCallsignInfo", callsignData, { root: true })
-        await dispatch("amateur/callSign/getUnusedCallSign", undefined, { root: true })
-      }
+      // if (licenseeInfo.callsign) {
+      //   const callsignData = {
+      //     callsign: licenseeInfo.callsign.toUpperCase(),
+      //     dateIssued: today.toLocaleDateString(undefined, options),
+      //     oldOwner: null,
+      //     newOwner: `${licenseeInfo.firstname} ${licenseeInfo.lastname}`,
+      //     used: true
+      //   }
+      //   await dispatch("amateur/callSign/updateCallsignInfo", callsignData, { root: true })
+      //   await dispatch("amateur/callSign/getUnusedCallSign", undefined, { root: true })
+      // }
+
+      await dispatch("amateur/callSign/checkCallsignAvailability", licenseeInfo.callsign, { root: true })
       const dbReference = await database.ref('amateur/licensee').push(licenseeInfo)
       commit('UPDATE_LICENSEE_ID', dbReference.key)
       commit('UPDATE_LICENSEE_INFO', licenseeInfo)
@@ -98,23 +100,30 @@ const actions = {
       const licenseeID = state.licenseeID
       if (!licenseeID) throw new Error('No licensee ID')
       if (callsignNew) {
-        const callsign = licenseeInfo.callsign.toUpperCase()
-        const callsignInfo = await database.ref(`amateur/callSign/issued/${callsign}`)
-          .get("value")
-          .then((snapshot) => snapshot.val())
+        //   const callsign = licenseeInfo.callsign.toUpperCase()
+        //   const callsignInfo = await database.ref(`amateur/callSign/issued/${callsign}`)
+        //     .get("value")
+        //     .then((snapshot) => snapshot.val())
 
-        if (callsignInfo) throw new Error('New Callsign is already in use')
-        else {
-          // update new callsign status
-          await database.ref(`amateur/callSign/forIssuance/${callsign}`).remove()
-          await database.ref(`amateur/callSign/issued/${callsign}`)
-            .set({ newOwner: `${licenseeInfo.firstname} ${licenseeInfo.lastname}`, used: true, dateIssued: today.toLocaleDateString(undefined, options) })
-          // update old callsign status
-          await database.ref(`amateur/callSign/issued/${oldCallSign}`).remove()
-          await database.ref(`amateur/callSign/forIssuance/${oldCallSign}`)
-            .set({ oldOwner: `${licenseeInfo.firstname} ${licenseeInfo.lastname}` })
+        //   if (callsignInfo) throw new Error('New Callsign is already in use')
+        //   else {
+        //     // update new callsign status
+        //     await database.ref(`amateur/callSign/forIssuance/${callsign}`).remove()
+        //     await database.ref(`amateur/callSign/issued/${callsign}`)
+        //       .set({ newOwner: `${licenseeInfo.firstname} ${licenseeInfo.lastname}`, used: true, dateIssued: today.toLocaleDateString(undefined, options) })
+        //     // update old callsign status
+        //     await database.ref(`amateur/callSign/issued/${oldCallSign}`).remove()
+        //     await database.ref(`amateur/callSign/forIssuance/${oldCallSign}`)
+        //       .set({ oldOwner: `${licenseeInfo.firstname} ${licenseeInfo.lastname}` })
 
-        }
+        //   }
+
+        // }
+        await dispatch("amateur/callSign/checkCallsignAvailability", licenseeInfo.callsign, { root: true })
+        await database.ref(`amateur/callSign/forIssuance/${licenseeInfo.callsign}`).remove() //  remove callsign under forIssuance
+        await database.ref(`amateur/callSign/forIssuance/${oldCallSign}`)
+          .set({ oldOwner: `${licenseeInfo.firstname} ${licenseeInfo.lastname}` }) // adds old callsign under forIssuance
+
 
       }
       await dispatch("amateur/callSign/getUnusedCallSign", { root: true })
