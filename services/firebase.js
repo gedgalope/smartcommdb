@@ -4,14 +4,14 @@ import 'firebase/database'
 // import 'firebase/storage'
 // import admin from "firebase-admin"
 const config = {
-  apiKey: "AIzaSyBh_424FQePP4UDi9LkDjlY8yh-JaUxSPw",
-  authDomain: "smartntcxidb.firebaseapp.com",
-  databaseURL: "https://smartntcxidb-default-rtdb.firebaseio.com",
-  projectId: "smartntcxidb",
-  storageBucket: "smartntcxidb.appspot.com",
-  messagingSenderId: "217207738118",
-  appId: "1:217207738118:web:c82b1a19ca6b022206d887",
-  measurementId: "G-NJF30XXD3R"
+  apiKey: "AIzaSyDJtVO8ax8BPPhE9CFONsn5lX84eD35hCU",
+  authDomain: "smartamateurdb.firebaseapp.com",
+  databaseURL: "https://smartamateurdb-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "smartamateurdb",
+  storageBucket: "smartamateurdb.appspot.com",
+  messagingSenderId: "683123563041",
+  appId: "1:683123563041:web:5225ed8bfb13898e666160",
+  measurementId: "G-9WK9QYSEKV"
 }
 
 if (!firebase.apps.length) firebase.initializeApp(config);

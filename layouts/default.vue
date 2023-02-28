@@ -30,6 +30,11 @@
                       <v-btn block text nuxt to="/amateur">Amateur Form</v-btn>
                     </v-list-item-title>
                   </v-list-item>
+                  <v-list-item>
+                    <v-list-item-title>
+                      <v-btn block text nuxt to="/smart">Smart Form</v-btn>
+                    </v-list-item-title>
+                  </v-list-item>
                 </v-list>
               </v-menu>
             </v-row>
