@@ -23,11 +23,11 @@
           <v-col cols="6">
             <v-row dense>
               <v-col cols="12">
-                <v-text-field v-model="units" :rules='[dataRequired]' dense outlined label="No of Units">
+                <v-text-field v-model="units" :rules='[dataRequired,unitRules]' dense outlined label="No of Units">
                 </v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-combobox v-model="intendedUse" :items="['ADDITIONAL UNIT', 'NEW STATION', 'REPLACEMENT UNIT']"
+                <v-combobox v-model="intendedUse" :items="['ADDITIONAL AMATEUR EQUIPMENT', 'NEW AMATEUR STATION', 'REPLACEMENT UNIT']"
                   :rules='[dataRequired]' dense outlined label="Intended Use">
                 </v-combobox>
               </v-col>

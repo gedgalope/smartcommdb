@@ -127,7 +127,7 @@ const actions = {
       const reportDate = today.toLocaleDateString(undefined, dateOptions)
       const reportData = {
         licensee: `${licensee.firstname} ${!licensee.middlename ? '' : licensee.middlename} ${licensee.lastname}`,
-        callsign: particulars.licenseeClass,
+        callsign: 'N/A',
         units: particulars.units,
         purchaseNumber: particulars.purchaseNumber,
         dateIssued: particulars.purchaseDateIssued,
@@ -138,7 +138,7 @@ const actions = {
       if (!licensee) throw new Error('No data in licensee')
 
       await database.ref(`amateur/monthly/purchase/${reportDate.replace(' ', '')}/${ID}`)
-        .set(reportData)
+        .set(reportData) 
     } catch (error) {
       console.log(error.message)
       return error.message

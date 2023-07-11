@@ -204,7 +204,7 @@ function printPurchase({ licenseeInfo, particulars }) {
   doc.setFontSize(12)
   doc.text(20, 110, `MAKE/MODEL/TYPE`);
   doc.setFontSize(12)
-  const splitFreq = doc.splitTextToSize(`: Any NTC Amateur Type Approved ${particulars.frequencyRange.toString()} equipment`, 90)
+  const splitFreq = doc.splitTextToSize(`: Any NTC Amateur Type Approved ${particulars.frequencyRange.toString()} Amateur Radio equipment`, 90)
   doc.text(center, 110, splitFreq);
 
   doc.setFontSize(12)
@@ -215,7 +215,7 @@ function printPurchase({ licenseeInfo, particulars }) {
   doc.setFontSize(12)
   doc.text(20, 140, `FREQUENCY RANGE`)
   doc.setFontSize(12)
-  doc.text(center, 140, doc.splitTextToSize(`: AMATEUR FREQUENCY BANDS (${particulars.frequencyRange})`, 90))
+  doc.text(center, 140, doc.splitTextToSize(`: ${particulars.frequencyRange} AMATEUR FREQUENCY BANDS (${frequencyBands(particulars.frequencyRange)})`, 90))
 
   doc.setFontSize(12)
   doc.text(20, 155, `INTENDED USE OF EQUIPMENT`)
@@ -225,7 +225,7 @@ function printPurchase({ licenseeInfo, particulars }) {
   doc.setFontSize(12)
   doc.text(20, 170, `SERVICE AREA`)
   doc.setFontSize(12)
-  const splitAddress = doc.splitTextToSize(`: Within ${licenseeInfo.address}`, 90)
+  const splitAddress = doc.splitTextToSize(`: WITHIN ABOVE ADDRESS`, 90)
   doc.text(center, 170, splitAddress)
 
   doc.setFontSize(10)
@@ -424,7 +424,7 @@ function printTemporary({ licenseeInfo, particulars }) {
       0: { minCellHeight: 50, halign: 'center', valign: 'center', overflow: 'linebreak', cellWidth: 50, fontSize: 12 },
       1: { minCellHeight: 50, halign: 'center', valign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 12 },
       2: { minCellHeight: 50, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 12 },
-      3: { minCellHeight: 50, halign: 'center', valign: 'center', overflow: 'linebreak', cellWidth: 20, fontSize: 12 },
+      3: { minCellHeight: 50, halign: 'center', overflow: 'linebreak', cellWidth: 20, fontSize: 12 },
       4: { minCellHeight: 50, halign: 'center', overflow: 'linebreak', cellWidth: 'wrap', fontSize: 12 },
 
     }
@@ -476,6 +476,8 @@ function printTemporary({ licenseeInfo, particulars }) {
 function printSellTransfer({ licenseeInfo, particulars }) {
 
   /*
+
+  
         this.buyersName = value.buyersName
         this.buyersAddress = value.buyersAddress
         this.equipment = value.equipment
@@ -591,7 +593,7 @@ function printMonthlyPurchase({ purchase, date }) {
   const monthlyDate = new Date(date)
   const monthlyDateOption = { month: 'long', year: 'numeric' }
 
-  const tableHeaders = [['FULLNAME', 'CLASS', 'UNITS', 'PURCHASE NO', 'DATE ISSUED', 'REMARKS']]
+  const tableHeaders = [['FULLNAME', '', 'UNITS', 'PURCHASE NO', 'DATE ISSUED', 'REMARKS']]
 
   const doc = new JSPDF({
     orientation: "portrait",
@@ -870,6 +872,13 @@ function printMonthlySellTransfer({ sellTransfer, date }) {
 
   doc.autoPrint()
   doc.output('dataurlnewwindow')
+}
+
+function frequencyBands(frequencyRange){
+  if(!frequencyRange || frequencyRange.length >= 2) return ''
+  else if (frequencyRange.includes('VHF')) return '144 - 146 MHz'
+  else if (frequencyRange.includes('UHF')) return '430 - 440 MHz or 1240 - 1300 MHz or 2300 -2450 MHz'
+  else if (frequencyRange.includes('HF')) return '3.5 - 3.9 MHz or 7 - 7.2 MHz or ANY AMATEUR HF BANDS'
 }
 export {
   printParticulars, printPurchase, printPossess, printTemporary, printMonthlyPurchase, printMonthlyPossess, printMonthlyParticulars, printSellTransfer, printMonthlySellTransfer

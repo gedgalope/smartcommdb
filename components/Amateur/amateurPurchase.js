@@ -12,6 +12,7 @@ export default {
     return {
       dataRequired: v => !!v || 'Required!',
       dateRules: v => !!(new Date(v)).valueOf() || 'Not a Date!',
+      unitRules: v => !isNaN(v) || 'Not a Number!',
       showAlert: false,
       alertText: null,
       amateurPurchase: false,
