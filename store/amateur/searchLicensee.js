@@ -1,7 +1,8 @@
 import { database } from "@/services/firebase";
 
 const state = () => ({
-  searchResults: []
+  searchResults: [],
+  callSignParticulars:true,
 })
 
 const getters = {
@@ -11,6 +12,9 @@ const getters = {
       return {text:elem.results, value:elem.data}
     })
     return formatResults
+  },
+  getCallSignAvailability(state){
+    return state.callSignParticulars
   }
 }
 
@@ -24,10 +28,34 @@ const mutations = {
       console.log({ licenseeID: ID, results: `${licenseeData.lastname},${licenseeData.firstname} callsign:${licenseeData.callsign}`, data: licenseeData })
       return {results: `${licenseeData.lastname}, ${licenseeData.firstname} /${licenseeData.callsign}`, data: Object.assign(licenseeData,{licenseeID:ID}) }
     })
+  },
+  POPULATE_CALLSIGN_ENCODING(state, result){
+    if(!result){
+      state.callSignParticulars = true
+    }else state.callSignParticulars  = false
+
   }
 }
 
 const actions = {
+  async searchCallSignEncoding({commit}, callSign){
+    // check callsign if its already taken
+    try {
+      if(!callSign) throw new Error('Empty call sign field')
+      const checkCallSign =  await database
+      .ref('amateur/licensee')
+      .orderByChild('callsign')
+      .equalTo(callSign)
+      .once('value')
+      .then(snapshot => {
+        return snapshot.val()
+      })
+
+      commit('POPULATE_CALLSIGN_ENCODING',checkCallSign)
+    } catch (error) {
+      return error.message
+    }
+  },
   async searchLicensee({ commit }, licenseeName) {
     try {
       if (!licenseeName) throw new Error('Empty search parameters')

@@ -17,7 +17,11 @@
           </v-text-field>
         </v-col>
         <v-col cols="4">
-          <v-text-field v-model="callsign" :rules='[dataFormat]' dense outlined label="CallSign">
+          <v-text-field v-model="callsign" :rules='[dataFormat,showCallSignAvailablity]' dense outlined append-icon="mdi-check"
+            label="Call Sign"
+            :loading="fetchingQuery"
+            @click:append="checkCallSignAvailability()"
+            >
           </v-text-field>
         </v-col>
         <v-col cols="4 ">
@@ -38,8 +42,8 @@
     <v-row>
       <v-col cols="4">
         <v-form ref="transactionHistory">
-          <v-combobox v-model="transactionType" :disabled="!licenseeFormComplete" :items="transactionItems" dense
-            outlined label="Transaction type" @change="populateHistory()" hide-details>
+          <v-combobox v-model="transactionType" :disabled="!licenseeFormComplete" :items="transactionItems" dense outlined
+            label="Transaction type" @change="populateHistory()" hide-details>
           </v-combobox>
         </v-form>
       </v-col>
@@ -83,10 +87,10 @@
               </v-card>
             </v-dialog>
           </v-row>
-
+          {{ checkedAvailability }}
         </v-container>
-
-        <v-btn v-else-if="transactionType === 'new'" :disabled="licenseeID ? true : false" dense outlined
+       
+        <v-btn v-else-if="transactionType === 'new'" :disabled="!(checkedAvailability && licenseeFormComplete)" dense outlined
           @click="submitLicenseeInfo()">Create new client
         </v-btn>
         <span v-else>

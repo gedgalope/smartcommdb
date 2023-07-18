@@ -22,7 +22,10 @@ export default {
       showAlert: false,
       alertText: null,
       resetTransactionHistory: false,
-      deleteClientDialog: false
+      deleteClientDialog: false,
+      fetchingQuery: false,
+      checkedAvailability: false,
+
     }
   },
   components: {
@@ -44,6 +47,11 @@ export default {
     }
   },
   watch: {
+    callsign(val, oldVal){
+      if (val !== oldVal){
+        this.checkedAvailability = false
+      }
+    },
     searchResult(val, oldVal) {
       if (val && oldVal) {
         if (val !== oldVal) {
@@ -77,7 +85,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      licenseeID: 'amateur/licenseeInfo/getLicenseeID'
+      licenseeID: 'amateur/licenseeInfo/getLicenseeID',
+      callSignAvailable: 'amateur/searchLicensee/getCallSignAvailability'
     }),
     transactionItems() {
       //  apply this code to transaction items when search bar is added
@@ -93,8 +102,12 @@ export default {
       else return type
     },
     disableUpdateDelete() {
-      if (this.licenseeFormComplete && this.licenseeID) return false
+      if (this.licenseeFormComplete && this.licenseeID && this.checkedAvailability) return false
       else return true
+    },
+    showCallSignAvailablity(){
+      if(!this.callSignAvailable) return 'Call sign already assigned'
+      else return this.callSignAvailable
     }
   },
   methods: {
@@ -103,7 +116,8 @@ export default {
       updateCallsignInfo: 'amateur/callSign/updateCallsignInfo',
       getTransactionHistory: 'amateur/transactionHistory/getTransactionHistory',
       updateLicenseeInfo: 'amateur/licenseeInfo/updateLicenseeInfo',
-      removeLicenseeInfo: 'amateur/licenseeInfo/removeLicenseeInfo'
+      removeLicenseeInfo: 'amateur/licenseeInfo/removeLicenseeInfo',
+      checkCallSignStatus:'amateur/searchLicensee/searchCallSignEncoding'
     }),
     async submitLicenseeInfo() {
       const licenseeData = {
@@ -174,6 +188,13 @@ export default {
         this.alertText = dbResponse
       }
 
+    },
+    async checkCallSignAvailability(){
+      this.fetchingQuery = true
+      if(!this.callsign) return
+      await this.checkCallSignStatus(this.callsign)
+      this.fetchingQuery = false
+      this.checkedAvailability = true
     }
   }
 
