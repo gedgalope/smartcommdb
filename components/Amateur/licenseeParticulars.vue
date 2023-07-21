@@ -3,7 +3,11 @@
     <success-failed-alert :show="showAlert" :text="alertText" @snackClosed="showAlert = $event"></success-failed-alert>
     <v-form ref="licenseeParticulars" v-model="validParticulars">
       <v-row dense>
-        <v-col cols="4">
+        <v-col cols="2">
+          <v-combobox v-model="district" :rules="[dataRequired]" :items="districtList" dense outlined label="District">
+          </v-combobox>
+        </v-col>
+        <v-col cols="3">
           <v-combobox v-model="licenseeClass" :rules="[dataRequired]" :items="['A', 'B', 'C', 'D']" dense outlined
             label="Class" hint="toggle if prefix is 4D-4I">
             <template v-slot:prepend-inner>
@@ -11,21 +15,25 @@
             </template>
           </v-combobox>
         </v-col>
-        <v-col cols="8">
+        <v-col cols="7">
           <v-combobox v-model="stationLocation" :rules="[dataRequired]"
             :items="['NONE', 'PORTABLE', 'PORTABLE & BASE', 'ABOVE ADDRESS']" dense outlined label="Station Location">
           </v-combobox>
         </v-col>
-        <v-col cols="6">
-          <v-text-field v-model="ARLSeries" :rules='[dataRequired]' :readonly="disableARL" dense outlined append-icon="mdi-update"
-            @click:append="updateARSLNumber()" label="ARL">
-          </v-text-field>
-        </v-col>
-        <v-col cols="6">
-          <v-text-field v-model="AROCSeries" :rules='[dataRequired]' dense outlined append-icon="mdi-update"
-            @click:append="updateAROCNumber()" label="AROC">
-          </v-text-field>
-        </v-col>
+          <v-col cols="6" v-if="district == 9">
+            <v-text-field v-model="ARLSeries" :rules='[dataRequired]' :readonly="disableARL" dense outlined
+              append-icon="mdi-update" @click:append="updateARSLNumber()" label="ARL">
+            </v-text-field>
+          </v-col>
+          <v-col cols="6" v-if="district == 9">
+            <v-text-field v-model="AROCSeries" :rules='[dataRequired]' dense outlined append-icon="mdi-update"
+              @click:append="updateAROCNumber()" label="AROC">
+            </v-text-field>
+          </v-col>
+          <v-col cols="12" v-if="district != 9">
+            <v-text-field v-model="districtSeries" dense outlined label="ROC/ARL Series">
+            </v-text-field>
+          </v-col>
 
         <v-col cols="6">
           <v-row dense>
@@ -48,13 +56,13 @@
               </v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="dateValid" :rules='[dataRequired, dateRules]' dense outlined
-                append-icon="mdi-update" @click:append="updateDateValid()" label="Expiry Date">
+              <v-text-field v-model="dateValid" :rules='[dataRequired, dateRules]' dense outlined append-icon="mdi-update"
+                @click:append="updateDateValid()" label="Expiry Date">
               </v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="formNumber" :rules='[dataRequired]' readonly dense outlined
-                append-icon="mdi-update" @click:append="updateFormNumber()" label="Form No">
+              <v-text-field v-model="formNumber" :rules='[dataRequired]' readonly dense outlined append-icon="mdi-update"
+                @click:append="updateFormNumber()" label="Form No">
               </v-text-field>
             </v-col>
             <v-col cols="12">

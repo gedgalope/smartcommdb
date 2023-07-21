@@ -42,19 +42,7 @@ function printParticulars({ licenseeInfo, particulars }) {
   });
 
   const suffix = licenseeInfo.callsign
-  let prefix = ''
-  if (!particulars.prefix) {
-    if (particulars.licenseeClass === 'A') prefix = 'DU9'
-    if (particulars.licenseeClass === 'B') prefix = 'DV9'
-    if (particulars.licenseeClass === 'C') prefix = 'DW9'
-    if (particulars.licenseeClass === 'D') prefix = 'DY9'
-  }else{
-    if (particulars.licenseeClass === 'A') prefix = '4F9'
-    if (particulars.licenseeClass === 'B') prefix = '4I9'
-    if (particulars.licenseeClass === 'C') prefix = '4G9'
-    if (particulars.licenseeClass === 'D') prefix = '4H9'
-  
-  }
+  const prefix = callSignPrefix({ prefix: particulars.prefix, amateurClass: particulars.licenseeClass, district: particulars.district })
 
   // const center = doc.internal.pageSize.getWidth() / 2
   // const right = doc.internal.pageSize.getWidth() - 20
@@ -140,10 +128,17 @@ function printParticulars({ licenseeInfo, particulars }) {
 
 
   doc.setFontSize(8)
-  if (particulars.ARLSeries === 'none' || particulars.ARLSeries === 'NONE') doc.text(83, 166, `AROC ONLY`)
-  else doc.text(83, 166, `ARSL-AT${particulars.licenseeClass}-KK-${particulars.ARLSeries}`)
+  if (particulars.district === 9) {
+    if (particulars.ARLSeries === 'none' || particulars.ARLSeries === 'NONE') doc.text(83, 166, `AROC ONLY`)
+    else doc.text(83, 166, `ARSL-AT${particulars.licenseeClass}-KK-${particulars.ARLSeries}`)
 
-  doc.text(83, 170, `AROC-AT${particulars.licenseeClass}-KK-${particulars.AROCSeries}`);
+    doc.text(83, 170, `AROC-AT${particulars.licenseeClass}-KK-${particulars.AROCSeries}`);
+  }
+  else{
+    doc.text(83, 166, `${particulars.districtSeries}`)
+
+  }
+
   doc.text(120, 170, `CLUB: ${particulars.club} EXAM PLACE: ${particulars.examPlace} ${particulars.examDate} RATING: ${particulars.rating}%`);
   doc.text(230, 160, particulars.transactionType);
 
@@ -874,11 +869,29 @@ function printMonthlySellTransfer({ sellTransfer, date }) {
   doc.output('dataurlnewwindow')
 }
 
-function frequencyBands(frequencyRange){
-  if(!frequencyRange || frequencyRange.length >= 2) return ''
+function frequencyBands(frequencyRange) {
+  if (!frequencyRange || frequencyRange.length >= 2) return ''
   else if (frequencyRange.includes('VHF')) return '144 - 146 MHz'
   else if (frequencyRange.includes('UHF')) return '430 - 440 MHz or 1240 - 1300 MHz or 2300 -2450 MHz'
   else if (frequencyRange.includes('HF')) return '3.5 - 3.9 MHz or 7 - 7.2 MHz or ANY AMATEUR HF BANDS'
+}
+
+function callSignPrefix({ prefix, amateurClass, district }) {
+  let callSignPrefix = ''
+  if (!district) district = 9
+  if (!prefix) {
+    if (amateurClass === 'A') callSignPrefix = `DU${district}`
+    if (amateurClass === 'B') callSignPrefix = `DV${district}`
+    if (amateurClass === 'C') callSignPrefix = `DW${district}`
+    if (amateurClass === 'D') callSignPrefix = `DY${district}`
+  } else {
+    if (amateurClass === 'A') callSignPrefix = '4F9' `4F${district}`
+    if (amateurClass === 'B') callSignPrefix = '4I9' `4I${district}`
+    if (amateurClass === 'C') callSignPrefix = '4G9' `4G${district}`
+    if (amateurClass === 'D') callSignPrefix = '4H9' `4H${district}`
+  }
+
+  return callSignPrefix
 }
 export {
   printParticulars, printPurchase, printPossess, printTemporary, printMonthlyPurchase, printMonthlyPossess, printMonthlyParticulars, printSellTransfer, printMonthlySellTransfer

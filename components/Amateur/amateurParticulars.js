@@ -14,10 +14,13 @@ export default {
       dateRules: v => !!(new Date(v)).valueOf() || 'Not a Date!',
       //  licensee particulars  
       clubList:['DARC','DVFBRAN','RAGDARI', 'RECON PHILS', 'SCAN INTL', 'UMARC-DEA', 'URGENT'],
+      districtList:[1,2,3,4,5,6,7,8,9],
       validParticulars: null,
+      district:9,
       licenseeClass: null,
       stationLocation: null,
       prefix:false,
+      districtSeries:null,
       ARLSeries: null,
       AROCSeries: null,
       equipment: null,
@@ -65,9 +68,11 @@ export default {
       if (val) {
         this.licenseeClass = val.licenseeClass
         this.stationLocation = val.stationLocation
+        this.district = !val.district ? 9 : val.district
         this.prefix = !val.prefix ? false : val.prefix
         this.ARLSeries = val.ARLSeries
         this.AROCSeries = val.AROCSeries
+        this.districtSeries = !val.districtSeries ? '' : val.districtSeries 
         this.equipment = val.equipment
         this.dateIssued = val.dateIssued
         this.dateValid = val.dateValid
@@ -117,9 +122,11 @@ export default {
         transactionType: this.transactionType,
         licenseeClass: !this.licenseeClass ? null : this.licenseeClass.toUpperCase(),
         stationLocation: !this.stationLocation ? null : this.stationLocation.toUpperCase(),
+        district: !this.district ? 9 : this.district,
         prefix: this.prefix,
         ARLSeries: this.ARLSeries,
         AROCSeries: this.AROCSeries,
+        districtSeries: !this.districtSeries ? null : this.districtSeries, 
         equipment: !this.equipment ? null : this.equipment.toUpperCase(),
         dateIssued: this.dateIssued,
         dateValid: this.dateValid,
