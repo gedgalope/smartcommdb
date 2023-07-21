@@ -13,14 +13,14 @@ export default {
       dataRequired: v => !!v || 'Required!',
       dateRules: v => !!(new Date(v)).valueOf() || 'Not a Date!',
       //  licensee particulars  
-      clubList:['DARC','DVFBRAN','RAGDARI', 'RECON PHILS', 'SCAN INTL', 'UMARC-DEA', 'URGENT'],
-      districtList:[1,2,3,4,5,6,7,8,9],
+      clubList: ['DARC', 'DVFBRAN', 'RAGDARI', 'RECON PHILS', 'SCAN INTL', 'UMARC-DEA', 'URGENT'],
+      districtList: [1, 2, 3, 4, 5, 6, 7, 8, 9],
       validParticulars: null,
-      district:9,
+      district: 9,
       licenseeClass: null,
       stationLocation: null,
-      prefix:false,
-      districtSeries:null,
+      prefix: false,
+      districtSeries: null,
       ARLSeries: null,
       AROCSeries: null,
       equipment: null,
@@ -72,7 +72,7 @@ export default {
         this.prefix = !val.prefix ? false : val.prefix
         this.ARLSeries = val.ARLSeries
         this.AROCSeries = val.AROCSeries
-        this.districtSeries = !val.districtSeries ? '' : val.districtSeries 
+        this.districtSeries = !val.districtSeries ? '' : val.districtSeries
         this.equipment = val.equipment
         this.dateIssued = val.dateIssued
         this.dateValid = val.dateValid
@@ -102,18 +102,28 @@ export default {
       licenseeInfo: 'amateur/licenseeInfo/getLicenseeInfo',
       formNumberSeries: 'amateur/callSign/getFormNumber'
     }),
-    disableARL(){
+    disableARL() {
       const station = this.stationLocation
-      if(station === 'none' || station === 'NONE'){
+      if (station === 'none' || station === 'NONE') {
         this.ARLSeries = 'NONE'
         this.equipment = '- NOTHING FOLLOWS -'
 
         return true
       }
-      else{
-        if(this.getTransactionDetails.ARLSeries !== 'NONE') this.ARLSeries = this.getTransactionDetails.ARLSeries
-        else this.updateARSLNumber()
-        this.equipment = this.getTransactionDetails.equipment
+      else {
+        if(this.getTransactionDetails){
+          this.ARLSeries = this.getTransactionDetails.ARLSeries
+          this.equipment = this.getTransactionDetails.equipment
+        }else{
+          this.updateARSLNumber()
+          this.equipment = ''
+        }
+
+        // if (this.getTransactionDetails.ARLSeries !== 'NONE') {
+        //   if (this.getTransactionDetails.ARLSeries.length > 0) this.ARLSeries = this.getTransactionDetails.ARLSeries
+        //   else this.updateARSLNumber()
+        // }
+        // this.equipment = this.getTransactionDetails.equipment
         return false
       }
     },
@@ -126,7 +136,7 @@ export default {
         prefix: this.prefix,
         ARLSeries: this.ARLSeries,
         AROCSeries: this.AROCSeries,
-        districtSeries: !this.districtSeries ? null : this.districtSeries, 
+        districtSeries: !this.districtSeries ? null : this.districtSeries,
         equipment: !this.equipment ? null : this.equipment.toUpperCase(),
         dateIssued: this.dateIssued,
         dateValid: this.dateValid,

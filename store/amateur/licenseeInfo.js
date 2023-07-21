@@ -16,7 +16,7 @@ const getters = {
     return state.licenseeID
   },
   getTransactionDetails(state) {
-    if (!state.transactionDetails) return []
+    if (!state.transactionDetails) return null
     return state.transactionDetails
   },
   getTransactionID(state) {
