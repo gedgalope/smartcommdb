@@ -41,18 +41,11 @@ export default {
       resetHistory: false
     }
   },
-  // watch:{
-  //   licensee(newLic,oldLic){
-  //     if(!oldLic) return  
-  //     if(newLic !== oldLic){
-  //       this.clearSearch = true
-  //     }
-  //   }
-  // },
   computed: {
     ...mapGetters({
       ATSeries:'amateur/licenseeInfo/getSeries',
-      previousATSeries: 'amateur/licenseeInfo/getPrevSeries'
+      previousATSeries: 'amateur/licenseeInfo/getPrevSeries',
+      getLicenseeID: 'amateur/licenseeInfo/getLicenseeID'
     }),
     showForm() {
       const transactionType = this.transactionType

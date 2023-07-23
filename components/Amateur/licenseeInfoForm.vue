@@ -87,7 +87,6 @@
               </v-card>
             </v-dialog>
           </v-row>
-          {{ checkedAvailability }}
         </v-container>
        
         <v-btn v-else-if="transactionType === 'new'" :disabled="!(checkedAvailability && licenseeFormComplete)" dense outlined

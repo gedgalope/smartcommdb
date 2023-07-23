@@ -34,10 +34,6 @@ export default {
   },
   props: {
     transactionType: null,
-    resetForm: {
-      type: Boolean,
-      default: () => false
-    }
   },
   watch: {
     getSellTransferDetails(value) {
@@ -53,8 +49,7 @@ export default {
         this.ORNumber = value.ORNumber
         this.ORDate = value.ORDate
         this.ORAmount = value.ORAmount
-
-      }
+      }else this.resetSellTransferForm()
     },
     resetForm(val) {
       if (val) {
@@ -96,12 +91,8 @@ export default {
     updateORDate() {
       this.ORDate = today.toLocaleDateString(undefined, dateOptions)
     },
-    resetSellTransferForm(fromDatabase = false) {
-      if (fromDatabase) {
-        this.$emit('resetHistory', true)
-      }
+    resetSellTransferForm() {
       this.$refs.amateurSellTransfer.reset()
-
     }
   }
 

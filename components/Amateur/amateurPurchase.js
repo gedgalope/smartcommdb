@@ -35,10 +35,6 @@ export default {
   },
   props: {
     transactionType: null,
-    resetForm: {
-      type: Boolean,
-      default: () => false
-    }
   },
   watch: {
     getPurchaseDetails(value) {
@@ -53,14 +49,8 @@ export default {
         this.ORDate = value.ORDate
         this.amount = value.amount
         this.purchaseRemarks = value.purchaseRemarks
-      }
+      } else this.resetParticularsForm()
     },
-    resetForm(val) {
-      if (val) {
-        this.resetParticularsForm()
-        this.$emit('cleared')
-      }
-    }
   },
   computed: {
     ...mapGetters({
@@ -93,12 +83,8 @@ export default {
     updateORDate() {
       this.ORDate = today.toLocaleDateString(undefined, dateOptions)
     },
-    resetParticularsForm(fromDatabase = false) {
-      if (fromDatabase) {
-        this.$emit('resetHistory', true)
-      }
+    resetParticularsForm() {
       this.$refs.AmateurPurchase.reset()
-
     }
   }
 

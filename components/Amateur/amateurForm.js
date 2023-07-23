@@ -21,7 +21,6 @@ export default {
       dataFormat: v => (v || '').length <= 6 || 'not a callsign',
       showAlert: false,
       alertText: null,
-      resetTransactionHistory: false,
       deleteClientDialog: false,
       fetchingQuery: false,
       checkedAvailability: false,
@@ -47,8 +46,8 @@ export default {
     }
   },
   watch: {
-    callsign(val, oldVal){
-      if (val !== oldVal){
+    callsign(val, oldVal) {
+      if (val !== oldVal) {
         this.checkedAvailability = false
       }
     },
@@ -68,18 +67,11 @@ export default {
         this.address = val.address
       }
     },
-    resetForm(val) {
-      if (val === true) {
+    licenseeID(val) {
+      if (!val) {
         this.$refs.licenseeInfoForm.reset()
         this.$refs.transactionHistory.reset()
-        this.resetTransactionHistory = false
-        this.$emit("reset", false)
-      }
-    },
-    resetHistory(val) {
-      if (val === true) {
-        this.$refs.transactionHistory.reset()
-        this.$emit('resetDone', false)
+        this.transactionType = null
       }
     },
   },
@@ -91,7 +83,7 @@ export default {
     transactionItems() {
       //  apply this code to transaction items when search bar is added
       const newLicensee = ['new', 'purchase', 'temporary']
-      const existingLicensee = ['renewal', 'renmod', 'duplicate', 'modification', 'purchase', 'possess', 'temporary', 'new', 'sell-transfer']
+      const existingLicensee = ['renewal', 'renmod', 'modification', 'purchase', 'possess', 'temporary', 'duplicate', 'new', 'sell-transfer']
       if (!this.searchResult) return newLicensee
       else return existingLicensee
     },
@@ -105,8 +97,8 @@ export default {
       if (this.licenseeFormComplete && this.licenseeID && this.checkedAvailability) return false
       else return true
     },
-    showCallSignAvailablity(){
-      if(!this.callSignAvailable) return 'Call sign already assigned'
+    showCallSignAvailablity() {
+      if (!this.callSignAvailable) return 'Call sign already assigned'
       else return this.callSignAvailable
     }
   },
@@ -117,7 +109,7 @@ export default {
       getTransactionHistory: 'amateur/transactionHistory/getTransactionHistory',
       updateLicenseeInfo: 'amateur/licenseeInfo/updateLicenseeInfo',
       removeLicenseeInfo: 'amateur/licenseeInfo/removeLicenseeInfo',
-      checkCallSignStatus:'amateur/searchLicensee/searchCallSignEncoding'
+      checkCallSignStatus: 'amateur/searchLicensee/searchCallSignEncoding'
     }),
     async submitLicenseeInfo() {
       const licenseeData = {
@@ -189,9 +181,9 @@ export default {
       }
 
     },
-    async checkCallSignAvailability(){
+    async checkCallSignAvailability() {
       this.fetchingQuery = true
-      if(!this.callsign) return
+      if (!this.callsign) return
       await this.checkCallSignStatus(this.callsign)
       this.fetchingQuery = false
       this.checkedAvailability = true

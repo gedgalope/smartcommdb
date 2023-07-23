@@ -29,11 +29,7 @@ export default {
     'form-actions': formActionsVue
   },
   props: {
-    transactionType: null,
-    resetForm: {
-      type: Boolean,
-      default: () => false
-    }
+    transactionType: null
   },
   watch: {
     getPossessDetails(val) {
@@ -47,14 +43,8 @@ export default {
         this.ORDate = val.ORDate
         this.Amount = val.Amount
         this.remarks = val.remarks
-      }
+      } else this.resetPossessForm()
     },
-    resetForm(val){
-      if(val){
-        this.resetPossessForm()
-        this.$emit('cleared')
-      }
-    }
   },
   computed: {
     ...mapGetters({
@@ -86,10 +76,7 @@ export default {
       this.ORDate = today.toLocaleDateString(undefined, dateOptions)
 
     },
-    resetPossessForm(fromDatabase = false){
-      if(fromDatabase){
-        this.$emit('resetHistory', true)
-      }
+    resetPossessForm(){
       this.$refs.possessForm.reset()  
     }
   }

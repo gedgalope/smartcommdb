@@ -37,10 +37,6 @@ export default {
   },
   props: {
     transactionType: null,
-    resetForm: {
-      type: Boolean,
-      default: () => false
-    }
   },
   watch: {
     transactionDetails(value) {
@@ -58,13 +54,7 @@ export default {
         this.ORAmount = value.ORAmount
         this.ORNumber = value.ORNumber
         this.ORDate = value.ORDate
-      }
-    },
-    resetForm(val) {
-      if (val) {
-        this.resetTemporaryForm()
-        this.$emit('cleared')
-      }
+      }else this.resetTemporaryForm()
     }
   },
   computed: {
@@ -109,10 +99,7 @@ export default {
     nothingFollows() {
       this.equipment = `${!this.equipment ? "" : this.equipment}${this.equipment ? '\n' : ""} - NOTHING FOLLOWS -`
     },
-    resetTemporaryForm(fromDatabase = false) {
-      if (fromDatabase) {
-        this.$emit('resetHistory', true)
-      }
+    resetTemporaryForm() {
       this.$refs.amateurTemporary.reset()
     }
   }

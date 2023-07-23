@@ -30,7 +30,9 @@ export default {
     ...mapMutations({
       updateLicenseeID: 'amateur/licenseeInfo/UPDATE_LICENSEE_ID',
       updateLicenseeInfo: 'amateur/licenseeInfo/UPDATE_LICENSEE_INFO',
-      updateSearchResults:'amateur/searchLicensee/POPULATE_SEARCH_RESULTS'
+      updateSearchResults:'amateur/searchLicensee/POPULATE_SEARCH_RESULTS',
+      clearTransaction: 'amateur/licenseeInfo/CLEAR_HISTORY',
+      clearHistory: 'amateur/transactionHistory/CLEAR_HISTORY'
     }),
     ...mapActions({
       searchLicensee: 'amateur/searchLicensee/searchLicensee'
@@ -40,6 +42,8 @@ export default {
       this.updateSearchResults(null)
       this.updateLicenseeID(null)
       this.updateLicenseeInfo(null)
+      this.clearTransaction()
+      this.clearHistory()
     },
     emitSelected() {
       if (this.searchName) {

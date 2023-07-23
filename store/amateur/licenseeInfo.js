@@ -61,6 +61,10 @@ const mutations = {
   },
   UPDATE_AT_SERIES(state, series) {
     state.ATSeries = series
+  },
+  CLEAR_HISTORY(state){
+    state.transactionDetails = null
+    state.transactionID = null
   }
 }
 

@@ -86,14 +86,10 @@ export default {
         this.ORDate = val.ORDate
         this.ORAmount = val.ORAmount
 
+      }else{
+        this.resetParticularsForm()
       }
     },
-    resetForm(val) {
-      if (val) {
-        this.resetParticularsForm()
-        this.$emit('cleared', false)
-      }
-    }
   },
   computed: {
     ...mapGetters({
@@ -118,12 +114,6 @@ export default {
           this.updateARSLNumber()
           this.equipment = ''
         }
-
-        // if (this.getTransactionDetails.ARLSeries !== 'NONE') {
-        //   if (this.getTransactionDetails.ARLSeries.length > 0) this.ARLSeries = this.getTransactionDetails.ARLSeries
-        //   else this.updateARSLNumber()
-        // }
-        // this.equipment = this.getTransactionDetails.equipment
         return false
       }
     },
@@ -187,11 +177,8 @@ export default {
     nothingFollows() {
       this.equipment = `${!this.equipment ? "" : this.equipment}${this.equipment ? '\n' : ""} - NOTHING FOLLOWS -`
     },
-    resetParticularsForm(fromDatabase = false) {
+    resetParticularsForm() {
       this.$refs.licenseeParticulars.reset()
-      if (fromDatabase) {
-        this.$emit('resetHistory', true)
-      }
     }
   }
 

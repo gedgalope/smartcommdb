@@ -51,6 +51,9 @@ const mutations = {
       return Object.assign({ transactionID: key }, history)
     })
     state.transactionHistory = list
+  },
+  CLEAR_HISTORY(state){
+    state.transactionHistory = null
   }
 }
 
