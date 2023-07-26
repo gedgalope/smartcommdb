@@ -71,6 +71,6 @@
 </template>
 
 <script >
-import amateurAccForm from './amateurAccForm.js'
+import amateurAccForm from './amateurAccFormJS.js'
 export default amateurAccForm
 </script>

@@ -20,6 +20,6 @@
 </template>
 
 <script >
-import callSignTable from './callSignTable.js'
+import callSignTable from './callSignTableJS.js'
 export default callSignTable
 </script>

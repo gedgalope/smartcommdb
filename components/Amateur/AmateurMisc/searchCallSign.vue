@@ -26,6 +26,6 @@
 </template>
 
 <script >
-import searchCallSign from './searchCallSign.js'
+import searchCallSign from './searchCallSignJS.js'
 export default searchCallSign
 </script>

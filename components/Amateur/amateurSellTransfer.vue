@@ -63,6 +63,6 @@
 </template>
 
 <script >
-import amateurSellTransfer from './amateurSellTransfer.js'
+import amateurSellTransfer from './amateurSellTransferJS.js'
 export default amateurSellTransfer
 </script>

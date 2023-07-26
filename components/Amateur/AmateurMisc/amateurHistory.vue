@@ -13,6 +13,6 @@
 </template>
 
 <script >
-import amateurHistory from './amateurHistory.js'
+import amateurHistory from './amateurHistoryJS.js'
 export default amateurHistory
 </script>

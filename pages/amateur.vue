@@ -4,6 +4,7 @@
       <v-col cols=12>
         <amateur-search-bar @selectedLicensee="licensee = $event" @cleared="transactionType = null"></amateur-search-bar>
       </v-col>
+
       <v-col cols="6">
         <v-row>
           <licensee-info-form @transactionType="transactionType = $event" :searchResult="licensee">
@@ -65,6 +66,9 @@
           :transactionType="transactionType"></amateur-sell-transfer>
         <span v-else>
           <monthly-report></monthly-report>
+          <div class="px-3">
+            <amateur-pending-view></amateur-pending-view>
+          </div>
           <add-new-callsign></add-new-callsign>
         </span>
       </v-col>

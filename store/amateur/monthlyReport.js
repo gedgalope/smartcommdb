@@ -1,5 +1,5 @@
 import { database } from "@/services/firebase";
-import monthlyReport from "~/components/Amateur/AmateurMisc/monthlyReport";
+import monthlyReport from "~/components/Amateur/AmateurMisc/monthlyReportJS";
 const today = new Date(Date.now())
 const dateOptions = { year: 'numeric', month: 'long' };
 const permitDateOptions = { year: '2-digit' }

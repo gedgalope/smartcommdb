@@ -43,6 +43,6 @@
 </template>
 
 <script >
-import formActions from './formActions.js'
+import formActions from './formActionsJS.js'
 export default formActions
 </script>

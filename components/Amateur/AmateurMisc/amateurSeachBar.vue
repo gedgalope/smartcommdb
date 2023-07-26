@@ -11,6 +11,6 @@
 </template>
 
 <script >
-import AmateurSearchBar from './amateurSearchBar.js'
+import AmateurSearchBar from './amateurSearchBarJS.js'
 export default AmateurSearchBar
 </script>

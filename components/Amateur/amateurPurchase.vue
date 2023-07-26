@@ -75,6 +75,6 @@
 </template>
 
 <script >
-import amateurPurchase from './amateurPurchase'
+import amateurPurchase from './amateurPurchaseJS'
 export default amateurPurchase
 </script>

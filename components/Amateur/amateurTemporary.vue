@@ -78,6 +78,6 @@
 </template>
 
 <script >
-import amateurTemporary from './amateurTemporary'
+import amateurTemporary from './amateurTemporaryJS'
 export default amateurTemporary
 </script>

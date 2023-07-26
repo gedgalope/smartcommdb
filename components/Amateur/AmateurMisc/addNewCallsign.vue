@@ -56,6 +56,6 @@
 </template>
  
 <script >
-import addNewCallsign from './addNewCallsign.js'
+import addNewCallsign from './addNewCallsignJS.js'
 export default addNewCallsign
 </script>

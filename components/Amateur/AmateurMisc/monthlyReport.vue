@@ -45,6 +45,6 @@
 </template>
 
 <script>
-import monthlyReport from './monthlyReport.js'
+import monthlyReport from './monthlyReportJS.js'
 export default monthlyReport
 </script>

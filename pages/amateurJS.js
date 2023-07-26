@@ -12,6 +12,7 @@ import AmateurSeachBarVue from '~/components/Amateur/AmateurMisc/amateurSeachBar
 import amateurAccFormVue from '~/components/Amateur/AmateurMisc/amateurAccForm.vue'
 import monthlyReportVue from '~/components/Amateur/AmateurMisc/monthlyReport.vue' 
 import amateurSellTransfer from '~/components/Amateur/amateurSellTransfer.vue'
+import amateurPendingView from '~/components/Amateur/AmateurMisc/AmateurPending/amateurPendingView'
 
 export default {
   name: 'Amateur',
@@ -19,6 +20,7 @@ export default {
     store.dispatch('amateur/callSign/getUnusedCallSign')
     store.dispatch('amateur/licenseeInfo/getSeries')
     store.dispatch('amateur/callSign/getFormSeries')
+    store.dispatch('amateur/pendingLicenses/getPendingLicense')
   },
   components: {
     'licensee-info-form': licenseeInfoFormVue,
@@ -31,7 +33,8 @@ export default {
     'amateur-search-bar': AmateurSeachBarVue,
     'amateur-accountable-form':amateurAccFormVue,
     'monthly-report':monthlyReportVue,
-    'amateur-sell-transfer':amateurSellTransfer
+    'amateur-sell-transfer':amateurSellTransfer,
+    'amateur-pending-view':amateurPendingView
   },
   data() {
     return {

@@ -55,6 +55,6 @@
 </template>
 
 <script >
-import amateurPossess from './amateurPossess'
+import amateurPossess from './amateurPossessJS'
 export default amateurPossess
 </script>
