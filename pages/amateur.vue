@@ -24,7 +24,8 @@
                 </v-row>
               </v-card-title>
               <v-divider></v-divider>
-              <v-card-text>
+              <series-form-display :ATSeries="ATSeries" :previousATSeries="previousATSeries"></series-form-display>
+              <!-- <v-card-text>
                 <v-row>
                   <v-col cols="6">
                     <v-text-field readonly outlined label="Next ROC Series" :value="ATSeries.AROC" dense hide-details>
@@ -45,7 +46,7 @@
                     </v-text-field>
                   </v-col>
                 </v-row>
-              </v-card-text>
+              </v-card-text> -->
             </v-card>
           </v-col>
 

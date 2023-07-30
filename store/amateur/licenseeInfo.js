@@ -62,7 +62,7 @@ const mutations = {
   UPDATE_AT_SERIES(state, series) {
     state.ATSeries = series
   },
-  CLEAR_HISTORY(state){
+  CLEAR_HISTORY(state) {
     state.transactionDetails = null
     state.transactionID = null
   }
@@ -87,10 +87,8 @@ const actions = {
       const dbReference = await database.ref('amateur/licensee').push(licenseeInfo)
       commit('UPDATE_LICENSEE_ID', dbReference.key)
       commit('UPDATE_LICENSEE_INFO', licenseeInfo)
-      console.log(dbReference)
       return true
     } catch (error) {
-      console.log(error.message)
       return error.message
     }
 
@@ -154,24 +152,17 @@ const actions = {
     }
   },
 
-  async postLicenseParticulars({ dispatch, state, getters }, licenseParticulars) {
+  async postLicenseParticulars({ dispatch, state }, licenseParticulars) {
     try {
       if (!licenseParticulars) throw new Error('No License Information')
       const licenseeID = state.licenseeID
       if (!licenseeID) throw new Error('No Licensee ID')
-      const dbReference = await database.ref(`amateur/particulars/${licenseeID}`).push(licenseParticulars)
-      const { ARSL } = getters.getSeries
-      console.log(dbReference)
+      await database.ref(`amateur/particulars/${licenseeID}`).push(licenseParticulars)
       await dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: licenseParticulars.transactionType }, { root: true })
       await dispatch("amateur/monthlyReport/postParticularsMonthly", { ID: licenseeID, licensee: state.licenseeInfo, particulars: licenseParticulars }, { root: true })
       await dispatch("amateur/callSign/postFormSeries", licenseParticulars.formNumber, { root: true })
-      if (licenseParticulars.transactionType === 'new') {
-        await dispatch('updateSeries', { arsl: licenseParticulars.ARLSeries.includes('-') ? licenseParticulars.ARLSeries : ARSL, aroc: licenseParticulars.AROCSeries })
-      } else if (licenseParticulars.transactionType === 'renmod' || licenseParticulars.transactionType === 'modification') {
-        if (licenseParticulars.ARLSeries === ARSL) {
-          await dispatch('updateSeries', { arsl: licenseParticulars.ARLSeries.includes('-') ? licenseParticulars.ARLSeries : ARSL, aroc: licenseParticulars.AROCSeries })
-        }
-      }
+      await dispatch('updateSeries', { arsl: licenseParticulars.ARLSeries, aroc: licenseParticulars.AROCSeries })
+
       return true
     } catch (error) {
       return error.message
@@ -186,8 +177,7 @@ const actions = {
 
       const licenseeID = state.licenseeID
       if (!licenseeID) throw new Error('No Licensee ID')
-      const dbReference = await database.ref(`amateur/purchase/${licenseeID}`).push(purchaseParticulars)
-      console.log(dbReference)
+      await database.ref(`amateur/purchase/${licenseeID}`).push(purchaseParticulars)
       await dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'purchase' }, { root: true })
       await dispatch("amateur/monthlyReport/postPurchaseMonthly", { ID: licenseeID, licensee: state.licenseeInfo, particulars: purchaseParticulars }, { root: true })
 
@@ -204,13 +194,11 @@ const actions = {
 
       const licenseeID = state.licenseeID
       if (!licenseeID) throw new Error('No Licensee ID')
-      const dbReference = await database.ref(`amateur/sell-transfer/${licenseeID}`).push(particulars)
-      console.log(dbReference)
+      await database.ref(`amateur/sell-transfer/${licenseeID}`).push(particulars)
       await dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'sell-transfer' }, { root: true })
       await dispatch("amateur/monthlyReport/postSellTransferMonthly", { ID: licenseeID, licensee: state.licenseeInfo, particulars }, { root: true })
       return true
     } catch (error) {
-      console.log(error.message)
       return error.message
     }
 
@@ -223,8 +211,7 @@ const actions = {
 
       const licenseeID = state.licenseeID
       if (!licenseeID) throw new Error('No Licensee ID')
-      const dbReference = await database.ref(`amateur/possess/${licenseeID}`).push(possessParticulars)
-      console.log(dbReference)
+      await database.ref(`amateur/possess/${licenseeID}`).push(possessParticulars)
       await dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'possess' }, { root: true })
       await dispatch("amateur/monthlyReport/postPossessMonthly", { ID: licenseeID, licensee: state.licenseeInfo, particulars: possessParticulars }, { root: true })
 
@@ -242,8 +229,7 @@ const actions = {
       const licenseeID = state.licenseeID
       if (!licenseeID) throw new Error('No Licensee ID')
 
-      const dbReference = await database.ref(`amateur/temporary/${licenseeID}`).push(licenseTemporary)
-      console.log(dbReference)
+      await database.ref(`amateur/temporary/${licenseeID}`).push(licenseTemporary)
       await dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType: 'temporary' }, { root: true })
       await dispatch("amateur/monthlyReport/postTemporaryMonthly", { ID: licenseeID, licensee: state.licenseeInfo, particulars: licenseTemporary }, { root: true })
       return true
@@ -252,7 +238,6 @@ const actions = {
     }
   },
   async getTransaction({ commit }, { licenseeID, transactionID, transactionType }) {
-    console.log({ licenseeID, transactionID, transactionType })
     try {
       if (!licenseeID || !transactionID || !transactionType) throw new Error('No empty Object!')
       let type = transactionType
@@ -264,13 +249,9 @@ const actions = {
         .then(snapshot => {
           return snapshot.val()
         })
-
-
-      console.log(transaction)
       commit('UPDATE_TRANSACTION_ID', transactionID)
       commit('UPDATE_TRANSACTION_DETAILS', transaction)
     } catch (error) {
-      console.log(error)
       return error.message
     }
   },
@@ -289,9 +270,6 @@ const actions = {
 
       if (transactionArray.includes(transaction)) transactionType = 'particulars'
       else transactionType = transaction
-
-      console.log(transactionType)
-
       await database.ref(`amateur/${transactionType}/${licenseeID}/${transactionID}`)
         .update(particulars)
       dispatch("amateur/transactionHistory/getTransactionHistory", { licenseeID, transactionType }, { root: true })
@@ -337,22 +315,51 @@ const actions = {
     }
   },
 
-  async updateSeries({ dispatch }, { arsl, aroc }) {
+  async newAmateurSeries({dispatch}, {nrsl,nroc}){
+    try {
+      if(!nrsl) throw new Error('No ARSL series input')
+      if(!nroc) throw new Error('No AROC series input')
+      await database.ref(`amateur/ATSeries`)
+      .set({AROC:nroc,ARSL:nrsl})
+      dispatch('getSeries')
+    } catch (error) {
+      return error.message
+    }
+  },
+
+  async updateSeries({ dispatch, state }, { arsl, aroc }) {
     try {
       if (!aroc) throw new Error('No ROC input!')
 
+      const dbRadioSeries = state.ATSeries.ARSL
+      const dbOperatorSeries = state.ATSeries.AROC
+      const dbOperatorSeriesObject = {
+        series: dbOperatorSeries.substring(dbOperatorSeries.indexOf('-'), 0),
+        year: dbOperatorSeries.substring(dbOperatorSeries.indexOf('-') + 1)
+      }
+      const dbRadioSeriesObject = {
+        series: dbRadioSeries.substring(dbRadioSeries.indexOf('-'), 0),
+        year: dbRadioSeries.substring(dbRadioSeries.indexOf('-') + 1)
+      }
 
       if (arsl.includes('-')) {
-        await database.ref(`amateur/ATSeries`)
-          .set({ AROC: aroc, ARSL: arsl })
-      } else {
-        await database.ref(`amateur/ATSeries/AROC`)
-          .set(aroc)
+        if (dbRadioSeriesObject.year === arsl.substring(arsl.indexOf('-') + 1)
+          && dbRadioSeriesObject.series <= arsl.substring(arsl.indexOf('-'), 0)) {
+          await database.ref(`amateur/ATSeries/ARSL`)
+            .set(arsl)
+        }
+      }
+
+      if (aroc.includes('-')) {
+        if (dbOperatorSeriesObject.year === aroc.substring(aroc.indexOf('-') + 1)
+          && dbOperatorSeriesObject.series <= aroc.substring(aroc.indexOf('-'), 0)) {
+          await database.ref(`amateur/ATSeries/AROC`)
+            .set(aroc)
+        }
       }
       dispatch('getSeries')
       return true
     } catch (error) {
-      console.log(error)
       return error.message
     }
   },

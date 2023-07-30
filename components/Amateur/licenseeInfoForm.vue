@@ -17,7 +17,7 @@
           </v-text-field>
         </v-col>
         <v-col cols="4">
-          <v-text-field v-model="callsign" :rules='[dataFormat,showCallSignAvailablity]' dense outlined append-icon="mdi-check"
+          <v-text-field v-model="callsign" :rules='[dataFormat,showCallSignAvailablity, callSignTextFieldMessage]' dense outlined append-icon="mdi-check"
             label="Call Sign"
             :loading="fetchingQuery"
             @click:append="checkCallSignAvailability()"
@@ -48,7 +48,7 @@
         </v-form>
       </v-col>
       <v-col cols="8">
-        <v-container class="pa-1" v-if="transactionType === null" grid-list-xs>
+        <v-container class="pa-1" v-if="transactionType === null" :disabled="!checkedAvailability" grid-list-xs>
           <v-row dense>
             <v-col class="pt-0" cols="6">
               <v-btn class="primary" block dense rounded :disabled="disableUpdateDelete" @click="updateRecord()">

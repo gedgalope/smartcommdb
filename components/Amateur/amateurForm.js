@@ -97,9 +97,20 @@ export default {
       if (this.licenseeFormComplete && this.licenseeID && this.checkedAvailability) return false
       else return true
     },
+    //  isaha ang monitor ug show 
     showCallSignAvailablity() {
       if (!this.callSignAvailable) return 'Call sign already assigned'
       else return this.callSignAvailable
+    },
+    callSignTextFieldMessage() {
+      if (this.checkedAvailability) return true
+      if(this.searchResult){
+        let upperCallSign = null
+        if(this.callsign) upperCallSign = this.callsign.toUpperCase()
+        if(this.searchResult.callsign === upperCallSign) return true
+        else return `Check call sign availability`
+      }
+      else return `Check call sign availability`
     }
   },
   methods: {

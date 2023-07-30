@@ -22,7 +22,7 @@
       </v-card-text>
       <v-card-actions>
         <v-row justify="center">
-          <v-dialog v-model="openSeriesDialog" persistent :overlay="false" max-width="40%"
+          <v-dialog v-model="openSeriesDialog" :overlay="false" max-width="40%"
             transition="dialog-transition">
 
             <template v-slot:activator="{ on, attrs }">

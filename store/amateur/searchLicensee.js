@@ -42,6 +42,7 @@ const actions = {
     // check callsign if its already taken
     try {
       if(!callSign) throw new Error('Empty call sign field')
+      callSign = callSign.toUpperCase()
       const checkCallSign =  await database
       .ref('amateur/licensee')
       .orderByChild('callsign')
@@ -51,8 +52,10 @@ const actions = {
         return snapshot.val()
       })
 
+      console.log(callSign)
       commit('POPULATE_CALLSIGN_ENCODING',checkCallSign)
     } catch (error) {
+      console.log(error)
       return error.message
     }
   },

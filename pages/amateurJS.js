@@ -12,7 +12,8 @@ import AmateurSeachBarVue from '~/components/Amateur/AmateurMisc/amateurSeachBar
 import amateurAccFormVue from '~/components/Amateur/AmateurMisc/amateurAccForm.vue'
 import monthlyReportVue from '~/components/Amateur/AmateurMisc/monthlyReport.vue' 
 import amateurSellTransfer from '~/components/Amateur/amateurSellTransfer.vue'
-import amateurPendingView from '~/components/Amateur/AmateurMisc/AmateurPending/amateurPendingView'
+import amateurPendingView from '~/components/Amateur/AmateurMisc/AmateurPending/amateurPendingView.vue'
+import seriesFormDisplay from '~/components/Amateur/AmateurMisc/seriesFormDisplay.vue'
 
 export default {
   name: 'Amateur',
@@ -34,7 +35,8 @@ export default {
     'amateur-accountable-form':amateurAccFormVue,
     'monthly-report':monthlyReportVue,
     'amateur-sell-transfer':amateurSellTransfer,
-    'amateur-pending-view':amateurPendingView
+    'amateur-pending-view':amateurPendingView,
+    'series-form-display':seriesFormDisplay
   },
   data() {
     return {
