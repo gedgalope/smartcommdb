@@ -94,6 +94,8 @@ export default {
       else return type
     },
     disableUpdateDelete() {
+      if(!this.searchResult) return true
+      if(this.callsign === this.searchResult.callsign) return false
       if (this.licenseeFormComplete && this.licenseeID && this.checkedAvailability) return false
       else return true
     },
