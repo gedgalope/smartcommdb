@@ -3,7 +3,9 @@ import { database } from "@/services/firebase";
 const state = () => ({
   unusedCallsign: null,
   callsignSearchResult: [],
-  formSeries: null
+  formSeries: null,
+  activeCallSign: null,
+  tableParticular: null
 })
 
 const getters = {
@@ -11,19 +13,60 @@ const getters = {
     // {CIS:{unused:true},CBD:{unused:true}}
     const rawCallSignData = state.unusedCallsign
     if (!rawCallSignData) return
-    console.log(rawCallSignData)
-    const callSigns = Object.keys(rawCallSignData)
-    const callSignArray = callSigns.map((elem) => {
-      return { callsign: elem }
+    const callSignArray = Object.entries(rawCallSignData).map(([callSign, details]) => {
+      return { oldOwner: details.prevOwner, newOwner: details.newOwner, callsign: callSign }
     })
     return callSignArray
   },
   callsignQueryResult: (state) => {
     return state.callsignSearchResult
   },
-  getFormNumber: (state) =>{
-    if(!state.formSeries) return 0
+  getFormNumber: (state) => {
+    if (!state.formSeries) return 0
     return state.formSeries
+  },
+  getActiveCallsign: (state) => {
+    if (!state.activeCallSign) return []
+
+    const licenseeBuffer = state.activeCallSign
+
+    const formattedLicensee = Object.entries(licenseeBuffer).map(([ID, licenseeData]) => {
+      if (!licenseeData.callsign || licenseeData.callsign.includes('/')) {
+        return {
+          ID,
+          callsign: licenseeData.callsign ? `temp:${licenseeData.callsign}` : `none assigned`,
+          licensee: `${licenseeData.firstname} ${licenseeData.lastname}`,
+          address: licenseeData.address,
+          contactNumber: licenseeData.contact
+        }
+      }
+      return {
+        ID,
+        callsign: licenseeData.callsign,
+        licensee: `${licenseeData.firstname} ${licenseeData.lastname}`,
+        address: licenseeData.address,
+        contactNumber: licenseeData.contact
+      }
+    })
+    return formattedLicensee.toSorted()
+  },
+  getParticularsForTable: (state) => {
+    if (!state.tableParticular) return null
+    if (state.tableParticular.error) return state.tableParticular
+
+    const particulars = state.tableParticular
+
+    const formatted = Object.values(particulars).map(details => {
+      return {
+        equipment: details.equipment,
+        dateIssued: details.dateIssued,
+        dateValid: details.dateValid,
+        recieptDetails: `${details.ORNumber}(${details.ORAmount})`,
+        error: false
+      }
+    })
+
+    return formatted[0]
   }
 }
 
@@ -37,15 +80,19 @@ const mutations = {
       state.callsignSearchResult = searchResult
     }
   },
-  UPDATE_FORM_SERIES(state, formNumber){
+  UPDATE_FORM_SERIES(state, formNumber) {
     state.formSeries = formNumber
+  },
+  POPULATE_USED_CALLSIGN_DATA(state, dbResponse) {
+    state.activeCallSign = dbResponse
+  },
+  POPULATE_PARTICULAR(state, dbResponse) {
+    state.tableParticular = dbResponse
   }
 
 }
 
 const actions = {
-  //  pag query nalang kung mangita kag callsign kaysa sa i table nmo kay mas hago kung mag table ka :)
-
   async postCallSignSeries({ commit }, callSeries) {
     const details = { used: false }
     if (!callSeries) throw new Error('Empty Object')
@@ -85,7 +132,6 @@ const actions = {
     try {
       const unusedCallsign = await database
         .ref(`amateur/callSign/forIssuance`)
-        .limitToFirst(5)
         .once("value")
         .then(snapshot => {
           return snapshot.val()
@@ -183,7 +229,7 @@ const actions = {
         newOwner: callsignInfo.newOwner,
         used: callsignInfo.used,
       }
-      if (callsignInfo.update) { 
+      if (callsignInfo.update) {
         // not in for issuance directly post to issued
         await database.ref(`amateur/callSign/issued/${callsignInfo.callsign.toUpperCase()}`).set(callsignDataForPost)
         return true
@@ -196,7 +242,7 @@ const actions = {
         .then(snapshot => {
           return snapshot.val()
         })
-        //  checks if callsign has been issued by posting directly to particulars
+      //  checks if callsign has been issued by posting directly to particulars
       if (checkLicenseeForObject) throw new Error('Callsign has been issued!')
 
       const checkIssuedForObject = await database
@@ -205,7 +251,7 @@ const actions = {
         .then(snapshot => {
           return snapshot.val()
         })
-        // checks if callsign has been issued through the issued callsign data
+      // checks if callsign has been issued through the issued callsign data
       if (checkIssuedForObject) throw new Error('Callsign has been issued, please modify and update licensee data first!')
 
       const checkForIssuanceForObject = await database
@@ -257,14 +303,14 @@ const actions = {
       if (callsignInfo.used) {
         await database.ref(`amateur/callSign/issued/${callsignInfo.callsign.toUpperCase()}`).set(callsignDataForPost)
         const checkCallsignInForIssuance = await database
-        .ref(`amateur/callSign/forIssuance/${callsignInfo.callsign.toUpperCase()}`)
-        .once("value")
-        .then(snapshot => {
-          return snapshot.val()
-        })
-        if(checkCallsignInForIssuance){
+          .ref(`amateur/callSign/forIssuance/${callsignInfo.callsign.toUpperCase()}`)
+          .once("value")
+          .then(snapshot => {
+            return snapshot.val()
+          })
+        if (checkCallsignInForIssuance) {
           await database.ref(`amateur/callSign/forIssuance/${callsignInfo.callsign.toUpperCase()}`)
-          .remove()
+            .remove()
         }
         return true
       } else {
@@ -294,12 +340,69 @@ const actions = {
       const dbReference = await database.ref('amateur/formNumber')
         .get("value")
         .then(snapshot => snapshot.val())
-        commit('UPDATE_FORM_SERIES', dbReference)
-        return true
+      commit('UPDATE_FORM_SERIES', dbReference)
+      return true
     } catch (error) {
       return error.message
     }
-  }
+  },
+  async callSignList({ state, commit }) {
+    try {
+      if (state.activeCallSign) return
+      const dbResponse = await database.ref('amateur')
+        .child('licensee')
+        .orderByValue()
+        .once("value").
+        then(snapshot => {
+          return snapshot.val()
+        })
+
+      commit('POPULATE_USED_CALLSIGN_DATA', dbResponse)
+
+    } catch (error) {
+      return error.message
+    }
+  },
+  async getParticularsFromTable({ commit }, licenseeInfo) {
+    try {
+      if (!licenseeInfo) throw new Error('No licensee information!')
+      const licenseeID = licenseeInfo.ID
+      const dbResponse = await database.ref(`amateur/particulars/${licenseeID}`)
+        .orderByKey()
+        .limitToFirst(1)
+        .once("value")
+        .then(snapshot => {
+          return snapshot.val()
+        })
+      if (!dbResponse) throw new Error('No AT license for the selected licensee')
+      commit('POPULATE_PARTICULAR', dbResponse)
+    } catch (error) {
+      commit('POPULATE_PARTICULAR', { error: error.message })
+    }
+  },
+  async updateCallSignForIssuance({ dispatch }, { callsign, newOwner, prevOwner }) {
+    try {
+      if (!callsign) throw new Error('No call sign selected')
+      await database.ref(`amateur/callSign/forIssuance/${callsign}`)
+        .set({ newOwner, prevOwner, used: false })
+
+      dispatch('getUnusedCallSign')
+    } catch (error) {
+      return error.message
+    }
+  },
+  async deleteCallSignForIssuance({ dispatch }, callsign) {
+    try {
+      if (!callsign) throw new Error('No call sign selected')
+      await database.ref(`amateur/callSign/forIssuance/${callsign}`)
+        .remove()
+
+      dispatch('getUnusedCallSign')
+    } catch (error) {
+      console.log(error.message)
+      return error.message
+    }
+  },
 }
 
 export default {

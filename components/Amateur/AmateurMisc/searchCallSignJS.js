@@ -3,31 +3,32 @@ export default {
   data() {
     return {
       callSignHeaders: [
-        {
-          text: 'CallSign',
-          align: 'start',
-          value: 'callsign',
-        },
-        { text: 'Prev Owner', value: 'oldOwner' },
-        { text: 'New Owner', value: 'newOwner' },
-        { text: 'Date Issued', value: 'dateIssued' },
+        {text: 'Call Sign',value: 'callsign'},
+        { text: 'Licensee', value: 'licensee' },
+        { text: 'Contact #', value: 'contactNumber' },
+        { text: 'Address', value: 'address' },
       ],
       searchByCallsign: null,
       searchPreviousOwner: null,
       loadingResultTable: false,
       callSignSearchError: null,
       ownerSearchError: null,
+      search:null,
+      expanded:false
     }
   },
   computed: {
     ...mapGetters({
-      callsignQueryResult: 'amateur/callSign/callsignQueryResult'
+      callsignQueryResult: 'amateur/callSign/callsignQueryResult',
+      activeLicenses:'amateur/callSign/getActiveCallsign',
+      particulars:'amateur/callSign/getParticularsForTable'
     })
   },
   methods: {
     ...mapActions({
       searchCallSign: 'amateur/callSign/searchCallSign',
-      searchOwner: 'amateur/callSign/searchOwner'
+      searchOwner: 'amateur/callSign/searchOwner',
+      getParticulars: 'amateur/callSign/getParticularsFromTable'
     }),
     async searchCallsign() {
       this.loadingResultTable = true
@@ -40,18 +41,9 @@ export default {
       this.loadingResultTable = false
       this.$refs.searchCallsignField.reset()
     },
-    async searchOldOwner() {
-      this.loadingResultTable = true
-      const dbResponse = await this.searchOwner(this.searchPreviousOwner)
-      if (dbResponse !== true) {
-        this.ownerSearchError = dbResponse
-      } else {
-        this.ownerSearchError = null
-      }
-      this.loadingResultTable = false
-      this.$refs.searchPreviousOwnerField.reset()
-    },
-    showCallsignTable() { },
+    showParticulars(licenseeInfo){
+      this.getParticulars(licenseeInfo)
+    }
   }
 
 }
